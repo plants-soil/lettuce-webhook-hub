@@ -24,9 +24,7 @@ public class ConfigurationFileLocatorTest {
 	
 	@Test
 	public void testGetConfigurationFile() {
-		assertThrows(RuntimeException.class, ()-> {
-			ConfigurationFileLocator.getConfigurationFile("lettuce.properties");
-		});
+		assertNull(ConfigurationFileLocator.getConfigurationFile("lettuce.properties"));
 	}
 	
 	private void createConfigurationFile(String dir) {

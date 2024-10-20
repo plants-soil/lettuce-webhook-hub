@@ -17,7 +17,8 @@ public class CryptLookup extends StrLookup {
 	 */
 	@Override
 	public String lookup(String key) {
-		String cval = "$CRYPT::" + key;
+		String cval = "${crypt:" + key + "}";
+		System.out.println(key);
 		return AesEncrypter.getInstance().decrypt(cval);
 	}
 

@@ -60,7 +60,7 @@ public class AesEncrypter {
     public String encrypt(String secretKey, String plainText) {
         if (plainText == null) {
             return null;
-        } else if (plainText.startsWith("$CRYPT::")) {
+        } else if (plainText.startsWith("${crypt:")) {
              // avoid encrypt again on an encrypted text
              return plainText;
         }
@@ -79,7 +79,7 @@ public class AesEncrypter {
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new RuntimeException(e);
         }
-        return "$CRYPT::" + new String(Base64.encodeBase64(encrypted)); //$NON-NLS-1$
+        return "${crypt:" + new String(Base64.encodeBase64(encrypted)) + "}"; //$NON-NLS-1$
     }
 
     /**
@@ -115,8 +115,8 @@ public class AesEncrypter {
         if (encryptedText == null) {
             return null;
         }
-        if (encryptedText.startsWith("$CRYPT::")) {
-            byte[] decoded = Base64.decodeBase64(encryptedText.substring(8));
+        if (encryptedText.startsWith("${crypt:")) {
+            byte[] decoded = Base64.decodeBase64(encryptedText.substring(8, encryptedText.length() - 1));
             Cipher cipher;
             try {
                 SecretKeySpec skeySpec = getKeySpecFromCache(secretKey);
@@ -148,9 +148,10 @@ public class AesEncrypter {
         String cmd = args[0];
         String input = args[1];
         if ("encrypt".equals(cmd)) {
-            System.out.println(AesEncrypter.getInstance().encrypt(input).substring("$CRYPT::".length()));
+        	String encrypted = AesEncrypter.getInstance().encrypt(input);
+            System.out.println(encrypted.substring(8, encrypted.length() - 1));
         } else if ("decrypt".equals(cmd)) {
-            System.out.println(AesEncrypter.getInstance().decrypt("$CRYPT::" + input));
+            System.out.println(AesEncrypter.getInstance().decrypt("${crypt:" + input + "}"));
         } else {
             printUsage();
         }

@@ -12,10 +12,7 @@
 	<name>Plants Soil common functions - configuration</name>
 
 	<dependencies>
-		<dependency>
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
-		</dependency>
+		<!-- Internal Dependencies -->
 		<dependency>
 			<groupId>io.plantssoil</groupId>
 			<artifactId>lettuce-common-filesystem</artifactId>
@@ -31,7 +28,17 @@
 			<artifactId>lettuce-common-test</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		
+
+		<!-- External Dependencies -->
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

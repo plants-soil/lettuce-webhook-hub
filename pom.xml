@@ -57,6 +57,7 @@
 		<version.resteasy>4.7.9.Final</version.resteasy>
 		<version.commons-configuration>1.10</version.commons-configuration>
 		<version.commons-codec>1.15</version.commons-codec>
+		<version.commons-logging>1.2</version.commons-logging>
 		<!-- Testing -->
 		<version.junit>4.13.2</version.junit>
 
@@ -140,6 +141,11 @@
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
 				<version>${version.commons-codec}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>${version.commons-logging}</version>
 			</dependency>
 
 			<!-- Hibernate -->

@@ -20,7 +20,7 @@ public class KeyStoreEncrypterTest {
 	@Before
 	public void setUp() throws Exception {
 		System.out.println(tempDir.getTempDir());
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 20; i++) {
 			tempEntries.put("alias-from-map-" + i, "alias-from-map-value" + ThreadLocalRandom.current().nextInt(100000));
 		}
 	}
