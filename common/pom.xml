@@ -13,7 +13,7 @@
 	<name>Plants Soil common functions</name>
 	
 	<modules>
-		<module>ddl</module>
+		<module>rdbms</module>
 		<module>config</module>
 		<module>filesystem</module>
 		<module>security</module>

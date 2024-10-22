@@ -1,4 +1,4 @@
-package com.plantssoil.common.config;
+package com.plantssoil.common.config.configuration;
 
 import java.util.Iterator;
 import java.util.List;

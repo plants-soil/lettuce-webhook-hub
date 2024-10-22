@@ -1,4 +1,4 @@
-package com.plantssoil.common.config;
+package com.plantssoil.common.config.configuration;
 
 import java.util.HashSet;
 import java.util.Iterator;

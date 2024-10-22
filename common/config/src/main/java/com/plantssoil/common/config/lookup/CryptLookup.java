@@ -1,4 +1,4 @@
-package com.plantssoil.common.config;
+package com.plantssoil.common.config.lookup;
 
 import org.apache.commons.lang.text.StrLookup;
 
