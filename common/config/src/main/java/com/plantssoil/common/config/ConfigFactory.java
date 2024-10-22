@@ -30,7 +30,7 @@ import com.plantssoil.common.security.KeyStoreEncrypter;
  */
 public class ConfigFactory {
 	private CompositeConfiguration configuration;
-	private static ConfigFactory instance;
+	private static volatile ConfigFactory instance;
 
     private ConfigFactory() {
         ConfigurationInterpolator.registerGlobalLookup("env", new EnvLookup()); //$NON-NLS-1$
@@ -93,7 +93,9 @@ public class ConfigFactory {
     public static ConfigFactory getInstance() {
     	if (instance == null) {
     		synchronized (ConfigFactory.class) {
-    			instance = new ConfigFactory();
+    			if (instance == null) {
+    				instance = new ConfigFactory();
+    			}
     		}
     	}
     	return instance;

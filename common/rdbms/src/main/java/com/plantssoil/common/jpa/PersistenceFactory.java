@@ -26,10 +26,10 @@ import com.plantssoil.common.config.LettuceConfiguration;
  *
  */
 public class PersistenceFactory {
-	private static Map<String, PersistenceFactory> factories;
+	private static volatile Map<String, PersistenceFactory> factories;
 	private String persistenceUnitName;
 	private DatabaseConnectionConfig databaseConnectionConfig;
-	private EntityManagerFactory entityManagerFactory;
+	private volatile EntityManagerFactory entityManagerFactory;
 
 	private PersistenceFactory(String persistenceUnitName) {
 		this.persistenceUnitName = persistenceUnitName;
@@ -45,21 +45,19 @@ public class PersistenceFactory {
 	public static PersistenceFactory getInstance(String persistenceUnitName) {
 		if (factories == null) {
 			synchronized (PersistenceFactory.class) {
-				factories = new ConcurrentHashMap<>();
-				PersistenceFactory factory = new PersistenceFactory(persistenceUnitName/* , databaseConnectionConfig */);
-				factories.put(persistenceUnitName, factory);
-				return factory;
-			}
-		} else {
-			PersistenceFactory factory = factories.get(persistenceUnitName);
-			if (factory == null) {
-				synchronized (persistenceUnitName) {
-					factory = new PersistenceFactory(persistenceUnitName/* , databaseConnectionConfig */);
-					factories.put(persistenceUnitName, factory);
+				if (factories == null) {
+					factories = new ConcurrentHashMap<>();
 				}
 			}
-			return factory;
 		}
+
+		// assumes ConcurrentHashMap works well
+		PersistenceFactory factory = factories.get(persistenceUnitName);
+		if (factory == null) {
+			factory = new PersistenceFactory(persistenceUnitName);
+			factories.put(persistenceUnitName, factory);
+		}
+		return factory;
 	}
 
 	/**
@@ -116,8 +114,10 @@ public class PersistenceFactory {
 	private EntityManagerFactory getEntityManagerFactory() {
 		if (this.entityManagerFactory == null) {
 			synchronized (this.persistenceUnitName) {
-				Map<String, String> connectionProperties = getConnectionProperties();
-				this.entityManagerFactory = Persistence.createEntityManagerFactory(this.persistenceUnitName, connectionProperties);
+				if (this.entityManagerFactory == null) {
+					Map<String, String> connectionProperties = getConnectionProperties();
+					this.entityManagerFactory = Persistence.createEntityManagerFactory(this.persistenceUnitName, connectionProperties);
+				}
 			}
 		}
 		return this.entityManagerFactory;

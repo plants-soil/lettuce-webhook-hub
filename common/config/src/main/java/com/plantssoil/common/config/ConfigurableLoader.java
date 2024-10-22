@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 public class ConfigurableLoader {
-	private static ConfigurableLoader instance;
+	private static volatile ConfigurableLoader instance;
 	private Map<String, Class<IConfigurable>> configurableClasses;
 
 	private ConfigurableLoader() {
@@ -22,7 +22,9 @@ public class ConfigurableLoader {
 	public static ConfigurableLoader getInstance() {
 		if (instance == null) {
 			synchronized (ConfigurableLoader.class) {
-				instance = new ConfigurableLoader();
+				if (instance == null) {
+					instance = new ConfigurableLoader();
+				}
 			}
 		}
 		return instance;

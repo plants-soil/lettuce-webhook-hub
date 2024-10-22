@@ -22,7 +22,7 @@ import org.apache.commons.codec.binary.Base64;
 public class AesEncrypter {
     private static final String secretKey = "d2d0aa10-18ce1f5";
     private Map<String, SecretKeySpec> keySpecs = new ConcurrentHashMap<>();
-    private static AesEncrypter instance;
+    private static volatile AesEncrypter instance;
 
     private AesEncrypter() {
     }
@@ -34,7 +34,9 @@ public class AesEncrypter {
     public static AesEncrypter getInstance() {
     	if (instance == null) {
     		synchronized(secretKey) {
-    			instance = new AesEncrypter();
+    			if (instance == null) {
+    				instance = new AesEncrypter();
+    			}
     		}
     	}
     	return instance;
