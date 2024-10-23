@@ -3,37 +3,26 @@ package com.plantssoil.common.jpa.impl;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.spi.NamingManager;
-
-import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.plantssoil.common.config.LettuceConfiguration;
 
-public class DefaultPersistenceTest {
+public class DefaultPersistenceTest1 {
 	private DefaultPersistenceCases test = new DefaultPersistenceCases();
 
 	@Before
 	public void setUp() throws Exception {
 		Properties p = new Properties();
 		p.setProperty(LettuceConfiguration.RDBMS_JPA_PERSISTENCE_CONFIGURABLE, DefaultPersistence.class.getName());
-		p.setProperty(LettuceConfiguration.ENGINE_CORE_DATASOURCE, "java:com/env/test");
 
-		BasicDataSource ds = new BasicDataSource();
-		ds.setDriverClassName(org.h2.Driver.class.getName());
-		ds.setUrl("jdbc:h2:mem:testShared;DB_CLOSE_DELAY=-1");
-		ds.setUsername("sa");
-		ds.setPassword("sa");
-
-		InitialContext context = new InitialContext();
-		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, MockInitialContextFactory.class.getName());
-		new NamingManager().setInitialContextFactoryBuilder();
-		MockInitialContextFactory.setCurrentContext(context);
-		context.bind("java:com/env/test", ds);
+		p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_DRIVER, org.h2.Driver.class.getName());
+		p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_URL, "jdbc:h2:mem:testShared;DB_CLOSE_DELAY=-1");
+		p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_USERNAME, "sa");
+		p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_PASSWORD, "sa");
+		p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_POOLSIZE, "20");
+		p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_SHOWSQL, "false");
 
 		try (FileOutputStream out = new FileOutputStream(test.util.getTempDir() + "/lettuce.properties")) {
 			p.store(out, "## No comments");
@@ -76,4 +65,5 @@ public class DefaultPersistenceTest {
 	public void testRemoveListOfQ() {
 		test.testRemoveList();
 	}
+
 }

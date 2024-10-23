@@ -28,6 +28,7 @@ import com.plantssoil.common.config.LettuceConfiguration;
 public class PersistenceFactory {
 	private static volatile Map<String, PersistenceFactory> factories;
 	private String persistenceUnitName;
+	private String datasourceName;
 	private DatabaseConnectionConfig databaseConnectionConfig;
 	private volatile EntityManagerFactory entityManagerFactory;
 
@@ -87,14 +88,21 @@ public class PersistenceFactory {
 	}
 
 	/**
+	 * Set datasource JNDI name (when deployed in container)
+	 * 
+	 * @param datasourceName datasource JNDI name
+	 */
+	public void setDatasourceName(String datasourceName) {
+		this.datasourceName = datasourceName;
+	}
+
+	/**
 	 * set database connection config if it's different from engine default database
 	 * 
 	 * @param databaseConnectionConfig the database connection config object
 	 */
 	public void setDatabaseConnectionConfig(DatabaseConnectionConfig databaseConnectionConfig) {
-		if (this.databaseConnectionConfig == null) {
-			this.databaseConnectionConfig = databaseConnectionConfig;
-		}
+		this.databaseConnectionConfig = databaseConnectionConfig;
 	}
 
 	private DatabaseConnectionConfig getEngineDatabaseConnectionConfig() {
@@ -124,8 +132,12 @@ public class PersistenceFactory {
 	}
 
 	private Map<String, String> getConnectionProperties() {
-		DatabaseConnectionConfig databaseConfig = this.databaseConnectionConfig == null ? getEngineDatabaseConnectionConfig() : this.databaseConnectionConfig;
 		Map<String, String> properties = new HashMap<>();
+		if (this.datasourceName != null) {
+			properties.put("jta-data-source", this.datasourceName);
+		}
+
+		DatabaseConnectionConfig databaseConfig = this.databaseConnectionConfig == null ? getEngineDatabaseConnectionConfig() : this.databaseConnectionConfig;
 		if (databaseConfig.getDatabaseDriver() != null) {
 			properties.put("javax.persistence.jdbc.driver", databaseConfig.getDatabaseDriver());
 		}

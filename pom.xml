@@ -60,7 +60,8 @@
 		<version.commons-logging>1.2</version.commons-logging>
 		<!-- Testing -->
 		<version.junit>4.13.2</version.junit>
-
+		<version.commons-dbcp>1.4</version.commons-dbcp>
+		<version.commons-pool>1.6</version.commons-pool>
 	</properties>
 
 	<dependencyManagement>
@@ -79,7 +80,7 @@
 			<dependency>
 				<groupId>io.plantssoil</groupId>
 				<artifactId>lettuce-common-config</artifactId>
-                <version>${version.parent}</version>
+				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.plantssoil</groupId>
@@ -151,6 +152,16 @@
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
 				<version>${version.commons-logging}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-dbcp</groupId>
+				<artifactId>commons-dbcp</artifactId>
+				<version>${version.commons-dbcp}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-pool</groupId>
+				<artifactId>commons-pool</artifactId>
+				<version>${version.commons-pool}</version>
 			</dependency>
 
 			<!-- Hibernate -->

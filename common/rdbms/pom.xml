@@ -7,34 +7,34 @@
 		<artifactId>lettuce-common</artifactId>
 		<version>${version.parent}</version>
 	</parent>
-	
+
 	<artifactId>lettuce-common-rdbms</artifactId>
 	<name>Plants Soil common functions - RDBMS</name>
-	
+
 	<dependencies>
-        <!-- Internal Dependencies -->
-        <dependency>
-            <groupId>io.plantssoil</groupId>
-            <artifactId>lettuce-common-filesystem</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.plantssoil</groupId>
-            <artifactId>lettuce-common-config</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        
-        <!-- External Dependencies -->
+		<!-- Internal Dependencies -->
+		<dependency>
+			<groupId>io.plantssoil</groupId>
+			<artifactId>lettuce-common-filesystem</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.plantssoil</groupId>
+			<artifactId>lettuce-common-config</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- External Dependencies -->
 		<!-- DDL -->
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
 		</dependency>
 		<!-- JPA -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
 		<!-- DB drivers -->
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -56,12 +56,32 @@
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
 		</dependency>
-		
-        <!-- Testing -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
+
+		<!-- Testing -->
+		<dependency>
+			<groupId>io.plantssoil</groupId>
+			<artifactId>lettuce-common-test</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
