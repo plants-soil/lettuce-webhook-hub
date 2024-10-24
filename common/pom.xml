@@ -13,10 +13,10 @@
 	<name>Plants Soil common functions</name>
 	
 	<modules>
-		<module>rdbms</module>
 		<module>config</module>
 		<module>filesystem</module>
 		<module>security</module>
+		<module>persistence</module>
 		<module>test</module>
 	</modules>
 </project>
