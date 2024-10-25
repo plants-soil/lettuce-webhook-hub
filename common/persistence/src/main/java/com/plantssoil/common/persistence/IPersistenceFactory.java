@@ -17,11 +17,18 @@ public interface IPersistenceFactory extends IConfigurable, AutoCloseable {
     public IPersistence create();
 
     /**
-     * Get default implementation of this factory
+     * Get default implementation of this factory (which is singleton)
      * 
-     * @return default implementation
+     * @return default implementation singleton
      */
     public static IPersistenceFactory getDefaultFactory() {
-        return (IPersistenceFactory) ConfigurableLoader.getInstance().getSingleton(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE);
+        IConfigurable configurable = ConfigurableLoader.getInstance().createSingleton(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE);
+        if (configurable instanceof IPersistenceFactory) {
+            return (IPersistenceFactory) configurable;
+        } else {
+            String err = String.format("The class %s don't implements com.plantssoil.common.persistence.IPersistenceFactory!",
+                    configurable.getClass().getName());
+            throw new RuntimeException(err);
+        }
     }
 }

@@ -42,7 +42,7 @@ public class ConfigurableLoader {
      * 
      * @see com.plantssoil.common.config.IConfigurable
      */
-    public IConfigurable getSingleton(String configName) {
+    public IConfigurable createSingleton(String configName) {
         IConfigurable configurable = configurables.get(configName);
         if (configurable != null) {
             return configurable;
@@ -51,7 +51,7 @@ public class ConfigurableLoader {
         synchronized (configName) {
             configurable = configurables.get(configName);
             if (configurable == null) {
-                configurable = createInstance(configName, true);
+                configurable = createConfigurable(configName, true);
             }
             return configurable;
         }
@@ -90,11 +90,11 @@ public class ConfigurableLoader {
      * @see com.plantssoil.common.config.IConfigurable
      * 
      */
-    public IConfigurable getInstance(String configName) {
-        return createInstance(configName, false);
+    public IConfigurable createConfigurable(String configName) {
+        return createConfigurable(configName, false);
     }
 
-    private IConfigurable createInstance(String configName, boolean singleton) {
+    private IConfigurable createConfigurable(String configName, boolean singleton) {
         String clazzName = ConfigFactory.getInstance().getConfiguration().getString(configName);
         if (clazzName == null || clazzName.strip().length() == 0) {
             throw new RuntimeException("Can't find the configuration: " + configName);
