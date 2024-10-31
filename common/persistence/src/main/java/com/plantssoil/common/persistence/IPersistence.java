@@ -80,4 +80,13 @@ public interface IPersistence extends AutoCloseable {
      * @param entities entities to be deleted
      */
     public void remove(List<?> entities);
+
+    /**
+     * Create query to retrieve entities with filters
+     * 
+     * @param <T>         Entity Type
+     * @param entityClass class of entity
+     * @return entity query instance
+     */
+    public <T> IEntityQuery<T> createQuery(Class<T> entityClass);
 }

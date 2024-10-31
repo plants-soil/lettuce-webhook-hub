@@ -1,4 +1,4 @@
-package com.plantssoil.common.ddl.impl;
+package com.plantssoil.common.persistence.rdbms;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -12,10 +12,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
-import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -24,11 +20,11 @@ import org.junit.runners.MethodSorters;
 
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.LettuceConfiguration;
-import com.plantssoil.common.ddl.IDatabaseInitializer;
+import com.plantssoil.common.persistence.IInitializer;
 import com.plantssoil.common.test.TempDirectoryUtility;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DatasourceInitializerTest {
+public class JDBCInitializerTest {
     private TempDirectoryUtility util = new TempDirectoryUtility();
 
     @Before
@@ -37,29 +33,19 @@ public class DatasourceInitializerTest {
         util.createSubDirectory("data");
         new File(util.getSubDirectory("data") + "/changelogs").mkdirs();
 
-        // setup initial context
-        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.eclipse.jetty.jndi.InitialContextFactory");
-        InitialContext ic = new InitialContext();
-
-        // Construct BasicDataSource
-        int r = ThreadLocalRandom.current().nextInt(100000);
-        Class.forName(org.h2.Driver.class.getName());
-        BasicDataSource bds = new BasicDataSource();
-        bds.setDriverClassName(org.h2.Driver.class.getName());
-        bds.setUrl("jdbc:h2:mem:testJdbc" + r + ";DB_CLOSE_DELAY=-1");
-        bds.setUsername("sa");
-        bds.setPassword("sa");
-        ic.rebind("datasource-lettuce" + r, bds);
-
         Properties p = new Properties();
-        p.setProperty(LettuceConfiguration.RDBMS_INIT_DDL_CONFIGURABLE, DatasourceInitializer.class.getName());
-        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATASOURCE, "datasource-lettuce" + r);
-
+        p.setProperty(LettuceConfiguration.RDBMS_INIT_DDL_CONFIGURABLE, JDBCInitializer.class.getName());
+        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_DRIVER, org.h2.Driver.class.getName());
+        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_URL,
+                "jdbc:h2:mem:testJdbc" + ThreadLocalRandom.current().nextInt(100000) + ";DB_CLOSE_DELAY=-1");
+        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_USERNAME, "sa");
+        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_PASSWORD, "sa");
         try (FileOutputStream out = new FileOutputStream(util.getSubDirectory("conf") + "/lettuce.properties")) {
             p.store(out, "## All configurations for lettuce");
         }
         System.setProperty("lettuce.config.dir", util.getSubDirectory("conf"));
         System.setProperty("lettuce.data.dir", util.getSubDirectory("data"));
+
         ConfigFactory.reload();
     }
 
@@ -72,8 +58,8 @@ public class DatasourceInitializerTest {
         StringBuilder sb = endDatabaseChangeLog(initTable(new StringBuilder()));
         createFile(util.getSubDirectory("data") + "/lettuce-master.xml", sb);
         createInitTableFile();
-        IDatabaseInitializer.createDefaultInitializer().initialize();
-        try (Connection conn = ((DatasourceInitializer) IDatabaseInitializer.createDefaultInitializer()).getConnection()) {
+        IInitializer.createDefaultInitializer().initialize();
+        try (Connection conn = ((JDBCInitializer) IInitializer.createDefaultInitializer()).getConnection()) {
             java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT * FROM client_info");
             stmt.executeQuery();
             assertTrue(true);
@@ -89,9 +75,9 @@ public class DatasourceInitializerTest {
         createFile(util.getSubDirectory("data") + "/lettuce-master.xml", sb);
         this.createInitTableFile();
         this.createAddTableFile();
-        IDatabaseInitializer.createDefaultInitializer().initialize();
+        IInitializer.createDefaultInitializer().initialize();
 
-        try (Connection conn = ((DatasourceInitializer) IDatabaseInitializer.createDefaultInitializer()).getConnection()) {
+        try (Connection conn = ((JDBCInitializer) IInitializer.createDefaultInitializer()).getConnection()) {
             java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT * FROM client_address");
             stmt.executeQuery();
             assertTrue(true);
@@ -108,9 +94,9 @@ public class DatasourceInitializerTest {
         this.createInitTableFile();
         this.createAddTableFile();
         this.createAddColumnFile();
-        IDatabaseInitializer.createDefaultInitializer().initialize();
+        IInitializer.createDefaultInitializer().initialize();
 
-        try (Connection conn = ((DatasourceInitializer) IDatabaseInitializer.createDefaultInitializer()).getConnection()) {
+        try (Connection conn = ((JDBCInitializer) IInitializer.createDefaultInitializer()).getConnection()) {
             java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT street, line1, line2, line3 FROM client_address");
             stmt.executeQuery();
             assertTrue(true);

@@ -16,6 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.persistence.TypedQuery;
 
+import com.plantssoil.common.persistence.IEntityQuery;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
 import com.plantssoil.common.persistence.rdbms.beans.Address;
@@ -65,7 +66,7 @@ public class JPAPersistenceTestUtil {
                                 Teacher.class);
                         query.setParameter(1, teacher.getTeacherId());
                         Teacher updated = query.getSingleResult();
-                        System.out.println(updated);
+//                        System.out.println(updated);
                         updated.setTeacherName("DDDDDDDDDDDD");
                         updated = persists.update(updated);
                         updated = query.getSingleResult();
@@ -81,7 +82,7 @@ public class JPAPersistenceTestUtil {
 
             for (Future<Teacher> future : futures) {
                 Teacher teacher = future.get();
-                System.out.println(teacher);
+//                System.out.println(teacher);
                 assertNotNull(teacher.getTeacherId());
             }
         } catch (Exception e) {
@@ -278,6 +279,22 @@ public class JPAPersistenceTestUtil {
         }
         ess.shutdown();
         assertTrue(true);
+    }
+
+    protected void testEntityQuery(IPersistenceFactory factory) {
+        try (JPAPersistence persists = (JPAPersistence) factory.create()) {
+            IEntityQuery<Student> query = persists.createQuery(Student.class);
+            List<Student> students = query.filter("studentName", IEntityQuery.FilterOperator.like, "Student-1%")
+                    .filter("gender", IEntityQuery.FilterOperator.equals, Student.Gender.Female).firstResult(0).maxResults(5).resultList();
+            for (Student s : students) {
+                System.out.println(s);
+            }
+            assertTrue(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+
     }
 
 }

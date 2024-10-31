@@ -26,20 +26,21 @@ public class AesEncrypter {
 
     private AesEncrypter() {
     }
-    
+
     /**
      * Get the instance of this utility
+     * 
      * @return singleton instance
      */
     public static AesEncrypter getInstance() {
-    	if (instance == null) {
-    		synchronized(secretKey) {
-    			if (instance == null) {
-    				instance = new AesEncrypter();
-    			}
-    		}
-    	}
-    	return instance;
+        if (instance == null) {
+            synchronized (AesEncrypter.class) {
+                if (instance == null) {
+                    instance = new AesEncrypter();
+                }
+            }
+        }
+        return instance;
     }
 
     /**
@@ -52,9 +53,10 @@ public class AesEncrypter {
     public String encrypt(String plainText) {
         return encrypt(secretKey, plainText);
     }
-    
+
     /**
      * Encrypt a plain text with the specified secret key
+     * 
      * @param secretKey the secret key used to encrypt
      * @param plainText the plain text to be encrypted
      * @return encrypted text
@@ -63,10 +65,10 @@ public class AesEncrypter {
         if (plainText == null) {
             return null;
         } else if (plainText.startsWith("${crypt:")) {
-             // avoid encrypt again on an encrypted text
-             return plainText;
+            // avoid encrypt again on an encrypted text
+            return plainText;
         }
-        
+
         byte[] encrypted;
         Cipher cipher;
         try {
@@ -86,6 +88,7 @@ public class AesEncrypter {
 
     /**
      * Returns a {@link SecretKeySpec} given a secret key.
+     * 
      * @param secretKey
      */
     private SecretKeySpec getKeySpecFromCache(String secretKey) {
@@ -99,18 +102,19 @@ public class AesEncrypter {
 
     /**
      * Decrypt an encrypted text with the default secret key
+     * 
      * @param encryptedText the encrypted text
      * @return the plain text decrypted
      */
     public String decrypt(String encryptedText) {
         return decrypt(secretKey, encryptedText);
     }
-    
-    
+
     /**
      * Decrypt an encrypted text with the specified secret key
+     * 
      * @param encryptedText the encrypted text
-     * @param secretKey the secret key
+     * @param secretKey     the secret key
      * @return the plain text decrypted
      */
     public String decrypt(String secretKey, String encryptedText) {
@@ -136,13 +140,13 @@ public class AesEncrypter {
             return encryptedText;
         }
     }
-    
 
     /**
      * Support encrypt / decrypt from the command line, this is the main entry point
+     * 
      * @param args
      */
-    public static void main(String [] args) {
+    public static void main(String[] args) {
         if (args.length != 2) {
             printUsage();
             return;
@@ -150,7 +154,7 @@ public class AesEncrypter {
         String cmd = args[0];
         String input = args[1];
         if ("encrypt".equals(cmd)) {
-        	String encrypted = AesEncrypter.getInstance().encrypt(input);
+            String encrypted = AesEncrypter.getInstance().encrypt(input);
             System.out.println(encrypted.substring(8, encrypted.length() - 1));
         } else if ("decrypt".equals(cmd)) {
             System.out.println(AesEncrypter.getInstance().decrypt("${crypt:" + input + "}"));

@@ -17,6 +17,8 @@
 		<module>filesystem</module>
 		<module>security</module>
 		<module>persistence</module>
+		<module>event</module>
 		<module>test</module>
+		<module>httpclient</module>
 	</modules>
 </project>

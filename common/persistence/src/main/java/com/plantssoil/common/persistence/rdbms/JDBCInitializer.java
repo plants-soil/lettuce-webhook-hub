@@ -1,4 +1,4 @@
-package com.plantssoil.common.ddl.impl;
+package com.plantssoil.common.persistence.rdbms;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

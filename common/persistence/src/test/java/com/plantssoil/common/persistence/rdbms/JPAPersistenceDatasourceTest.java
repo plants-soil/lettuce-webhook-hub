@@ -26,6 +26,9 @@ public class JPAPersistenceDatasourceTest {
 
     @BeforeClass
     public static void clearPersistenceFactory() throws Exception {
+        Thread.sleep(1000);
+        ConfigurableLoader.getInstance().removeSingleton(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE);
+
         // setup initial context
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.eclipse.jetty.jndi.InitialContextFactory");
         InitialContext ic = new InitialContext();
@@ -49,7 +52,6 @@ public class JPAPersistenceDatasourceTest {
         System.setProperty("lettuce.config.dir", util.getTempDir());
         ConfigFactory.reload();
 
-        ConfigurableLoader.getInstance().removeSingleton(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE);
         IPersistenceFactory.getDefaultFactory();
     }
 
@@ -88,4 +90,8 @@ public class JPAPersistenceDatasourceTest {
         test.testRemoveList(IPersistenceFactory.getDefaultFactory());
     }
 
+    @Test
+    public void test7QueryStudent() {
+        test.testEntityQuery(IPersistenceFactory.getDefaultFactory());
+    }
 }

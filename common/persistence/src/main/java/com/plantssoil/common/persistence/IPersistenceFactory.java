@@ -26,8 +26,7 @@ public interface IPersistenceFactory extends IConfigurable, AutoCloseable {
         if (configurable instanceof IPersistenceFactory) {
             return (IPersistenceFactory) configurable;
         } else {
-            String err = String.format("The class %s don't implements com.plantssoil.common.persistence.IPersistenceFactory!",
-                    configurable.getClass().getName());
+            String err = String.format("The class %s don't implements %s!", configurable.getClass().getName(), IPersistenceFactory.class.getName());
             throw new RuntimeException(err);
         }
     }

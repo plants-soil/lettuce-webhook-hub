@@ -1,12 +1,12 @@
-package com.plantssoil.common.ddl.impl;
+package com.plantssoil.common.persistence.rdbms;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Connection;
 
-import com.plantssoil.common.ddl.IDatabaseInitializer;
 import com.plantssoil.common.fs.DatabaseChangeLogFileLocator;
+import com.plantssoil.common.persistence.IInitializer;
 
 import liquibase.Liquibase;
 import liquibase.database.Database;
@@ -38,7 +38,7 @@ import liquibase.resource.FileSystemResourceAccessor;
  * @author danialdy
  *
  */
-public abstract class AbstractLiquibaseInitializer implements IDatabaseInitializer {
+public abstract class AbstractLiquibaseInitializer implements IInitializer {
     /**
      * Get Database Connection on which to execute Liquibase database initialization
      * 

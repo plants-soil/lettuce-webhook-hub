@@ -22,6 +22,9 @@ public class JPAPersistenceJdbcTest {
 
     @BeforeClass
     public static void clearPersistenceFactory() throws Exception {
+        Thread.sleep(1000);
+        ConfigurableLoader.getInstance().removeSingleton(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE);
+
         Properties p = new Properties();
         p.setProperty(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE, JPAPersistenceFactory.class.getName());
 
@@ -38,7 +41,6 @@ public class JPAPersistenceJdbcTest {
         System.setProperty("lettuce.config.dir", util.getTempDir());
         ConfigFactory.reload();
 
-        ConfigurableLoader.getInstance().removeSingleton(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE);
         IPersistenceFactory.getDefaultFactory();
     }
 
@@ -75,6 +77,11 @@ public class JPAPersistenceJdbcTest {
     @Test
     public void test6RemoveListOfQ() {
         test.testRemoveList(IPersistenceFactory.getDefaultFactory());
+    }
+
+    @Test
+    public void test7QueryStudent() {
+        test.testEntityQuery(IPersistenceFactory.getDefaultFactory());
     }
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
+import com.plantssoil.common.persistence.IEntityQuery;
 import com.plantssoil.common.persistence.IPersistence;
 
 /**
@@ -27,7 +28,6 @@ public class JPAPersistence implements IPersistence {
             tx.begin();
         }
         entityManager.persist(entity);
-//        tx.commit();
     }
 
     @Override
@@ -39,7 +39,6 @@ public class JPAPersistence implements IPersistence {
         for (Object entity : entities) {
             entityManager.persist(entity);
         }
-//        tx.commit();
     }
 
     @Override
@@ -49,7 +48,6 @@ public class JPAPersistence implements IPersistence {
             tx.begin();
         }
         T updated = entityManager.merge(entity);
-//        tx.commit();
         return updated;
     }
 
@@ -63,7 +61,6 @@ public class JPAPersistence implements IPersistence {
         for (T entity : entities) {
             updated.add(entityManager.merge(entity));
         }
-//        tx.commit();
         return updated;
     }
 
@@ -74,7 +71,6 @@ public class JPAPersistence implements IPersistence {
             tx.begin();
         }
         entityManager.remove(entityManager.merge(entity));
-//        tx.commit();
     }
 
     @Override
@@ -86,24 +82,44 @@ public class JPAPersistence implements IPersistence {
         for (Object entity : entities) {
             entityManager.remove(entityManager.merge(entity));
         }
-//        tx.commit();
     }
 
     @Override
     public void close() throws Exception {
         EntityTransaction tx = entityManager.getTransaction();
         if (tx.isActive()) {
-            tx.commit();
+            try {
+                tx.commit();
+            } finally {
+                if (this.entityManager.isOpen()) {
+                    this.entityManager.close();
+                }
+            }
         }
         if (this.entityManager.isOpen()) {
             this.entityManager.close();
         }
     }
 
+    @Override
+    public <T> IEntityQuery<T> createQuery(Class<T> entityClass) {
+        return new JPAEntityQuery<T>(this.entityManager, entityClass);
+    }
+
+    /**
+     * set JPA entity manager
+     * 
+     * @param em entity manager instance
+     */
     public void setEntityManager(EntityManager em) {
         this.entityManager = em;
     }
 
+    /**
+     * get JPA entity manager instance
+     * 
+     * @return entity manager
+     */
     public EntityManager getEntityManager() {
         return this.entityManager;
     }
