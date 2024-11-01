@@ -12,11 +12,20 @@
 	<name>Plants Soil common functions - security</name>
 
 	<dependencies>
+		<!-- Internal Dependencies -->
+		<dependency>
+			<groupId>io.plantssoil</groupId>
+			<artifactId>lettuce-common-exception</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
+		<!-- External Dependencies -->
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>
-
+		
+		<!-- Testing Dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

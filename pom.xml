@@ -70,6 +70,11 @@
 			<!-- Internal Projects -->
 			<dependency>
 				<groupId>io.plantssoil</groupId>
+				<artifactId>lettuce-common-exception</artifactId>
+				<version>${version.parent}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.plantssoil</groupId>
 				<artifactId>lettuce-common-filesystem</artifactId>
 				<version>${version.parent}</version>
 			</dependency>

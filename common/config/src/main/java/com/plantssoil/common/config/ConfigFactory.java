@@ -15,6 +15,7 @@ import org.apache.commons.configuration.interpol.ConfigurationInterpolator;
 
 import com.plantssoil.common.config.configuration.SystemEnvConfiguration;
 import com.plantssoil.common.config.configuration.SystemPropertiesConfiguration;
+import com.plantssoil.common.config.exception.ConfigException;
 import com.plantssoil.common.config.lookup.CryptLookup;
 import com.plantssoil.common.config.lookup.EnvLookup;
 import com.plantssoil.common.fs.ConfigurationFileLocator;
@@ -49,12 +50,12 @@ public class ConfigFactory {
         // add lettuce configuration property file
         URL url = getConfigurationPropertyFile();
         if (url == null) {
-            throw new RuntimeException("Can't find lettuce configuration property file!");
+            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12010, "Can't find lettuce configuration property file!");
         } else {
             try {
                 configuration.addConfiguration(new PropertiesConfiguration(url));
             } catch (ConfigurationException e) {
-                throw new RuntimeException(e);
+                throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12011, e);
             }
         }
     }
@@ -71,18 +72,19 @@ public class ConfigFactory {
             return new HashMap<>();
         }
         if (!keystoreType.equals(KeyStoreEncrypter.KeyStoreType.jceks.toString()) && !keystoreType.equals(KeyStoreEncrypter.KeyStoreType.pkcs12.toString())) {
-            throw new RuntimeException("Only support jceks or pkcs12 as Lettuce Keystore Type configured by 'lettuce.keystore.type' !");
+            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12012,
+                    "Only support jceks or pkcs12 as Lettuce Keystore Type configured by 'lettuce.keystore.type'!");
         }
         URL url = ConfigurationFileLocator.getConfigurationFile(keystoreFileName);
         if (url == null) {
-            throw new RuntimeException("Can't find lettuce keystore file configured by 'lettuce.keystore.file'!");
+            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12013, "Can't find lettuce keystore file configured by 'lettuce.keystore.file'!");
         }
         try {
             KeyStoreEncrypter keyStoreEncrypter = KeyStoreEncrypter.getInstance(KeyStoreEncrypter.KeyStoreType.valueOf(keystoreType),
                     new File(url.toURI()).getAbsolutePath(), keystorePassword);
             return keyStoreEncrypter.readEntries();
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12014, e);
         }
     }
 

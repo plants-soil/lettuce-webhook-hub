@@ -54,8 +54,12 @@ public class Sha512HmacEncrypter {
             byte[] macData = sha512Hmac.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
             String encrypted = Base64.getEncoder().encodeToString(macData);
             return encrypted;
-        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new com.plantssoil.common.security.exception.SecurityException(
+                    com.plantssoil.common.security.exception.SecurityException.BUSINESS_EXCEPTION_CODE_10001, e);
+        } catch (InvalidKeyException e) {
+            throw new com.plantssoil.common.security.exception.SecurityException(
+                    com.plantssoil.common.security.exception.SecurityException.BUSINESS_EXCEPTION_CODE_10002, e);
         }
     }
 

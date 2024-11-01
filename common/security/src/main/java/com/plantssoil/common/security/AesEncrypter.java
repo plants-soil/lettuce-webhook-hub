@@ -75,13 +75,24 @@ public class AesEncrypter {
             SecretKeySpec skeySpec = getKeySpecFromCache(secretKey);
             cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
-            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new com.plantssoil.common.security.exception.SecurityException(
+                    com.plantssoil.common.security.exception.SecurityException.BUSINESS_EXCEPTION_CODE_10001, e);
+        } catch (InvalidKeyException e) {
+            throw new com.plantssoil.common.security.exception.SecurityException(
+                    com.plantssoil.common.security.exception.SecurityException.BUSINESS_EXCEPTION_CODE_10002, e);
+        } catch (NoSuchPaddingException e) {
+            throw new com.plantssoil.common.security.exception.SecurityException(
+                    com.plantssoil.common.security.exception.SecurityException.BUSINESS_EXCEPTION_CODE_10003, e);
         }
         try {
             encrypted = cipher.doFinal(plainText.getBytes());
-        } catch (IllegalBlockSizeException | BadPaddingException e) {
-            throw new RuntimeException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new com.plantssoil.common.security.exception.SecurityException(
+                    com.plantssoil.common.security.exception.SecurityException.BUSINESS_EXCEPTION_CODE_10004, e);
+        } catch (BadPaddingException e) {
+            throw new com.plantssoil.common.security.exception.SecurityException(
+                    com.plantssoil.common.security.exception.SecurityException.BUSINESS_EXCEPTION_CODE_10005, e);
         }
         return "${crypt:" + new String(Base64.encodeBase64(encrypted)) + "}"; //$NON-NLS-1$
     }
@@ -128,13 +139,24 @@ public class AesEncrypter {
                 SecretKeySpec skeySpec = getKeySpecFromCache(secretKey);
                 cipher = Cipher.getInstance("AES");
                 cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
-                throw new RuntimeException(e);
+            } catch (NoSuchAlgorithmException e) {
+                throw new com.plantssoil.common.security.exception.SecurityException(
+                        com.plantssoil.common.security.exception.SecurityException.BUSINESS_EXCEPTION_CODE_10001, e);
+            } catch (InvalidKeyException e) {
+                throw new com.plantssoil.common.security.exception.SecurityException(
+                        com.plantssoil.common.security.exception.SecurityException.BUSINESS_EXCEPTION_CODE_10002, e);
+            } catch (NoSuchPaddingException e) {
+                throw new com.plantssoil.common.security.exception.SecurityException(
+                        com.plantssoil.common.security.exception.SecurityException.BUSINESS_EXCEPTION_CODE_10003, e);
             }
             try {
                 return new String(cipher.doFinal(decoded));
-            } catch (IllegalBlockSizeException | BadPaddingException e) {
-                throw new RuntimeException(e);
+            } catch (IllegalBlockSizeException e) {
+                throw new com.plantssoil.common.security.exception.SecurityException(
+                        com.plantssoil.common.security.exception.SecurityException.BUSINESS_EXCEPTION_CODE_10004, e);
+            } catch (BadPaddingException e) {
+                throw new com.plantssoil.common.security.exception.SecurityException(
+                        com.plantssoil.common.security.exception.SecurityException.BUSINESS_EXCEPTION_CODE_10005, e);
             }
         } else {
             return encryptedText;

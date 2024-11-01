@@ -13,6 +13,14 @@
 	<name>Plants Soil common functions - file system</name>
 
 	<dependencies>
+		<!-- Internal Dependencies -->
+		<dependency>
+			<groupId>io.plantssoil</groupId>
+			<artifactId>lettuce-common-exception</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
+		<!-- Testing Dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

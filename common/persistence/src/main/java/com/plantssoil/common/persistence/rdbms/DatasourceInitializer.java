@@ -11,6 +11,7 @@ import org.apache.commons.configuration.Configuration;
 
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.LettuceConfiguration;
+import com.plantssoil.common.persistence.exception.PersistenceException;
 
 /**
  * Initialize database base on datasourceName context, generally used in web
@@ -42,13 +43,15 @@ public class DatasourceInitializer extends AbstractLiquibaseInitializer {
     @Override
     protected Connection getConnection() {
         if (this.datasourceName == null || this.datasourceName.strip().length() == 0) {
-            throw new RuntimeException("The datasource name for database connection can't be null!");
+            throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13007, "The datasource name for database connection can't be null!");
         }
         try {
             DataSource dataSource = (DataSource) new InitialContext().lookup(this.datasourceName);
             return dataSource.getConnection();
-        } catch (NamingException | SQLException e) {
-            throw new RuntimeException(e);
+        } catch (NamingException e) {
+            throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13008, e);
+        } catch (SQLException e) {
+            throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13009, e);
         }
     }
 

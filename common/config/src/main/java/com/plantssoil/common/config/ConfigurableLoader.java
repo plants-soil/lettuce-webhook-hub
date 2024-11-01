@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.plantssoil.common.config.exception.ConfigException;
+
 /**
  * Read and Load configurable class from the configured name which defined in
  * lettuce.properties
@@ -97,7 +99,7 @@ public class ConfigurableLoader {
     private IConfigurable createConfigurable(String configName, boolean singleton) {
         String clazzName = ConfigFactory.getInstance().getConfiguration().getString(configName);
         if (clazzName == null || clazzName.strip().length() == 0) {
-            throw new RuntimeException("Can't find the configuration: " + configName);
+            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12001, "Can't find the configuration: " + configName);
         }
         try {
             Class<?> clazz = Class.forName(clazzName);
@@ -108,13 +110,24 @@ public class ConfigurableLoader {
                 }
                 return configurable;
             } else {
-                String err = String.format("The implementation (%s) with configure name (%s) does not implement 'com.plantssoil.common.config.IConfigurable'!",
-                        clazz.getName(), configName);
-                throw new RuntimeException(err);
+                String err = String.format("The implementation (%s) with configure name (%s) does not implement '%s'!", clazz.getName(), configName,
+                        IConfigurable.class.getName());
+                throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12002, err);
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException e) {
-            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12003, e);
+        } catch (InstantiationException e) {
+            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12004, e);
+        } catch (IllegalAccessException e) {
+            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12005, e);
+        } catch (IllegalArgumentException e) {
+            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12006, e);
+        } catch (InvocationTargetException e) {
+            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12007, e);
+        } catch (NoSuchMethodException e) {
+            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12008, e);
+        } catch (SecurityException e) {
+            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12009, e);
         }
     }
 }

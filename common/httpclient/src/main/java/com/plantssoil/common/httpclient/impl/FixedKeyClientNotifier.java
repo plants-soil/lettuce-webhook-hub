@@ -2,6 +2,8 @@ package com.plantssoil.common.httpclient.impl;
 
 import java.util.Map;
 
+import com.plantssoil.common.httpclient.exception.HttpClientException;
+
 /**
  * Use the accessToken (fixed key) as the signature
  * 
@@ -28,7 +30,7 @@ public class FixedKeyClientNotifier extends AbstractClientNotifier {
         if (this.accessToken != null) {
             headers.put(HEADER_WEBHOOK_SIGNATURE, this.accessToken);
         } else {
-            throw new RuntimeException("The secret key should not be null!");
+            throw new HttpClientException(HttpClientException.BUSINESS_EXCEPTION_CODE_14001, "The secret key should not be null!");
         }
     }
 

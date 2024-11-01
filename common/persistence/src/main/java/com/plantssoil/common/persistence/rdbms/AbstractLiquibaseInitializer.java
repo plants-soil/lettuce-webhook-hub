@@ -7,6 +7,7 @@ import java.sql.Connection;
 
 import com.plantssoil.common.fs.DatabaseChangeLogFileLocator;
 import com.plantssoil.common.persistence.IInitializer;
+import com.plantssoil.common.persistence.exception.PersistenceException;
 
 import liquibase.Liquibase;
 import liquibase.database.Database;
@@ -64,11 +65,12 @@ public abstract class AbstractLiquibaseInitializer implements IInitializer {
                 url = DatabaseChangeLogFileLocator.getDatabaseChangeLogFile("lettuce-master.json");
             }
             if (url == null) {
-                throw new RuntimeException("Can't find database change log file (xml, yaml, json) in any location!");
+                throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13003,
+                        "Can't find database change log file (xml, yaml, json) in any location!");
             }
             return new File(url.toURI()).getAbsolutePath();
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13004, e);
         }
     }
 
@@ -87,7 +89,7 @@ public abstract class AbstractLiquibaseInitializer implements IInitializer {
         try {
             database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
         } catch (DatabaseException e) {
-            throw new RuntimeException(e);
+            throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13005, e);
         }
 
         // only put Liquibase object into try ()
@@ -99,7 +101,7 @@ public abstract class AbstractLiquibaseInitializer implements IInitializer {
                 ((DerbyDatabase) database).setShutdownEmbeddedDerby(false);
             }
         } catch (LiquibaseException e) {
-            throw new RuntimeException(e);
+            throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13006, e);
         }
 
     }
