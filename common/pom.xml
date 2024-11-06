@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.plantssoil</groupId>
+		<artifactId>lettuce</artifactId>
+		<version>${version.parent}</version>
+	</parent>
+	
+	<artifactId>lettuce-common</artifactId>
+	<packaging>pom</packaging>
+	<name>Plants Soil common functions</name>
+	
+	<modules>
+		<module>exception</module>
+		<module>test</module>
+		<module>security</module>
+		<module>filesystem</module>
+		<module>config</module>
+		<module>persistence</module>
+		<module>httpclient</module>
+		<module>mq</module>
+	</modules>
+</project>
