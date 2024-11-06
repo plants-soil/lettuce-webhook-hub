@@ -15,6 +15,7 @@
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<version.parent>1.0.0-SNAPSHOT</version.parent>
 		<version.java>11</version.java>
+		<version.jms>2.0.1</version.jms>
 		<!-- Plugin Versions -->
 		<version.ant>1.10.11</version.ant>
 		<version.antrun.plugin>1.7</version.antrun.plugin>
@@ -58,6 +59,10 @@
 		<version.commons-configuration>1.10</version.commons-configuration>
 		<version.commons-codec>1.15</version.commons-codec>
 		<version.commons-logging>1.2</version.commons-logging>
+		<version.commons-pool2>2.12.0</version.commons-pool2>
+		<version.rabbitmq-client>5.22.0</version.rabbitmq-client>
+		<version.activemq-client>5.18.6</version.activemq-client>
+		<version.redis-lettuce>6.5.0.RC2</version.redis-lettuce>
 		<!-- Testing -->
 		<version.junit>4.13.2</version.junit>
 		<version.commons-dbcp>1.4</version.commons-dbcp>
@@ -71,6 +76,11 @@
 			<dependency>
 				<groupId>io.plantssoil</groupId>
 				<artifactId>lettuce-common-exception</artifactId>
+				<version>${version.parent}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.plantssoil</groupId>
+				<artifactId>lettuce-common-test</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
@@ -90,11 +100,28 @@
 			</dependency>
 			<dependency>
 				<groupId>io.plantssoil</groupId>
-				<artifactId>lettuce-common-test</artifactId>
+				<artifactId>lettuce-common-persistence</artifactId>
+				<version>${version.parent}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.plantssoil</groupId>
+				<artifactId>lettuce-common-httpclient</artifactId>
+				<version>${version.parent}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.plantssoil</groupId>
+				<artifactId>lettuce-common-mq</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 
 			<!-- External Projects -->
+			<!-- JMS -->
+			<dependency>
+				<groupId>javax.jms</groupId>
+				<artifactId>javax.jms-api</artifactId>
+				<version>${version.jms}</version>
+			</dependency>
+
 			<!-- DDL -->
 			<dependency>
 				<groupId>org.liquibase</groupId>
@@ -159,6 +186,11 @@
 				<artifactId>commons-logging</artifactId>
 				<version>${version.commons-logging}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-pool2</artifactId>
+				<version>${version.commons-pool2}</version>
+			</dependency>
 
 			<!-- Hibernate -->
 			<dependency>
@@ -170,6 +202,28 @@
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-c3p0</artifactId>
 				<version>${version.hibernate}</version>
+			</dependency>
+
+			<!-- Message Queue -->
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-client</artifactId>
+				<version>${version.activemq-client}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-pool</artifactId>
+				<version>${version.activemq-client}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.rabbitmq</groupId>
+				<artifactId>amqp-client</artifactId>
+				<version>${version.rabbitmq-client}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.lettuce</groupId>
+				<artifactId>lettuce-core</artifactId>
+				<version>${version.redis-lettuce}</version>
 			</dependency>
 
 			<!-- Restful API -->

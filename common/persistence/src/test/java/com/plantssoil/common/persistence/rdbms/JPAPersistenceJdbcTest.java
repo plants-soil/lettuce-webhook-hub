@@ -28,12 +28,12 @@ public class JPAPersistenceJdbcTest {
         Properties p = new Properties();
         p.setProperty(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE, JPAPersistenceFactory.class.getName());
 
-        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_DRIVER, org.h2.Driver.class.getName());
-        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_URL, "jdbc:h2:mem:testJdbc;DB_CLOSE_DELAY=-1");
-        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_USERNAME, "sa");
-        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_PASSWORD, "sa");
-        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_POOLSIZE, "22");
-        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_SHOWSQL, "false");
+        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_DRIVER, org.h2.Driver.class.getName());
+        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_URL, "jdbc:h2:mem:testJdbc;DB_CLOSE_DELAY=-1");
+        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_USERNAME, "sa");
+        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_PASSWORD, "sa");
+        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_POOLSIZE, "22");
+        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_SHOWSQL, "false");
 
         try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/lettuce.properties")) {
             p.store(out, "## No comments");

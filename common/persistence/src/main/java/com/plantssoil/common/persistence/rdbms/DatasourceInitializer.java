@@ -26,8 +26,8 @@ public class DatasourceInitializer extends AbstractLiquibaseInitializer {
 
     public DatasourceInitializer() {
         Configuration config = ConfigFactory.getInstance().getConfiguration();
-        if (config.containsKey(LettuceConfiguration.ENGINE_CORE_DATASOURCE)) {
-            this.datasourceName = config.getString(LettuceConfiguration.ENGINE_CORE_DATASOURCE);
+        if (config.containsKey(LettuceConfiguration.RDBMS_DATASOURCE)) {
+            this.datasourceName = config.getString(LettuceConfiguration.RDBMS_DATASOURCE);
         }
     }
 

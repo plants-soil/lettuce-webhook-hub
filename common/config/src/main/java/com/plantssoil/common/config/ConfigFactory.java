@@ -61,13 +61,13 @@ public class ConfigFactory {
     }
 
     private URL getConfigurationPropertyFile() {
-        return ConfigurationFileLocator.getConfigurationFile("lettuce.properties");
+        return ConfigurationFileLocator.getConfigurationFile(LettuceConfiguration.CONFIGURATION_FILE_NAME);
     }
 
     private Map<String, String> getConfigurationFromKeystore() {
-        String keystoreType = System.getProperty("lettuce.keystore.type");
-        String keystoreFileName = System.getProperty("lettuce.keystore.file");
-        String keystorePassword = System.getProperty("lettuce.keystore.password");
+        String keystoreType = System.getProperty(LettuceConfiguration.KEYSTORE_TYPE_PROPERTY_NAME);
+        String keystoreFileName = System.getProperty(LettuceConfiguration.KEYSTORE_FILENAME_PROPERTY_NAME);
+        String keystorePassword = System.getProperty(LettuceConfiguration.KEYSTORE_PASSWORD_PROPERTY_NAME);
         if (keystoreType == null || keystoreFileName == null) {
             return new HashMap<>();
         }

@@ -18,7 +18,9 @@ public interface IPersistenceFactory extends IConfigurable, AutoCloseable {
     public IPersistence create();
 
     /**
-     * Get default implementation of this factory (which is singleton)
+     * Get default implementation of this factory (which is singleton)<br/>
+     * The default implementation is specified by configuration
+     * {@link LettuceConfiguration#PERSISTENCE_FACTORY_CONFIGURABLE}
      * 
      * @return default implementation singleton
      */

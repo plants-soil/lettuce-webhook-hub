@@ -34,7 +34,7 @@ public class BusinessExceptionCode {
     public final static int BUSINESS_EXCEPTION_CODE_14000 = 14000;
 
     /**
-     * TODO not specified yet
+     * Message Queue Exception (15000 - 15999)
      */
     public final static int BUSINESS_EXCEPTION_CODE_15000 = 15000;
 

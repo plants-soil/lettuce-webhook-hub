@@ -25,17 +25,17 @@ public class JDBCInitializer extends AbstractLiquibaseInitializer {
 
     public JDBCInitializer() {
         Configuration config = ConfigFactory.getInstance().getConfiguration();
-        if (config.containsKey(LettuceConfiguration.ENGINE_CORE_DATABASE_DRIVER)) {
-            this.driverClass = config.getString(LettuceConfiguration.ENGINE_CORE_DATABASE_DRIVER);
+        if (config.containsKey(LettuceConfiguration.RDBMS_DATABASE_DRIVER)) {
+            this.driverClass = config.getString(LettuceConfiguration.RDBMS_DATABASE_DRIVER);
         }
-        if (config.containsKey(LettuceConfiguration.ENGINE_CORE_DATABASE_URL)) {
-            this.connectionUrl = config.getString(LettuceConfiguration.ENGINE_CORE_DATABASE_URL);
+        if (config.containsKey(LettuceConfiguration.RDBMS_DATABASE_URL)) {
+            this.connectionUrl = config.getString(LettuceConfiguration.RDBMS_DATABASE_URL);
         }
-        if (config.containsKey(LettuceConfiguration.ENGINE_CORE_DATABASE_USERNAME)) {
-            this.userName = config.getString(LettuceConfiguration.ENGINE_CORE_DATABASE_USERNAME);
+        if (config.containsKey(LettuceConfiguration.RDBMS_DATABASE_USERNAME)) {
+            this.userName = config.getString(LettuceConfiguration.RDBMS_DATABASE_USERNAME);
         }
-        if (config.containsKey(LettuceConfiguration.ENGINE_CORE_DATABASE_PASSWORD)) {
-            this.password = config.getString(LettuceConfiguration.ENGINE_CORE_DATABASE_PASSWORD);
+        if (config.containsKey(LettuceConfiguration.RDBMS_DATABASE_PASSWORD)) {
+            this.password = config.getString(LettuceConfiguration.RDBMS_DATABASE_PASSWORD);
         }
     }
 

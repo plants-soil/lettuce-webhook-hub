@@ -35,11 +35,11 @@ public class JDBCInitializerTest {
 
         Properties p = new Properties();
         p.setProperty(LettuceConfiguration.RDBMS_INIT_DDL_CONFIGURABLE, JDBCInitializer.class.getName());
-        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_DRIVER, org.h2.Driver.class.getName());
-        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_URL,
+        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_DRIVER, org.h2.Driver.class.getName());
+        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_URL,
                 "jdbc:h2:mem:testJdbc" + ThreadLocalRandom.current().nextInt(100000) + ";DB_CLOSE_DELAY=-1");
-        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_USERNAME, "sa");
-        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATABASE_PASSWORD, "sa");
+        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_USERNAME, "sa");
+        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_PASSWORD, "sa");
         try (FileOutputStream out = new FileOutputStream(util.getSubDirectory("conf") + "/lettuce.properties")) {
             p.store(out, "## All configurations for lettuce");
         }

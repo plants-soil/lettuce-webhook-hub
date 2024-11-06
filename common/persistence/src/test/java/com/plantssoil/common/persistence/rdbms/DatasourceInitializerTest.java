@@ -53,7 +53,7 @@ public class DatasourceInitializerTest {
 
         Properties p = new Properties();
         p.setProperty(LettuceConfiguration.RDBMS_INIT_DDL_CONFIGURABLE, DatasourceInitializer.class.getName());
-        p.setProperty(LettuceConfiguration.ENGINE_CORE_DATASOURCE, "datasource-lettuce" + r);
+        p.setProperty(LettuceConfiguration.RDBMS_DATASOURCE, "datasource-lettuce" + r);
 
         try (FileOutputStream out = new FileOutputStream(util.getSubDirectory("conf") + "/lettuce.properties")) {
             p.store(out, "## All configurations for lettuce");

@@ -13,13 +13,13 @@
 	<name>Plants Soil common functions</name>
 	
 	<modules>
-		<module>test</module>
 		<module>exception</module>
+		<module>test</module>
 		<module>security</module>
 		<module>filesystem</module>
 		<module>config</module>
 		<module>persistence</module>
-		<module>event</module>
 		<module>httpclient</module>
+		<module>mq</module>
 	</modules>
 </project>
