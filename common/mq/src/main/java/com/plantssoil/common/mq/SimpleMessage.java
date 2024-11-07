@@ -1,6 +1,4 @@
-package com.plantssoil.common.mq.active;
-
-import com.plantssoil.common.mq.IMessage;
+package com.plantssoil.common.mq;
 
 /**
  * Simple Message
@@ -8,17 +6,19 @@ import com.plantssoil.common.mq.IMessage;
  * @author danialdy
  * @Date 3 Nov 2024 8:53:23 pm
  */
-public class Message implements IMessage {
+public class SimpleMessage implements IMessage {
     private static final long serialVersionUID = 4519170869670477272L;
     private String publisherId;
     private String version;
     private String dataGroup;
+    private String consumerId;
     private String message;
 
-    public Message(String publisherId, String version, String dataGroup, String message) {
+    public SimpleMessage(String publisherId, String version, String dataGroup, String consumerId, String message) {
         this.publisherId = publisherId;
         this.version = version;
         this.dataGroup = dataGroup;
+        this.consumerId = consumerId;
         this.message = message;
     }
 
@@ -33,13 +33,18 @@ public class Message implements IMessage {
     }
 
     @Override
-    public String getMessage() {
-        return this.message;
+    public String getDataGroup() {
+        return this.dataGroup;
     }
 
     @Override
-    public String getDataGroup() {
-        return this.dataGroup;
+    public String getConsumerId() {
+        return this.consumerId;
+    }
+
+    @Override
+    public String getMessage() {
+        return this.message;
     }
 
 }

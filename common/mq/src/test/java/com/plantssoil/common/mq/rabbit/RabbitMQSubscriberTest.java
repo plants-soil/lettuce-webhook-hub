@@ -58,9 +58,8 @@ public class RabbitMQSubscriberTest {
     public void testSubscribeOrganization01() {
         for (int i = 0; i < 5; i++) {
             IMessageSubscriber subscriber = IMessageServiceFactory.getDefaultFactory().createMessageSubscriber();
-            subscriber.setConsumerId("consumerId-" + i);
-            subscriber.addMessageListener(new MessageListener());
-            subscriber.subscribe("PUBLISHER-ID-01", "V1.0", null);
+            subscriber.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-01").version("V1.0").addMessageListener(new MessageListener());
+            subscriber.subscribe();
         }
         try {
             Thread.sleep(1000);
@@ -69,8 +68,9 @@ public class RabbitMQSubscriberTest {
         }
         // publish message
         IMessagePublisher publisher = IMessageServiceFactory.getDefaultFactory().createMessagePublisher();
+        publisher.publisherId("PUBLISHER-ID-01").version("V1.0");
         for (int i = 0; i < 20; i++) {
-            publisher.publish(new Message("PUBLISHER-ID-01", "V1.0", null, "This is the " + i + " message comes from PUBLISHER-ID-01 (V1.0)"));
+            publisher.publish("This is the " + i + " message comes from PUBLISHER-ID-01 (V1.0)");
         }
         try {
             Thread.sleep(1000);
@@ -85,9 +85,8 @@ public class RabbitMQSubscriberTest {
         // setup 2 subscribers
         for (int i = 5; i < 8; i++) {
             IMessageSubscriber subscriber = IMessageServiceFactory.getDefaultFactory().createMessageSubscriber();
-            subscriber.setConsumerId("consumerId-" + i);
-            subscriber.addMessageListener(new MessageListener());
-            subscriber.subscribe("PUBLISHER-ID-02", "V2.0", null);
+            subscriber.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-02").version("V2.0").addMessageListener(new MessageListener());
+            subscriber.subscribe();
         }
 
         try {
@@ -97,8 +96,9 @@ public class RabbitMQSubscriberTest {
         }
         // publish message
         IMessagePublisher publisher = IMessageServiceFactory.getDefaultFactory().createMessagePublisher();
+        publisher.publisherId("PUBLISHER-ID-02").version("V2.0");
         for (int i = 0; i < 30; i++) {
-            publisher.publish(new Message("PUBLISHER-ID-02", "V2.0", null, "This is the " + i + " message comes from PUBLISHER-ID-02 (V2.0)"));
+            publisher.publish("This is the " + i + " message comes from PUBLISHER-ID-02 (V2.0)");
         }
         try {
             Thread.sleep(1000);
