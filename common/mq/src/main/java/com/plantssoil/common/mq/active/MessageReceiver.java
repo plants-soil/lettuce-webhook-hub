@@ -4,28 +4,36 @@ import java.util.List;
 
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
-import javax.jms.ObjectMessage;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import com.plantssoil.common.mq.IMessageListener;
+import com.plantssoil.common.mq.SimpleMessage;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 
 class MessageReceiver implements Runnable {
     private Session session;
-    private String consumerTag;
     private String queueName;
+    private String publisherId;
+    private String version;
+    private String dataGroup;
+    private String consumerTag;
     private List<IMessageListener> listeners;
 
-    public MessageReceiver(Session session, String consumerTag, String queueName, List<IMessageListener> listeners) {
+    public MessageReceiver(Session session, String queueName, String publisherId, String version, String dataGroup, String consumerTag,
+            List<IMessageListener> listeners) {
         this.session = session;
-        this.consumerTag = consumerTag;
         this.queueName = queueName;
+        this.publisherId = publisherId;
+        this.version = version;
+        this.dataGroup = dataGroup;
+        this.consumerTag = consumerTag;
         this.listeners = listeners;
     }
 
     @Override
     public void run() {
-        try (MessageConsumer consumer = session.createConsumer(session.createQueue(queueName))) {
+        try (MessageConsumer consumer = this.session.createConsumer(this.session.createQueue(this.queueName))) {
             while (true) {
                 javax.jms.Message msg = null;
                 // try to receive message from consumer
@@ -46,17 +54,13 @@ class MessageReceiver implements Runnable {
                         }
                     }
                 }
-                if (msg == null || !(msg instanceof ObjectMessage)) {
+                if (msg == null || !(msg instanceof TextMessage)) {
                     continue;
                 }
-                java.io.Serializable serializable = ((ObjectMessage) msg).getObject();
-                if (serializable == null || !(serializable instanceof Message)) {
-                    continue;
-                }
+                String text = ((TextMessage) msg).getText();
 
-                Message message = (Message) serializable;
+                SimpleMessage message = new SimpleMessage(this.publisherId, this.version, this.dataGroup, this.consumerTag, text);
                 for (IMessageListener listener : listeners) {
-                    listener.setConsumerId(consumerTag);
                     listener.onMessage(message);
                 }
             }

@@ -3,8 +3,7 @@ package com.plantssoil.common.mq.rabbit;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-import com.plantssoil.common.mq.IMessage;
-import com.plantssoil.common.mq.IMessagePublisher;
+import com.plantssoil.common.mq.AbstractMessagePublisher;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 import com.rabbitmq.client.Channel;
 
@@ -14,7 +13,7 @@ import com.rabbitmq.client.Channel;
  * @author danialdy
  * @Date 3 Nov 2024 8:51:37 am
  */
-public class MessagePublisher implements IMessagePublisher {
+public class MessagePublisher extends AbstractMessagePublisher {
     private final static String EXCHANGE_NAME = "com.plantssoil.message.exchange";
     private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private ConnectionPool pool;
@@ -31,8 +30,9 @@ public class MessagePublisher implements IMessagePublisher {
         this.pool.returnConnection(this.connection);
     }
 
-    private String createRoutingKey(String publisherId, String version, String dataGroup) {
-        return String.format("%s%s%s%s%s", publisherId, ROUTING_KEY_SEPARATOR, version, ROUTING_KEY_SEPARATOR, dataGroup == null ? "NULL" : dataGroup);
+    private String createRoutingKey() {
+        return String.format("%s%s%s%s%s", this.getPublisherId(), ROUTING_KEY_SEPARATOR, this.getVersion(), ROUTING_KEY_SEPARATOR,
+                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
     }
 
     /**
@@ -59,16 +59,15 @@ public class MessagePublisher implements IMessagePublisher {
     }
 
     @Override
-    public void publish(IMessage message) {
-        if (message.getPublisherId() == null || message.getVersion() == null) {
+    public void publish(String message) {
+        if (this.getPublisherId() == null || this.getVersion() == null) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15008, "The [publisherId] or [version] should not be null!");
         }
         try (Channel channel = this.getChannel()) {
             // create exchange for every publiserId + version
-            String routingKey = createRoutingKey(message.getPublisherId(), message.getVersion(), message.getDataGroup());
+            String routingKey = createRoutingKey();
             channel.exchangeDeclare(EXCHANGE_NAME, "direct");
-            channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getMessage().getBytes("UTF-8"));
-
+            channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"));
         } catch (IOException e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15009, e);
         } catch (TimeoutException e) {

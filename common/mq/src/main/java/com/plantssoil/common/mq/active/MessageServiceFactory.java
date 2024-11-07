@@ -163,7 +163,7 @@ public class MessageServiceFactory implements IMessageServiceFactory {
     @Override
     public IMessagePublisher createMessagePublisher() {
         try {
-            return new MessagePublisher(this.publisherFactory.createQueueConnection().createQueueSession(false, Session.AUTO_ACKNOWLEDGE));
+            return new MessagePublisher(this.publisherFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE));
         } catch (JMSException e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15008, e);
         }

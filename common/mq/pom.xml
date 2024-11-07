@@ -39,7 +39,7 @@
 			<groupId>io.lettuce</groupId>
 			<artifactId>lettuce-core</artifactId>
 		</dependency>
-
+		
 		<!-- Testing Dependencies -->
 		<dependency>
 			<groupId>junit</groupId>

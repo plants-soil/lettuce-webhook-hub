@@ -9,25 +9,6 @@ package com.plantssoil.common.mq;
  */
 public interface IMessageListener {
     /**
-     * Get the consumer id<br/>
-     * This will be null if not set consumerId via
-     * {@link IMessageSubscriber#setConsumerId(String)} when subscribe messages
-     * 
-     * @return
-     */
-    public String getConsumerId();
-
-    /**
-     * Set the consumer id<br/>
-     * 
-     * @param consumerId This will be null if not set consumerId via
-     *                   {@link IMessageSubscriber#setConsumerId(String)} when
-     *                   subscribe messages
-     * @return
-     */
-    public void setConsumerId(String consumerId);
-
-    /**
      * MQ will call this method after message received<br/>
      * Could process the messages in this method<br/>
      * 

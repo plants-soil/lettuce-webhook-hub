@@ -85,6 +85,7 @@ public class LettuceConfiguration {
      * <li>RabbitMQ:
      * <code>amqp://username:password@domain.com:5672/vhost</code></li>
      * <li>ActiveMQ: <code>tcp://username:password@domain.com:61616</code></li></li>
+     * <li>Redis: <code>redis://username:password@domain.com:6379</code></li>
      * </ul>
      * 
      */

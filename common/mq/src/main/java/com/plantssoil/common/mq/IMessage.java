@@ -39,6 +39,16 @@ public interface IMessage extends Serializable {
     public String getDataGroup();
 
     /**
+     * Get consumer id (optional) <br/>
+     * 
+     * if subscriber provided the consumer id, here will come with it, otherwise it
+     * will be null
+     * 
+     * @return consumer id
+     */
+    public String getConsumerId();
+
+    /**
      * Get the message (mostly be payload JSON / xml)
      * 
      * @return payload text
