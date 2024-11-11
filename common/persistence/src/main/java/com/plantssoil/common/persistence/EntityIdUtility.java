@@ -3,9 +3,10 @@ package com.plantssoil.common.persistence;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.persistence.Id;
+
+import org.bson.types.ObjectId;
 
 import com.plantssoil.common.persistence.exception.PersistenceException;
 
@@ -72,34 +73,12 @@ public class EntityIdUtility {
     }
 
     /**
-     * Generate entity id, which will be UNIQUE within the whole world (just like
+     * Generate unique id, which will be UNIQUE within the whole world (just like
      * UUID)
      * 
      * @return unique entity id string
      */
-    public String generateEntityId() {
-        // Step 1: Get the current timestamp (4 bytes)
-        long timestamp = System.currentTimeMillis() / 1000; // seconds since epoch
-        String timestampHex = String.format("%08x", timestamp);
-
-        // Step 2: Generate a random 5-byte value
-        byte[] machineAndPid = new byte[5];
-        ThreadLocalRandom.current().nextBytes(machineAndPid);
-        String randomHex = bytesToHex(machineAndPid);
-
-        // Step 3: Generate a 3-byte counter (for uniqueness)
-        String counterHex = String.format("%06x", ThreadLocalRandom.current().nextInt(16777216)); // 3 bytes = 6 hex digits
-
-        // Concatenate all parts
-        return timestampHex + randomHex + counterHex;
-    }
-
-    // Helper method to convert bytes to hex string
-    private String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString();
+    public String generateUniqueId() {
+        return new ObjectId().toHexString();
     }
 }

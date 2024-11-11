@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -37,7 +36,7 @@ public class MongodbPersistenceTest {
         MongodbPersistenceTest test = new MongodbPersistenceTest();
         test.testCreateQuery();
         MongodbPersistenceTest.tearDownAfterClass();
-        System.out.println(EntityIdUtility.getInstance().generateEntityId());
+        System.out.println(EntityIdUtility.getInstance().generateUniqueId());
     }
 
     @BeforeClass
@@ -66,21 +65,21 @@ public class MongodbPersistenceTest {
 
     private Teacher newTeacherEntity() {
         Teacher teacher = new Teacher();
-        teacher.setTeacherId(UUID.randomUUID().toString());
+        teacher.setTeacherId(EntityIdUtility.getInstance().generateUniqueId());
         teacher.setTeacherName("Teacher " + ThreadLocalRandom.current().nextInt());
         return teacher;
     }
 
     private Course newCourseEntity() {
         Course course = new Course();
-        course.setCourseId(UUID.randomUUID().toString());
+        course.setCourseId(EntityIdUtility.getInstance().generateUniqueId());
         course.setCourseName("Course" + ThreadLocalRandom.current().nextInt());
         return course;
     }
 
     private Student newStudentEntity() {
         Student student = new Student();
-        student.setStudentId(UUID.randomUUID().toString());
+        student.setStudentId(EntityIdUtility.getInstance().generateUniqueId());
         student.setStudentName("Student" + ThreadLocalRandom.current().nextInt());
         student.setGender(Student.Gender.Female);
         student.setAddress(new Address("Address No " + ThreadLocalRandom.current().nextInt(), "Street " + ThreadLocalRandom.current().nextInt(),
