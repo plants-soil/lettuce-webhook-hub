@@ -18,7 +18,7 @@ import com.plantssoil.common.persistence.IPersistenceFactory;
  * 
  * Manage connection pool (via entity manager factory)<br/>
  * Create persistence instance, the implementation is defined via configuration
- * {@link LettuceConfiguration.RDBMS_JPA_PERSISTENCE_CONFIGURABLE}
+ * {@link LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE}
  * 
  * @author danialdy
  *
@@ -154,10 +154,10 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
             properties.put("javax.persistence.jdbc.url", databaseConfig.getConnectionUrl());
         }
         if (databaseConfig.getUserName() != null) {
-            properties.put("javax.persistence.jdbc.user", "sa");
+            properties.put("javax.persistence.jdbc.user", databaseConfig.getUserName());
         }
         if (databaseConfig.getPassword() != null) {
-            properties.put("javax.persistence.jdbc.password", "sa");
+            properties.put("javax.persistence.jdbc.password", databaseConfig.getPassword());
         }
         hibernateSettings(properties, databaseConfig.getConnectionPoolSize(), databaseConfig.isShowSql());
 
@@ -167,14 +167,20 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
     private DatabaseConnectionConfig getEngineDatabaseConnectionConfig() {
         Configuration conf = ConfigFactory.getInstance().getConfiguration();
         String driver = conf.getString(LettuceConfiguration.RDBMS_DATABASE_DRIVER);
-        String url = conf.getString(LettuceConfiguration.RDBMS_DATABASE_URL);
-        String username = conf.getString(LettuceConfiguration.RDBMS_DATABASE_USERNAME);
-        String password = conf.getString(LettuceConfiguration.RDBMS_DATABASE_PASSWORD);
-        int poolsize = 20;
-        boolean showsql = false;
-        if (conf.containsKey(LettuceConfiguration.RDBMS_DATABASE_POOLSIZE)) {
-            poolsize = conf.getInt(LettuceConfiguration.RDBMS_DATABASE_POOLSIZE);
+        String url = conf.getString(LettuceConfiguration.PERSISTENCE_DATABASE_URL);
+        String username = null;
+        if (conf.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_USERNAME)) {
+            username = conf.getString(LettuceConfiguration.PERSISTENCE_DATABASE_USERNAME);
         }
+        String password = null;
+        if (conf.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_PASSWORD)) {
+            password = conf.getString(LettuceConfiguration.PERSISTENCE_DATABASE_PASSWORD);
+        }
+        int poolsize = 20;
+        if (conf.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_POOLSIZE)) {
+            poolsize = conf.getInt(LettuceConfiguration.PERSISTENCE_DATABASE_POOLSIZE);
+        }
+        boolean showsql = false;
         if (conf.containsKey(LettuceConfiguration.RDBMS_DATABASE_SHOWSQL)) {
             showsql = conf.getBoolean(LettuceConfiguration.RDBMS_DATABASE_SHOWSQL);
         }

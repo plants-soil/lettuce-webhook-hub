@@ -1,4 +1,4 @@
-package com.plantssoil.common.persistence.rdbms.beans;
+package com.plantssoil.common.persistence.beans;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

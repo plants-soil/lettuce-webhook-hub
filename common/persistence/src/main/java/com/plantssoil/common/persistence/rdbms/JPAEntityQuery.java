@@ -2,6 +2,7 @@ package com.plantssoil.common.persistence.rdbms;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -14,6 +15,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import com.plantssoil.common.persistence.IEntityQuery;
+import com.plantssoil.common.persistence.SimpleFilter;
+import com.plantssoil.common.persistence.exception.PersistenceException;
 
 /**
  * JPA implementation for IEntityQuery
@@ -22,33 +25,8 @@ import com.plantssoil.common.persistence.IEntityQuery;
  * @author danialdy
  * @Date 31 Oct 2024 7:31:56 pm
  */
-public class JPAEntityQuery<T> implements IEntityQuery<T> {
-    private class Filter {
-        private String attributeName;
-        private FilterOperator operator;
-        private Object filterValue;
-
-        public Filter(String attributeName, FilterOperator operator, Object filterValue) {
-            super();
-            this.attributeName = attributeName;
-            this.operator = operator;
-            this.filterValue = filterValue;
-        }
-
-        public String getAttributeName() {
-            return attributeName;
-        }
-
-        public FilterOperator getOperator() {
-            return operator;
-        }
-
-        public Object getFilterValue() {
-            return filterValue;
-        }
-    }
-
-    private List<Filter> filters = new ArrayList<>();
+class JPAEntityQuery<T> implements IEntityQuery<T> {
+    private List<SimpleFilter> filters = new ArrayList<>();
     private Class<?> entityClass;
     private int startPosition = 0;
     private int maxResult = 20;
@@ -61,7 +39,7 @@ public class JPAEntityQuery<T> implements IEntityQuery<T> {
 
     @Override
     public IEntityQuery<T> filter(String attributeName, FilterOperator operator, Object filterValue) {
-        filters.add(new Filter(attributeName, operator, filterValue));
+        filters.add(new SimpleFilter(attributeName, operator, filterValue));
         return this;
     }
 
@@ -79,27 +57,42 @@ public class JPAEntityQuery<T> implements IEntityQuery<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public T singleResult(Object primaryKey) {
-        return (T) entityManager.find(this.entityClass, primaryKey);
+    public CompletableFuture<T> singleResult(Object primaryKey) {
+        CompletableFuture<T> future = CompletableFuture.supplyAsync(() -> {
+            return (T) entityManager.find(this.entityClass, primaryKey);
+        }).exceptionally(ex -> {
+            throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13012, ex);
+        });
+        return future;
     }
 
     @Override
-    public T singleResult() {
-        TypedQuery<T> query = getTypedQuery();
-        query.setFirstResult(0).setMaxResults(1);
-        List<T> results = query.getResultList();
-        if (results.size() == 0) {
-            return null;
-        } else {
-            return results.get(0);
-        }
+    public CompletableFuture<T> singleResult() {
+        CompletableFuture<T> future = CompletableFuture.supplyAsync(() -> {
+            TypedQuery<T> query = getTypedQuery();
+            query.setFirstResult(0).setMaxResults(1);
+            List<T> results = query.getResultList();
+            if (results.size() == 0) {
+                return null;
+            } else {
+                return results.get(0);
+            }
+        }).exceptionally(ex -> {
+            throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13012, ex);
+        });
+        return future;
     }
 
     @Override
-    public List<T> resultList() {
-        TypedQuery<T> query = getTypedQuery();
-        query.setFirstResult(this.startPosition).setMaxResults(this.maxResult);
-        return query.getResultList();
+    public CompletableFuture<List<T>> resultList() {
+        CompletableFuture<List<T>> future = CompletableFuture.supplyAsync(() -> {
+            TypedQuery<T> query = getTypedQuery();
+            query.setFirstResult(this.startPosition).setMaxResults(this.maxResult);
+            return query.getResultList();
+        }).exceptionally(ex -> {
+            throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13012, ex);
+        });
+        return future;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -109,7 +102,7 @@ public class JPAEntityQuery<T> implements IEntityQuery<T> {
         Root<T> r = (Root<T>) q.from(this.entityClass);
         Predicate predicateAll = null;
         for (int i = 0; i < this.filters.size(); i++) {
-            Filter filter = this.filters.get(i);
+            SimpleFilter filter = this.filters.get(i);
             Path<Object> path = r.get(filter.getAttributeName());
             ParameterExpression<?> param = cb.parameter(filter.getFilterValue().getClass(), filter.getAttributeName());
             Predicate predicate = null;
@@ -124,10 +117,13 @@ public class JPAEntityQuery<T> implements IEntityQuery<T> {
                 predicateAll = cb.and(predicateAll, predicate);
             }
         }
-        q.select(r).where(predicateAll);
+        q.select(r);
+        if (predicateAll != null) {
+            q.where(predicateAll);
+        }
         TypedQuery<T> query = this.entityManager.createQuery(q);
         for (int i = 0; i < this.filters.size(); i++) {
-            Filter filter = this.filters.get(i);
+            SimpleFilter filter = this.filters.get(i);
             query.setParameter(filter.getAttributeName(), filter.getFilterValue());
         }
         return query;

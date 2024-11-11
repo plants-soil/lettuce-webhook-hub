@@ -1,9 +1,10 @@
-package com.plantssoil.common.persistence.rdbms.beans;
+package com.plantssoil.common.persistence.beans;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,7 +33,7 @@ public class Student {
     private Address address;
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationTime;
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "studentId")
     private List<Course> courses = new ArrayList<>();
 

@@ -1,6 +1,7 @@
 package com.plantssoil.common.persistence;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Entity Query, could retrieve entity via primary<br/>
@@ -23,7 +24,7 @@ public interface IEntityQuery<T> {
     }
 
     /**
-     * Add filter to the query
+     * Builder function, add filter to the query
      * 
      * @param attributeName the attribute to filter
      * @param operator      filter operator type
@@ -33,7 +34,8 @@ public interface IEntityQuery<T> {
     public IEntityQuery<T> filter(String attributeName, FilterOperator operator, Object filterValue);
 
     /**
-     * Set the position of the first result to retrieve.
+     * Builder function, set the position of the first result to retrieve. (for
+     * pagination)
      * 
      * @param startPosition position of the first result, default numbered from 0
      * @return the same query instance
@@ -42,7 +44,8 @@ public interface IEntityQuery<T> {
     public IEntityQuery<T> firstResult(int startPosition);
 
     /**
-     * Set the maximum number of results to retrieve.
+     * Builder function, set the maximum number of results to retrieve. (for
+     * pagination)
      * 
      * @param maxResult maximum number of results to retrieve, default numbered with
      *                  20
@@ -56,23 +59,23 @@ public interface IEntityQuery<T> {
      * Filters will be ignored if added.<br/>
      * 
      * @param primaryKey the entity primary key to be retrieved
-     * @return Entity object
+     * @return CompletableFuture<T>, could get the single entity in future
      */
-    public T singleResult(Object primaryKey);
+    public CompletableFuture<T> singleResult(Object primaryKey);
 
     /**
      * Query the FIRST entity from persistence which matches the filters
      * 
-     * @return Entity object
+     * @return CompletableFuture<T>, could get the first entity in future
      */
-    public T singleResult();
+    public CompletableFuture<T> singleResult();
 
     /**
      * Query the entities from persistence which matches the filters.<br/>
      * will only return maxResult entities from startPosition if pagination
      * information provided.<br/>
      * 
-     * @return Entity objects
+     * @return CompletableFuture<List<T>>, could get entities list in future
      */
-    public List<T> resultList();
+    public CompletableFuture<List<T>> resultList();
 }

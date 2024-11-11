@@ -25,6 +25,11 @@
 		</dependency>
 
 		<!-- External Dependencies -->
+		<!-- fastxml jackson from jboss resteasy -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson2-provider</artifactId>
+		</dependency>
 		<!-- DDL -->
 		<dependency>
 			<groupId>org.liquibase</groupId>
@@ -45,6 +50,10 @@
 			<artifactId>h2</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-sync</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 		</dependency>
@@ -60,6 +69,16 @@
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
 		</dependency>
+		<!--
+		<dependency>
+			<groupId>org.reactivestreams</groupId>
+			<artifactId>reactive-streams</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-core</artifactId>
+		</dependency>
+		-->
 
 		<!-- Testing -->
 		<dependency>

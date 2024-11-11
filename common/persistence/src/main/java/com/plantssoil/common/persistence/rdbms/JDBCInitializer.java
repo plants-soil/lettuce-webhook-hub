@@ -28,14 +28,14 @@ public class JDBCInitializer extends AbstractLiquibaseInitializer {
         if (config.containsKey(LettuceConfiguration.RDBMS_DATABASE_DRIVER)) {
             this.driverClass = config.getString(LettuceConfiguration.RDBMS_DATABASE_DRIVER);
         }
-        if (config.containsKey(LettuceConfiguration.RDBMS_DATABASE_URL)) {
-            this.connectionUrl = config.getString(LettuceConfiguration.RDBMS_DATABASE_URL);
+        if (config.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_URL)) {
+            this.connectionUrl = config.getString(LettuceConfiguration.PERSISTENCE_DATABASE_URL);
         }
-        if (config.containsKey(LettuceConfiguration.RDBMS_DATABASE_USERNAME)) {
-            this.userName = config.getString(LettuceConfiguration.RDBMS_DATABASE_USERNAME);
+        if (config.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_USERNAME)) {
+            this.userName = config.getString(LettuceConfiguration.PERSISTENCE_DATABASE_USERNAME);
         }
-        if (config.containsKey(LettuceConfiguration.RDBMS_DATABASE_PASSWORD)) {
-            this.password = config.getString(LettuceConfiguration.RDBMS_DATABASE_PASSWORD);
+        if (config.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_PASSWORD)) {
+            this.password = config.getString(LettuceConfiguration.PERSISTENCE_DATABASE_PASSWORD);
         }
     }
 
@@ -65,14 +65,19 @@ public class JDBCInitializer extends AbstractLiquibaseInitializer {
 
     @Override
     protected Connection getConnection() {
-        if (this.driverClass == null || this.connectionUrl == null || this.userName == null || this.password == null || this.driverClass.strip().length() == 0
-                || this.connectionUrl.strip().length() == 0 || this.userName.strip().length() == 0 || this.password.strip().length() == 0) {
+        if (this.driverClass == null || this.connectionUrl == null || this.driverClass.strip().length() == 0 || this.connectionUrl.strip().length() == 0
+                || this.userName.strip().length() == 0 || this.password.strip().length() == 0) {
             throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13010,
-                    "Database connection (driverClass, connectionUrl, userName, password) can't be null!");
+                    "Database connection (driverClass, connectionUrl) can't be null!");
         }
         try {
             Class.forName(this.driverClass);
-            Connection connection = DriverManager.getConnection(this.connectionUrl, this.userName, this.password);
+            Connection connection = null;
+            if (this.userName == null) {
+                connection = DriverManager.getConnection(this.connectionUrl);
+            } else {
+                connection = DriverManager.getConnection(this.connectionUrl, this.userName, this.password);
+            }
             connection.setAutoCommit(false);
             return connection;
         } catch (ClassNotFoundException e) {

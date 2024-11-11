@@ -18,69 +18,84 @@ import com.plantssoil.common.persistence.IPersistence;
  * @author danial
  *
  */
-public class JPAPersistence implements IPersistence {
+class JPAPersistence implements IPersistence {
     private EntityManager entityManager;
 
-    @Override
-    public void create(Object entity) {
+    private EntityManager getEntityManager() {
         EntityTransaction tx = entityManager.getTransaction();
         if (!tx.isActive()) {
             tx.begin();
         }
-        entityManager.persist(entity);
+        return entityManager;
+    }
+
+    @Override
+    public void create(Object entity) {
+        if (entity == null) {
+            return;
+        }
+
+        EntityManager em = this.getEntityManager();
+        em.persist(entity);
     }
 
     @Override
     public void create(List<?> entities) {
-        EntityTransaction tx = entityManager.getTransaction();
-        if (!tx.isActive()) {
-            tx.begin();
+        if (entities == null || entities.size() == 0) {
+            return;
+        } else if (entities.size() == 1) {
+            this.create(entities.get(0));
         }
+
+        EntityManager em = this.getEntityManager();
         for (Object entity : entities) {
-            entityManager.persist(entity);
+            em.persist(entity);
         }
     }
 
     @Override
     public <T> T update(T entity) {
-        EntityTransaction tx = entityManager.getTransaction();
-        if (!tx.isActive()) {
-            tx.begin();
+        if (entity == null) {
+            return null;
         }
-        T updated = entityManager.merge(entity);
+        EntityManager em = this.getEntityManager();
+        T updated = em.merge(entity);
         return updated;
     }
 
     @Override
-    public <T> List<T> update(List<T> entities) {
-        EntityTransaction tx = entityManager.getTransaction();
-        if (!tx.isActive()) {
-            tx.begin();
+    public List<?> update(List<?> entities) {
+        if (entities == null || entities.size() == 0) {
+            return entities;
         }
-        List<T> updated = new ArrayList<>();
-        for (T entity : entities) {
-            updated.add(entityManager.merge(entity));
+
+        EntityManager em = this.getEntityManager();
+        List<Object> updated = new ArrayList<>();
+        for (Object entity : entities) {
+            updated.add(em.merge(entity));
         }
         return updated;
     }
 
     @Override
     public void remove(Object entity) {
-        EntityTransaction tx = entityManager.getTransaction();
-        if (!tx.isActive()) {
-            tx.begin();
+        if (entity == null) {
+            return;
         }
-        entityManager.remove(entityManager.merge(entity));
+        EntityManager em = this.getEntityManager();
+        em.remove(em.merge(entity));
     }
 
     @Override
     public void remove(List<?> entities) {
-        EntityTransaction tx = entityManager.getTransaction();
-        if (!tx.isActive()) {
-            tx.begin();
+        if (entities == null || entities.size() == 0) {
+            return;
+        } else if (entities.size() == 1) {
+            this.remove(entities.get(0));
         }
+        EntityManager em = this.getEntityManager();
         for (Object entity : entities) {
-            entityManager.remove(entityManager.merge(entity));
+            em.remove(em.merge(entity));
         }
     }
 
@@ -90,6 +105,9 @@ public class JPAPersistence implements IPersistence {
         if (tx.isActive()) {
             try {
                 tx.commit();
+            } catch (Exception e) {
+                tx.rollback();
+                throw e;
             } finally {
                 if (this.entityManager.isOpen()) {
                     this.entityManager.close();
@@ -111,17 +129,8 @@ public class JPAPersistence implements IPersistence {
      * 
      * @param em entity manager instance
      */
-    public void setEntityManager(EntityManager em) {
+    protected void setEntityManager(EntityManager em) {
         this.entityManager = em;
-    }
-
-    /**
-     * get JPA entity manager instance
-     * 
-     * @return entity manager
-     */
-    public EntityManager getEntityManager() {
-        return this.entityManager;
     }
 
 }

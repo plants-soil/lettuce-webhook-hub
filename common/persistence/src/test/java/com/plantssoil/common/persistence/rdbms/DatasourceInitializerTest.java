@@ -55,11 +55,11 @@ public class DatasourceInitializerTest {
         p.setProperty(LettuceConfiguration.RDBMS_INIT_DDL_CONFIGURABLE, DatasourceInitializer.class.getName());
         p.setProperty(LettuceConfiguration.RDBMS_DATASOURCE, "datasource-lettuce" + r);
 
-        try (FileOutputStream out = new FileOutputStream(util.getSubDirectory("conf") + "/lettuce.properties")) {
-            p.store(out, "## All configurations for lettuce");
+        try (FileOutputStream out = new FileOutputStream(util.getSubDirectory("conf") + "/" + LettuceConfiguration.CONFIGURATION_FILE_NAME)) {
+            p.store(out, "## No comments");
         }
-        System.setProperty("lettuce.config.dir", util.getSubDirectory("conf"));
-        System.setProperty("lettuce.data.dir", util.getSubDirectory("data"));
+        System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getSubDirectory("conf"));
+        System.setProperty(LettuceConfiguration.DATA_DIRECTORY_PROPERTY_NAME, util.getSubDirectory("data"));
         ConfigFactory.reload();
     }
 

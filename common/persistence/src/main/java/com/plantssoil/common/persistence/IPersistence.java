@@ -5,6 +5,9 @@ import java.util.List;
 /**
  * Persistence interface<br/>
  * Could create / update / remove entity from persistence (SQL or NOSQL)<br/>
+ * In order to support database transaction feature, all the functions should be
+ * thread safe (If need call IPersistence function multiple times, they should
+ * be in one thread)<br/>
  * IPersistence extends {@link AutoCloseable}, so could put IPersistence into
  * try (...) clause, otherwise need call {@link IPersistence#close()} in finally
  * block<br/>
@@ -63,9 +66,9 @@ public interface IPersistence extends AutoCloseable {
      * 
      * @param <T>      Entity
      * @param entities the entities to be persisted
-     * @return the entities persisted
+     * @return entities list persisted
      */
-    public <T> List<T> update(List<T> entities);
+    public List<?> update(List<?> entities);
 
     /**
      * Delete entity from persistence

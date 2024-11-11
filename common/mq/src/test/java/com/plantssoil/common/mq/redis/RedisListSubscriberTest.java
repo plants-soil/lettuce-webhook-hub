@@ -40,10 +40,10 @@ public class RedisListSubscriberTest {
         p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE, ListMessageServiceFactory.class.getName());
         p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_URI, "redis://192.168.0.116:6379");
 
-        try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/lettuce.properties")) {
+        try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/" + LettuceConfiguration.CONFIGURATION_FILE_NAME)) {
             p.store(out, "## No comments");
         }
-        System.setProperty("lettuce.config.dir", util.getTempDir());
+        System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getTempDir());
         ConfigFactory.reload();
 
         IMessageServiceFactory.getDefaultFactory();

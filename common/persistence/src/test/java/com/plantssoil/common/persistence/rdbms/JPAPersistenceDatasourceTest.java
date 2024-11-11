@@ -45,11 +45,12 @@ public class JPAPersistenceDatasourceTest {
         Properties p = new Properties();
         p.setProperty(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE, JPAPersistenceFactory.class.getName());
         p.setProperty(LettuceConfiguration.RDBMS_DATASOURCE, "datasource-lettuce");
+        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_SHOWSQL, "true");
 
-        try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/lettuce.properties")) {
-            p.store(out, "## All configurations for lettuce");
+        try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/" + LettuceConfiguration.CONFIGURATION_FILE_NAME)) {
+            p.store(out, "## No comments");
         }
-        System.setProperty("lettuce.config.dir", util.getTempDir());
+        System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getTempDir());
         ConfigFactory.reload();
 
         IPersistenceFactory.getDefaultFactory();

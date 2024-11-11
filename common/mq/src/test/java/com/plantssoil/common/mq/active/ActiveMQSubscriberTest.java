@@ -40,10 +40,10 @@ public class ActiveMQSubscriberTest {
         p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE, MessageServiceFactory.class.getName());
         p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_URI, "tcp://admin:admin@192.168.0.116:61616");
 
-        try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/lettuce.properties")) {
+        try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/" + LettuceConfiguration.CONFIGURATION_FILE_NAME)) {
             p.store(out, "## No comments");
         }
-        System.setProperty("lettuce.config.dir", util.getTempDir());
+        System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getTempDir());
         ConfigFactory.reload();
 
         IMessageServiceFactory.getDefaultFactory();

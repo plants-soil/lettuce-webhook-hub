@@ -49,9 +49,7 @@ public class ConfigFactory {
         }
         // add lettuce configuration property file
         URL url = getConfigurationPropertyFile();
-        if (url == null) {
-            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12010, "Can't find lettuce configuration property file!");
-        } else {
+        if (url != null) {
             try {
                 configuration.addConfiguration(new PropertiesConfiguration(url));
             } catch (ConfigurationException e) {
