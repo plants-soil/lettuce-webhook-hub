@@ -58,7 +58,7 @@ public class MessageSubscriber extends AbstractMessageSubscriber {
             boolean global = false;
             channel.basicQos(prefetchSize, prefetchCount, global);
 
-            // consume message without auto-ack
+            // consume message with auto-ack
             this.channel.basicConsume(queueName, true, this.getConsumerId(), (consumerTag, message) -> {
                 SimpleMessage msg = new SimpleMessage(this.getPublisherId(), this.getVersion(), this.getDataGroup(), this.getConsumerId(),
                         new String(message.getBody(), "UTF-8"));
