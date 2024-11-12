@@ -14,7 +14,7 @@ import com.rabbitmq.client.Channel;
  * @author danialdy
  * @Date 3 Nov 2024 8:37:13 pm
  */
-public class MessageSubscriber extends AbstractMessageSubscriber {
+class MessageSubscriber extends AbstractMessageSubscriber {
     private final static String EXCHANGE_NAME = "com.plantssoil.message.exchange";
     private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private Channel channel;

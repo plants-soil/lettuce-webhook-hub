@@ -10,7 +10,7 @@ import com.plantssoil.common.mq.AbstractMessageSubscriber;
  * @author danialdy
  * @Date 3 Nov 2024 8:37:13 pm
  */
-public class MessageSubscriber extends AbstractMessageSubscriber {
+class MessageSubscriber extends AbstractMessageSubscriber {
     private Session session;
 
     /**

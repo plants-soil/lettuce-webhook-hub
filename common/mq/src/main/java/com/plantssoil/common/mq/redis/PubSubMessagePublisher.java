@@ -11,7 +11,7 @@ import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
  * @author danialdy
  * @Date 6 Nov 2024 4:34:30 pm
  */
-public class PubSubMessagePublisher extends AbstractMessagePublisher {
+class PubSubMessagePublisher extends AbstractMessagePublisher {
     private RedisPubSubAsyncCommands<String, String> command;
     private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
 

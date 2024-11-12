@@ -52,7 +52,7 @@ public abstract class AbstractMessageSubscriber implements IMessageSubscriber {
      * 
      * @return publisher id
      */
-    protected String getPublisherId() {
+    public String getPublisherId() {
         return publisherId;
     }
 
@@ -61,7 +61,7 @@ public abstract class AbstractMessageSubscriber implements IMessageSubscriber {
      * 
      * @return publisher version
      */
-    protected String getVersion() {
+    public String getVersion() {
         return version;
     }
 
@@ -71,7 +71,7 @@ public abstract class AbstractMessageSubscriber implements IMessageSubscriber {
      * 
      * @return data group
      */
-    protected String getDataGroup() {
+    public String getDataGroup() {
         return dataGroup;
     }
 
@@ -80,7 +80,7 @@ public abstract class AbstractMessageSubscriber implements IMessageSubscriber {
      * 
      * @return consumer id
      */
-    protected String getConsumerId() {
+    public String getConsumerId() {
         return consumerId;
     }
 
@@ -89,7 +89,7 @@ public abstract class AbstractMessageSubscriber implements IMessageSubscriber {
      * 
      * @return message listeners
      */
-    protected List<IMessageListener> getListeners() {
+    public List<IMessageListener> getListeners() {
         return listeners;
     }
 }

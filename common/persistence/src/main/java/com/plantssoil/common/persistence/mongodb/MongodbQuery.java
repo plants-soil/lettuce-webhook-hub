@@ -26,7 +26,7 @@ import com.plantssoil.common.persistence.exception.PersistenceException;
  * @author danialdy
  * @Date 11 Nov 2024 9:18:52 am
  */
-public class MongodbQuery<T> implements IEntityQuery<T> {
+class MongodbQuery<T> implements IEntityQuery<T> {
     private MongoDatabase mongoDatabase;
     private Class<T> entityClass;
     private String mongoCollectionName;

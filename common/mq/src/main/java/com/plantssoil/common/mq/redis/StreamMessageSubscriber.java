@@ -17,7 +17,7 @@ import io.lettuce.core.api.reactive.RedisReactiveCommands;
  * @author danialdy
  * @Date 6 Nov 2024 10:04:25 pm
  */
-public class StreamMessageSubscriber extends AbstractMessageSubscriber {
+class StreamMessageSubscriber extends AbstractMessageSubscriber {
     private final static String ID_READ_GROUP = "stream-subscriber-group";
     private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private final static String PUBLISHER_ID = "publisherId";

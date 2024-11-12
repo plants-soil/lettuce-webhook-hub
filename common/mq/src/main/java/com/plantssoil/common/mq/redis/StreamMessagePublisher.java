@@ -14,7 +14,7 @@ import io.lettuce.core.api.async.RedisAsyncCommands;
  * @author danialdy
  * @Date 6 Nov 2024 4:34:30 pm
  */
-public class StreamMessagePublisher extends AbstractMessagePublisher {
+class StreamMessagePublisher extends AbstractMessagePublisher {
     private RedisAsyncCommands<String, String> command;
     private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private final static String PUBLISHER_ID = "publisherId";

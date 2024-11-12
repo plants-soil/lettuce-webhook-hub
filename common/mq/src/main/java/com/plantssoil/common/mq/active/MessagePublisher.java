@@ -15,7 +15,7 @@ import com.plantssoil.common.mq.exception.MessageQueueException;
  * @author danialdy
  * @Date 3 Nov 2024 8:51:37 am
  */
-public class MessagePublisher extends AbstractMessagePublisher {
+class MessagePublisher extends AbstractMessagePublisher {
     private Session session;
 
     /**

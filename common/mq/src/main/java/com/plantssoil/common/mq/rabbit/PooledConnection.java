@@ -28,7 +28,7 @@ import com.rabbitmq.client.ShutdownSignalException;
  * @author danialdy
  * @Date 5 Nov 2024 7:05:11 pm
  */
-public class PooledConnection implements Closeable {
+class PooledConnection implements Closeable {
     private Connection connection;
     private ConnectionPool pool;
     private AtomicInteger channels = new AtomicInteger(0);

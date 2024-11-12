@@ -8,7 +8,7 @@ Functions for configuration search, load and getter.
 
 Could load configurations from OS env variables, Java system properties, Java keystore file, and configuration file "lettuce.properties".
 
-1. `com.plantssoil.common.config.ConfigFactory`: Singleton instance to search, load and get configuration via name from all sort of configurations. Could read encrypted configuration value, the variable tagged via ${} also could be read.
+1. `com.plantssoil.common.config.ConfigFactory`: Singleton instance to search, load and get configuration via name from all sort of configurations. Could read encrypted configuration value, the variable enveloped via ${} also could be read.
 2. `com.plantssoil.common.config.LettuceConfiguration`: All configuration name constants.
 3. `com.plantssoil.common.config.ConfigurableLoader`: Some configuration items are Factory classes or Object types (Which implements interface `com.plantssoil.common.config.IConfigurable`), ConfigurableLoader could create singleton or non-singleton instances from configuration item name.
 
@@ -32,7 +32,7 @@ The directory loader, to locate configuration or data directory.
 Also included 2 loader, one for configuration file loader, another for database change log file loader.
 
 ## lettuce-common-httpclient
-As httpclient, used to call API from remote URL.
+As HTTP Client, used to call API from remote URL.
 
 Support 3 kind of clients:
 
@@ -41,7 +41,7 @@ Support 3 kind of clients:
 3. `com.plantssoil.common.httpclient.impl.SignaturedClientNotifier`, use encrypted payload as the signature in header when call remote API.
 
 ## lettuce-common-mq
-Just like a broker, defined universal message publisher & subscriber function.
+As message queue broker, could publish or subscribe messages, no need have any idea of MQ.
 
 1. `com.plantssoil.common.mq.IMessageServiceFactory`, the singleton factory for IMessagePublisher & IMessageSubscriber creation.
 2. `com.plantssoil.common.mq.IMessagePublisher`, could publish messages via this interface, careless MQ type / connection / channel (session).

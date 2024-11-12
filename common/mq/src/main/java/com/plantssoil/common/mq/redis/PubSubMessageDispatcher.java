@@ -22,7 +22,7 @@ import io.lettuce.core.pubsub.RedisPubSubListener;
  * @author danialdy
  * @Date 6 Nov 2024 9:04:36 pm
  */
-public class PubSubMessageDispatcher implements RedisPubSubListener<String, String> {
+class PubSubMessageDispatcher implements RedisPubSubListener<String, String> {
     private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private Map<String, LinkedHashMap<String, List<IMessageListener>>> listeners = new ConcurrentHashMap<>();
     private Map<String, String[]> channelMap = new ConcurrentHashMap<>();

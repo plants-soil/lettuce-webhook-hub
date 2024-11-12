@@ -21,7 +21,7 @@ import io.lettuce.core.codec.RedisCodec;
  * @author danialdy
  * @Date 6 Nov 2024 4:28:19 pm
  */
-public class MessageRedisCodec implements RedisCodec<String, IMessage> {
+class MessageRedisCodec implements RedisCodec<String, IMessage> {
 
     @Override
     public String decodeKey(ByteBuffer bytes) {

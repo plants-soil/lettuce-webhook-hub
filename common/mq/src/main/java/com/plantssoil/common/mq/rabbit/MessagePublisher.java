@@ -13,7 +13,7 @@ import com.rabbitmq.client.Channel;
  * @author danialdy
  * @Date 3 Nov 2024 8:51:37 am
  */
-public class MessagePublisher extends AbstractMessagePublisher {
+class MessagePublisher extends AbstractMessagePublisher {
     private final static String EXCHANGE_NAME = "com.plantssoil.message.exchange";
     private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private ConnectionPool pool;

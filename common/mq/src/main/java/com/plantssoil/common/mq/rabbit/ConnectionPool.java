@@ -39,7 +39,7 @@ import com.rabbitmq.client.ConnectionFactory;
  * @author danialdy
  * @Date 5 Nov 2024 6:05:29 pm
  */
-public class ConnectionPool implements Closeable {
+class ConnectionPool implements Closeable {
     private ConnectionFactory factory;
     private BlockingQueue<PooledConnection> connections;
     private int maxConnections = 18;

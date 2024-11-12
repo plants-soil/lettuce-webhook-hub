@@ -12,7 +12,7 @@ import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
  * @author danialdy
  * @Date 6 Nov 2024 10:04:25 pm
  */
-public class PubSubMessageSubscriber extends AbstractMessageSubscriber {
+class PubSubMessageSubscriber extends AbstractMessageSubscriber {
     private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private RedisPubSubAsyncCommands<String, String> command;
     private PubSubMessageDispatcher dispatcher;

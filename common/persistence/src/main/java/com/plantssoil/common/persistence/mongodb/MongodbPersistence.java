@@ -16,7 +16,7 @@ import com.plantssoil.common.persistence.IPersistence;
  * @author danialdy
  * @Date 9 Nov 2024 10:44:33 am
  */
-public class MongodbPersistence implements IPersistence {
+class MongodbPersistence implements IPersistence {
     private MongoClient mongoClient;
     private ClientSession clientSession;
     private MongoDatabase mongoDatabase;

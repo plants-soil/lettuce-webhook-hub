@@ -1,6 +1,8 @@
 package com.plantssoil.common.mq.redis;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.configuration.Configuration;
 
@@ -29,6 +31,7 @@ public class ListMessageServiceFactory implements IMessageServiceFactory {
     private long connectionTimeout = 30 * 1000;
     private StatefulRedisConnection<String, String> publisherConnection;
     private StatefulRedisConnection<String, String> subscriberConnection;
+    private List<ListMessageSubscriber> subscribers;
 
     /**
      * Constructor<br/>
@@ -60,10 +63,18 @@ public class ListMessageServiceFactory implements IMessageServiceFactory {
         // create subscriber connection
         this.subscriberConnection = this.client.connect();
         this.subscriberConnection.setTimeout(Duration.ofMillis(this.connectionTimeout));
+
+        // create subscriber collection
+        this.subscribers = new ArrayList<>();
     }
 
     @Override
     public void close() throws Exception {
+        if (this.subscribers != null) {
+            for (ListMessageSubscriber subscriber : this.subscribers) {
+                subscriber.stop();
+            }
+        }
         if (this.publisherConnection != null) {
             this.publisherConnection.close();
         }
@@ -80,7 +91,9 @@ public class ListMessageServiceFactory implements IMessageServiceFactory {
 
     @Override
     public IMessageSubscriber createMessageSubscriber() {
-        return new ListMessageSubscriber(this.subscriberConnection.async());
+        ListMessageSubscriber subscriber = new ListMessageSubscriber(this.subscriberConnection.async());
+        this.subscribers.add(subscriber);
+        return subscriber;
     }
 
 }

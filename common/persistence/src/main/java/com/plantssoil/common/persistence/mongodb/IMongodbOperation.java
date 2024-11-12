@@ -16,7 +16,7 @@ import com.mongodb.client.result.UpdateResult;
  * @author danialdy
  * @Date 9 Nov 2024 12:19:39 pm
  */
-public interface IMongodbOperation {
+interface IMongodbOperation {
 
     /**
      * Get the collection which document belongs to

@@ -39,7 +39,7 @@ import liquibase.resource.FileSystemResourceAccessor;
  * @author danialdy
  *
  */
-public abstract class AbstractLiquibaseInitializer implements IInitializer {
+abstract class AbstractLiquibaseInitializer implements IInitializer {
     /**
      * Get Database Connection on which to execute Liquibase database initialization
      * 
