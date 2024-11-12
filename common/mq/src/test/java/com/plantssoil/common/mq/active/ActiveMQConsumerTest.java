@@ -14,18 +14,18 @@ import org.junit.runners.MethodSorters;
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.LettuceConfiguration;
+import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
-import com.plantssoil.common.mq.IMessageSubscriber;
 import com.plantssoil.common.test.TempDirectoryUtility;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ActiveMQSubscriberTest {
+public class ActiveMQConsumerTest {
     public static void main(String[] args) throws Exception {
-        ActiveMQSubscriberTest test = new ActiveMQSubscriberTest();
+        ActiveMQConsumerTest test = new ActiveMQConsumerTest();
         setUpBeforeClass();
-        test.testSubscribeOrganization01();
-        test.testSubscribeOrganization02();
+        test.testConsumeOrganization01();
+        test.testConsumeOrganization02();
         tearDownAfterClass();
     }
 
@@ -55,11 +55,11 @@ public class ActiveMQSubscriberTest {
     }
 
     @Test
-    public void testSubscribeOrganization01() {
+    public void testConsumeOrganization01() {
         for (int i = 0; i < 5; i++) {
-            IMessageSubscriber subscriber = IMessageServiceFactory.getDefaultFactory().createMessageSubscriber();
-            subscriber.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-01").version("V1.0").addMessageListener(new MessageListener());
-            subscriber.subscribe();
+            IMessageConsumer consumer = IMessageServiceFactory.getDefaultFactory().createMessageConsumer();
+            consumer.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-01").version("V1.0").addMessageListener(new MessageListener());
+            consumer.consume();
         }
         try {
             Thread.sleep(1000);
@@ -81,12 +81,12 @@ public class ActiveMQSubscriberTest {
     }
 
     @Test
-    public void testSubscribeOrganization02() {
-        // setup 2 subscribers
+    public void testConsumeOrganization02() {
+        // setup 2 consumers
         for (int i = 5; i < 8; i++) {
-            IMessageSubscriber subscriber = IMessageServiceFactory.getDefaultFactory().createMessageSubscriber();
-            subscriber.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-02").version("V2.0").addMessageListener(new MessageListener());
-            subscriber.subscribe();
+            IMessageConsumer consumer = IMessageServiceFactory.getDefaultFactory().createMessageConsumer();
+            consumer.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-02").version("V2.0").addMessageListener(new MessageListener());
+            consumer.consume();
         }
 
         try {

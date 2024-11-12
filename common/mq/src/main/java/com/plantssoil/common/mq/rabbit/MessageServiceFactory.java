@@ -1,8 +1,8 @@
 package com.plantssoil.common.mq.rabbit;
 
+import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
-import com.plantssoil.common.mq.IMessageSubscriber;
 import com.rabbitmq.client.Channel;
 
 /**
@@ -13,18 +13,18 @@ import com.rabbitmq.client.Channel;
  */
 public class MessageServiceFactory implements IMessageServiceFactory {
     private ConnectionPool publisherPool;
-    private ConnectionPool subscriberPool;
-    private PooledConnection subscriberConnection;
+    private ConnectionPool consumerPool;
+    private PooledConnection consumerConnection;
 
     /**
      * Constructor<br/>
-     * Initialize connection pools for publisher and subscriber<br/>
+     * Initialize connection pools for publisher and consumer<br/>
      */
     public MessageServiceFactory() {
         this.publisherPool = new ConnectionPool();
-        this.subscriberPool = new ConnectionPool();
-        // create initial subscriber connection
-        this.subscriberConnection = this.subscriberPool.getConnection();
+        this.consumerPool = new ConnectionPool();
+        // create initial consumer connection
+        this.consumerConnection = this.consumerPool.getConnection();
     }
 
     @Override
@@ -32,8 +32,8 @@ public class MessageServiceFactory implements IMessageServiceFactory {
         if (publisherPool != null) {
             publisherPool.close();
         }
-        if (subscriberPool != null) {
-            subscriberPool.close();
+        if (consumerPool != null) {
+            consumerPool.close();
         }
     }
 
@@ -44,41 +44,41 @@ public class MessageServiceFactory implements IMessageServiceFactory {
 
     /**
      * Get MQ Channel.<br/>
-     * Subscription Connections & Channels should not be closed, consumer will
-     * ALWAYS listening for incoming message.<br/>
+     * Consumer Connections & Channels should not be closed, consumer will ALWAYS
+     * listening for incoming message.<br/>
      * Consumer will not receive message if Connection/Channel closed.<br/>
      * <br/>
-     * The new subscriber will re-use current connection to create channel.<br/>
-     * Will retrieve new connection from subscriber connection pool if active
-     * channels exceed maximum number configured, and the previous connection will
-     * be returned back into subscriber connection pool.<br/>
+     * The new consumer will re-use current connection to create channel.<br/>
+     * Will create new connection from consumer connection pool if active channels
+     * exceed maximum number configured, and the previous connection will be
+     * returned back into consumer connection pool.<br/>
      * <br/>
-     * The whole subscriber capacity in one JVM should be: max connections * max
+     * The whole consumer capacity in one JVM should be: max connections * max
      * sessions per connection. e.g:<br/>
      * Default configuration: Max Connection: 18, Max Session / Connection: 500<br/>
      * Capacity = 18 * 500 = 9,000<br/>
      * 
      * @return Channel used to consume messages from MQ
      */
-    private Channel getSubscriberChannel() {
-        if (this.subscriberConnection.getActiveChannels() >= this.subscriberPool.getMaxSessionsPerConnection()) {
+    private Channel getConsumerChannel() {
+        if (this.consumerConnection.getActiveChannels() >= this.consumerPool.getMaxSessionsPerConnection()) {
             synchronized (this) {
-                if (this.subscriberConnection.getActiveChannels() >= this.subscriberPool.getMaxSessionsPerConnection()) {
-                    this.subscriberPool.returnConnection(this.subscriberConnection);
-                    this.subscriberConnection = this.subscriberPool.getConnection();
-                    return this.subscriberConnection.createChannel();
+                if (this.consumerConnection.getActiveChannels() >= this.consumerPool.getMaxSessionsPerConnection()) {
+                    this.consumerPool.returnConnection(this.consumerConnection);
+                    this.consumerConnection = this.consumerPool.getConnection();
+                    return this.consumerConnection.createChannel();
                 }
             }
         }
 
-        return this.subscriberConnection.createChannel();
+        return this.consumerConnection.createChannel();
     }
 
     @Override
-    public IMessageSubscriber createMessageSubscriber() {
+    public IMessageConsumer createMessageConsumer() {
         // don't close connection and channel, in order to receive message from server
         // continuously
-        return new MessageSubscriber(getSubscriberChannel());
+        return new MessageConsumer(getConsumerChannel());
     }
 
 }

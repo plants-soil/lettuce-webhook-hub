@@ -5,11 +5,11 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.plantssoil.common.mq.AbstractMessageSubscriber;
+import com.plantssoil.common.mq.AbstractMessageConsumer;
 
 class InMemoryMessageQueue {
     private volatile Map<String, LinkedBlockingQueue<String>> messageQueues;
-    private volatile Map<String, MessageConsumer> messageConsumers;
+    private volatile Map<String, MessageRunnable> messageConsumers;
 
     InMemoryMessageQueue() {
         this.messageQueues = new ConcurrentHashMap<>();
@@ -17,7 +17,7 @@ class InMemoryMessageQueue {
     }
 
     void close() {
-        for (Entry<String, MessageConsumer> consumer : messageConsumers.entrySet()) {
+        for (Entry<String, MessageRunnable> consumer : messageConsumers.entrySet()) {
             consumer.getValue().stop();
         }
         this.messageQueues.clear();
@@ -32,7 +32,7 @@ class InMemoryMessageQueue {
                 if (mq == null) {
                     mq = new LinkedBlockingQueue<>();
                     this.messageQueues.put(queueName, mq);
-                    MessageConsumer messageConsumer = new MessageConsumer(mq);
+                    MessageRunnable messageConsumer = new MessageRunnable(mq);
                     this.messageConsumers.put(queueName, messageConsumer);
                     new Thread(messageConsumer).start();
                 }
@@ -46,9 +46,9 @@ class InMemoryMessageQueue {
         mq.put(message);
     }
 
-    void subscribe(String queueName, AbstractMessageSubscriber subscriber) {
+    void consume(String queueName, AbstractMessageConsumer consumer) {
         getMessageQueue(queueName);
-        MessageConsumer messageConsumer = this.messageConsumers.get(queueName);
-        messageConsumer.addSubscriber(subscriber);
+        MessageRunnable messageConsumer = this.messageConsumers.get(queueName);
+        messageConsumer.addConsumer(consumer);
     }
 }

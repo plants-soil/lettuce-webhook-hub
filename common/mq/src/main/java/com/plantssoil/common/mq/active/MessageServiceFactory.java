@@ -16,9 +16,9 @@ import org.apache.commons.configuration.Configuration;
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.LettuceConfiguration;
+import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
-import com.plantssoil.common.mq.IMessageSubscriber;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 
 /**
@@ -30,10 +30,10 @@ import com.plantssoil.common.mq.exception.MessageQueueException;
  * @Date 3 Nov 2024 8:45:20 am
  */
 public class MessageServiceFactory implements IMessageServiceFactory {
-    private ActiveMQConnectionFactory subscriberFactory;
+    private ActiveMQConnectionFactory consumerFactory;
     private PooledConnectionFactory publisherFactory;
-    private List<Connection> subscriberConnectionPool;
-    private AtomicInteger nextSubscriberSessionIndex = new AtomicInteger(0);
+    private List<Connection> consumerConnectionPool;
+    private AtomicInteger nextConsumerSessionIndex = new AtomicInteger(0);
     private int maxConnections = 18;
     private int maxSessionsPerConnection = 500;
 
@@ -49,13 +49,13 @@ public class MessageServiceFactory implements IMessageServiceFactory {
     public MessageServiceFactory() {
         Configuration configuration = ConfigFactory.getInstance().getConfiguration();
         if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_URI)) {
-            // initialize subscriber & publisher factory
+            // initialize consumer & publisher factory
             String uri = ConfigFactory.getInstance().getConfiguration().getString(LettuceConfiguration.MESSAGE_SERVICE_URI);
-            this.subscriberFactory = new ActiveMQConnectionFactory(uri);
+            this.consumerFactory = new ActiveMQConnectionFactory(uri);
             this.publisherFactory = new PooledConnectionFactory(new ActiveMQConnectionFactory(uri));
 
             // ActiveMQ need the package declaration for security reason
-            this.subscriberFactory.setTrustedPackages(new ArrayList<String>(Arrays.asList("com.plantssoil.common.mq.active".split(","))));
+            this.consumerFactory.setTrustedPackages(new ArrayList<String>(Arrays.asList("com.plantssoil.common.mq.active".split(","))));
         } else {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15004,
                     String.format("Don't find configuration '%s'!", LettuceConfiguration.MESSAGE_SERVICE_URI));
@@ -92,9 +92,9 @@ public class MessageServiceFactory implements IMessageServiceFactory {
             this.publisherFactory.setExpiryTimeout(configuration.getLong(LettuceConfiguration.MESSAGE_SERVICE_EXPIRY_TIMEOUT));
         }
 
-        // initialize subscriber pool and add 1 connection into it
-        this.subscriberConnectionPool = new ArrayList<>();
-        addSubscriberConnection();
+        // initialize consumer pool and add 1 connection into it
+        this.consumerConnectionPool = new ArrayList<>();
+        addConsumerConnection();
     }
 
     @Override
@@ -102,56 +102,56 @@ public class MessageServiceFactory implements IMessageServiceFactory {
         if (this.publisherFactory != null) {
             this.publisherFactory.stop();
         }
-        for (Connection connection : this.subscriberConnectionPool) {
+        for (Connection connection : this.consumerConnectionPool) {
             connection.stop();
             connection.close();
         }
     }
 
-    private void addSubscriberConnection() {
+    private void addConsumerConnection() {
         try {
             // create connection
-            Connection connection = this.subscriberFactory.createConnection();
+            Connection connection = this.consumerFactory.createConnection();
             // Starts (or restarts) a connection's delivery of incoming messages. A call to
             // start on a connection that has already been started is ignored.
             connection.start();
-            this.subscriberConnectionPool.add(connection);
+            this.consumerConnectionPool.add(connection);
         } catch (JMSException e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15005, e);
         }
     }
 
-    private Session getSubscriberSession() {
-        // next subscription session index ++
+    private Session getConsumerSession() {
+        // next consumer session index ++
         // put this on the first line is essential
         // it's atomic to avoid multiple threads mis-determine
-        this.nextSubscriberSessionIndex.incrementAndGet();
+        this.nextConsumerSessionIndex.incrementAndGet();
 
-        if (this.nextSubscriberSessionIndex.get() > this.maxSessionsPerConnection) {
+        if (this.nextConsumerSessionIndex.get() > this.maxSessionsPerConnection) {
             synchronized (this) {
-                if (this.nextSubscriberSessionIndex.get() > this.maxSessionsPerConnection) {
-                    if (this.subscriberConnectionPool.size() >= this.maxConnections) {
+                if (this.nextConsumerSessionIndex.get() > this.maxSessionsPerConnection) {
+                    if (this.consumerConnectionPool.size() >= this.maxConnections) {
                         throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15006,
                                 String.format("Subscriber connections exceed maximium pool size (%d)!", this.maxConnections));
                     }
-                    addSubscriberConnection();
+                    addConsumerConnection();
 
                     // need acquire the first session within the synchronized block
-                    Connection connection = this.subscriberConnectionPool.get(this.subscriberConnectionPool.size() - 1);
+                    Connection connection = this.consumerConnectionPool.get(this.consumerConnectionPool.size() - 1);
                     try {
                         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-                        this.nextSubscriberSessionIndex.getAndSet(1);
+                        this.nextConsumerSessionIndex.getAndSet(1);
                         return session;
                     } catch (JMSException e) {
                         throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15007, e);
                     }
                 } else {
-                    this.nextSubscriberSessionIndex.incrementAndGet();
+                    this.nextConsumerSessionIndex.incrementAndGet();
                 }
             }
         }
 
-        Connection connection = this.subscriberConnectionPool.get(this.subscriberConnectionPool.size() - 1);
+        Connection connection = this.consumerConnectionPool.get(this.consumerConnectionPool.size() - 1);
         try {
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             return session;
@@ -170,8 +170,8 @@ public class MessageServiceFactory implements IMessageServiceFactory {
     }
 
     @Override
-    public IMessageSubscriber createMessageSubscriber() {
-        return new MessageSubscriber(getSubscriberSession());
+    public IMessageConsumer createMessageConsumer() {
+        return new MessageConsumer(getConsumerSession());
     }
 
 }

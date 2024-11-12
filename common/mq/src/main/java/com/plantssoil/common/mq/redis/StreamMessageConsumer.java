@@ -3,7 +3,7 @@ package com.plantssoil.common.mq.redis;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.plantssoil.common.mq.AbstractMessageSubscriber;
+import com.plantssoil.common.mq.AbstractMessageConsumer;
 import com.plantssoil.common.mq.IMessageListener;
 import com.plantssoil.common.mq.SimpleMessage;
 
@@ -12,12 +12,12 @@ import io.lettuce.core.XReadArgs.StreamOffset;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
 
 /**
- * The IMessageSubscriber implementation base on Redis Stream
+ * The IMessageConsumer implementation base on Redis Stream
  * 
  * @author danialdy
  * @Date 6 Nov 2024 10:04:25 pm
  */
-class StreamMessageSubscriber extends AbstractMessageSubscriber {
+class StreamMessageConsumer extends AbstractMessageConsumer {
     private final static String ID_READ_GROUP = "stream-subscriber-group";
     private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private final static String PUBLISHER_ID = "publisherId";
@@ -26,7 +26,7 @@ class StreamMessageSubscriber extends AbstractMessageSubscriber {
     private final static String PAYLOAD = "payload";
     private RedisReactiveCommands<String, String> command;
 
-    protected StreamMessageSubscriber(RedisReactiveCommands<String, String> command) {
+    protected StreamMessageConsumer(RedisReactiveCommands<String, String> command) {
         this.command = command;
     }
 
@@ -37,7 +37,7 @@ class StreamMessageSubscriber extends AbstractMessageSubscriber {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void subscribe() {
+    public void consume() {
         String key = createRoutingKey();
 //        commands.xgroupCreate(StreamOffset.latest(key), ID_READ_GROUP);
 //        commands.xreadgroup(io.lettuce.core.Consumer.from(ID_READ_GROUP, this.getConsumerId()), XReadArgs.Builder.noack(false), StreamOffset.lastConsumed(key))

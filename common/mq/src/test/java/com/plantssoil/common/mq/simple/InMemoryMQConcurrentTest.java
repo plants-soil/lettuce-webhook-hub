@@ -18,7 +18,7 @@ import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
-import com.plantssoil.common.mq.IMessageSubscriber;
+import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.test.TempDirectoryUtility;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -55,12 +55,12 @@ public class InMemoryMQConcurrentTest {
         util.removeTempDirectory();
     }
 
-    private class InnerSubscriber implements Runnable {
+    private class InnerConsumer implements Runnable {
         private int no;
         private String publisherId;
         private String version;
 
-        InnerSubscriber(int no, String publisherId, String version) {
+        InnerConsumer(int no, String publisherId, String version) {
             this.no = no;
             this.publisherId = publisherId;
             this.version = version;
@@ -68,9 +68,9 @@ public class InMemoryMQConcurrentTest {
 
         @Override
         public void run() {
-            IMessageSubscriber subscriber = IMessageServiceFactory.getDefaultFactory().createMessageSubscriber();
-            subscriber.consumerId("Subscriber-" + this.no).publisherId(this.publisherId).version(this.version).addMessageListener(new MessageListener());
-            subscriber.subscribe();
+            IMessageConsumer consumer = IMessageServiceFactory.getDefaultFactory().createMessageConsumer();
+            consumer.consumerId("Subscriber-" + this.no).publisherId(this.publisherId).version(this.version).addMessageListener(new MessageListener());
+            consumer.consume();
         }
     }
 
@@ -98,7 +98,7 @@ public class InMemoryMQConcurrentTest {
     public void testSubscribeOrganization01() {
         ExecutorService es = Executors.newFixedThreadPool(200);
         for (int i = 0; i < 5; i++) {
-            es.submit(new InnerSubscriber(i, "PUBLISHER-ID-01", "V1.0"));
+            es.submit(new InnerConsumer(i, "PUBLISHER-ID-01", "V1.0"));
         }
         // publish message
         for (int i = 0; i < 20; i++) {
@@ -113,7 +113,7 @@ public class InMemoryMQConcurrentTest {
         // setup 2 subscribers
         ExecutorService es = Executors.newFixedThreadPool(200);
         for (int i = 5; i < 8; i++) {
-            es.submit(new InnerSubscriber(i, "PUBLISHER-ID-02", "V2.0"));
+            es.submit(new InnerConsumer(i, "PUBLISHER-ID-02", "V2.0"));
         }
         // publish message
         for (int i = 0; i < 30; i++) {

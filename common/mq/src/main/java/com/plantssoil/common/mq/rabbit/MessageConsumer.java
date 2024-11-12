@@ -2,19 +2,19 @@ package com.plantssoil.common.mq.rabbit;
 
 import java.io.IOException;
 
-import com.plantssoil.common.mq.AbstractMessageSubscriber;
+import com.plantssoil.common.mq.AbstractMessageConsumer;
 import com.plantssoil.common.mq.IMessageListener;
 import com.plantssoil.common.mq.SimpleMessage;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 import com.rabbitmq.client.Channel;
 
 /**
- * The IMessageSubscriber implementation base on Rabbit MQ
+ * The IMessageConsumer implementation base on Rabbit MQ
  * 
  * @author danialdy
  * @Date 3 Nov 2024 8:37:13 pm
  */
-class MessageSubscriber extends AbstractMessageSubscriber {
+class MessageConsumer extends AbstractMessageConsumer {
     private final static String EXCHANGE_NAME = "com.plantssoil.message.exchange";
     private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private Channel channel;
@@ -22,9 +22,9 @@ class MessageSubscriber extends AbstractMessageSubscriber {
     /**
      * Constructor mandatory
      * 
-     * @param channel channel to subscribe messages
+     * @param channel channel to consume messages
      */
-    protected MessageSubscriber(Channel channel) {
+    protected MessageConsumer(Channel channel) {
         this.channel = channel;
     }
 
@@ -38,7 +38,7 @@ class MessageSubscriber extends AbstractMessageSubscriber {
     }
 
     @Override
-    public void subscribe() {
+    public void consume() {
         String routingKey = createRoutingKey();
         // create exchange for every publiserId + version + dataGroup
         try {

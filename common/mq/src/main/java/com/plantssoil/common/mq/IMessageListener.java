@@ -1,7 +1,7 @@
 package com.plantssoil.common.mq;
 
 /**
- * Listen the message comes from subscribed MQ topic<br/>
+ * Listen the message comes from subscribed Message Queue<br/>
  * Will process the messages<br/>
  * 
  * @author danialdy

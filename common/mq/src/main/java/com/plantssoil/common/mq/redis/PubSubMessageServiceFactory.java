@@ -6,9 +6,9 @@ import org.apache.commons.configuration.Configuration;
 
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.LettuceConfiguration;
+import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
-import com.plantssoil.common.mq.IMessageSubscriber;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 
 import io.lettuce.core.RedisClient;
@@ -28,19 +28,19 @@ public class PubSubMessageServiceFactory implements IMessageServiceFactory {
     private RedisClient client;
     private long connectionTimeout = 30 * 1000;
     private StatefulRedisPubSubConnection<String, String> publisherConnection;
-    private StatefulRedisPubSubConnection<String, String> subscriberConnection;
+    private StatefulRedisPubSubConnection<String, String> consumerConnection;
     private PubSubMessageDispatcher messageDispatcher;
 
     /**
      * Constructor<br/>
-     * Initialize connection pools for publisher and subscriber<br/>
+     * Initialize connection pools for publisher and consumer<br/>
      */
     public PubSubMessageServiceFactory() {
         Configuration configuration = ConfigFactory.getInstance().getConfiguration();
 
         // initiate the RedisClient
         if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_URI)) {
-            // initialize subscriber & publisher factory
+            // initialize consumer & publisher factory
             String uri = ConfigFactory.getInstance().getConfiguration().getString(LettuceConfiguration.MESSAGE_SERVICE_URI);
             this.client = RedisClient.create(uri);
         } else {
@@ -48,8 +48,7 @@ public class PubSubMessageServiceFactory implements IMessageServiceFactory {
                     String.format("Don't find configuration '%s'!", LettuceConfiguration.MESSAGE_SERVICE_URI));
         }
         // Sets the connection timeout value for getting Connections and following
-        // Commands in
-        // Milliseconds, defaults to 30 seconds.
+        // commands in milliseconds, defaults to 30 seconds.
         if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_CONNECTION_TIMEOUT)) {
             this.connectionTimeout = configuration.getLong(LettuceConfiguration.MESSAGE_SERVICE_CONNECTION_TIMEOUT);
         }
@@ -58,13 +57,13 @@ public class PubSubMessageServiceFactory implements IMessageServiceFactory {
         this.publisherConnection = this.client.connectPubSub();
         this.publisherConnection.setTimeout(Duration.ofMillis(this.connectionTimeout));
 
-        // create subscriber connection
-        this.subscriberConnection = this.client.connectPubSub();
-        this.subscriberConnection.setTimeout(Duration.ofMillis(this.connectionTimeout));
+        // create consumer connection
+        this.consumerConnection = this.client.connectPubSub();
+        this.consumerConnection.setTimeout(Duration.ofMillis(this.connectionTimeout));
 
-        // add message receiver (dispatcher) on the subscriber connection
+        // add message receiver (dispatcher) on the consumer connection
         this.messageDispatcher = new PubSubMessageDispatcher();
-        this.subscriberConnection.addListener(this.messageDispatcher);
+        this.consumerConnection.addListener(this.messageDispatcher);
     }
 
     @Override
@@ -72,8 +71,8 @@ public class PubSubMessageServiceFactory implements IMessageServiceFactory {
         if (this.publisherConnection != null) {
             this.publisherConnection.close();
         }
-        if (this.subscriberConnection != null) {
-            this.subscriberConnection.close();
+        if (this.consumerConnection != null) {
+            this.consumerConnection.close();
         }
     }
 
@@ -83,8 +82,8 @@ public class PubSubMessageServiceFactory implements IMessageServiceFactory {
     }
 
     @Override
-    public IMessageSubscriber createMessageSubscriber() {
-        return new PubSubMessageSubscriber(this.subscriberConnection.async(), this.messageDispatcher);
+    public IMessageConsumer createMessageConsumer() {
+        return new PubSubMessageConsumer(this.consumerConnection.async(), this.messageDispatcher);
     }
 
 }

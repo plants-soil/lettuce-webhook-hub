@@ -2,15 +2,15 @@ package com.plantssoil.common.mq.active;
 
 import javax.jms.Session;
 
-import com.plantssoil.common.mq.AbstractMessageSubscriber;
+import com.plantssoil.common.mq.AbstractMessageConsumer;
 
 /**
- * The IMessageSubscriber implementation base on Rabbit MQ
+ * The IMessageConsumer implementation base on Rabbit MQ
  * 
  * @author danialdy
  * @Date 3 Nov 2024 8:37:13 pm
  */
-class MessageSubscriber extends AbstractMessageSubscriber {
+class MessageConsumer extends AbstractMessageConsumer {
     private Session session;
 
     /**
@@ -18,12 +18,12 @@ class MessageSubscriber extends AbstractMessageSubscriber {
      * 
      * @param pool
      */
-    protected MessageSubscriber(Session session) {
+    protected MessageConsumer(Session session) {
         this.session = session;
     }
 
     @Override
-    public void subscribe() {
+    public void consume() {
         String queueName = String.format("QUEUE-%s-%s-%s", this.getPublisherId(), this.getVersion(),
                 this.getDataGroup() == null ? "NULL" : this.getDataGroup());
         MessageReceiver mc = new MessageReceiver(this.session, queueName, this.getPublisherId(), this.getVersion(), this.getDataGroup(), this.getConsumerId(),

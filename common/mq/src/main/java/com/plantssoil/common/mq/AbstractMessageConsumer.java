@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The abstract message subscriber which hold publisher id + version + data
- * group + consumer id, and listeners
+ * The abstract message consumer which hold publisher id + version + data group
+ * + consumer id, and listeners
  * 
  * @author danialdy
  * @Date 6 Nov 2024 7:42:02 pm
  */
-public abstract class AbstractMessageSubscriber implements IMessageSubscriber {
+public abstract class AbstractMessageConsumer implements IMessageConsumer {
     private String publisherId;
     private String version;
     private String dataGroup;
@@ -18,31 +18,31 @@ public abstract class AbstractMessageSubscriber implements IMessageSubscriber {
     private List<IMessageListener> listeners = new ArrayList<>();
 
     @Override
-    public IMessageSubscriber publisherId(String publisherId) {
+    public IMessageConsumer publisherId(String publisherId) {
         this.publisherId = publisherId;
         return this;
     }
 
     @Override
-    public IMessageSubscriber version(String version) {
+    public IMessageConsumer version(String version) {
         this.version = version;
         return this;
     }
 
     @Override
-    public IMessageSubscriber dataGroup(String dataGroup) {
+    public IMessageConsumer dataGroup(String dataGroup) {
         this.dataGroup = dataGroup;
         return this;
     }
 
     @Override
-    public IMessageSubscriber addMessageListener(IMessageListener listener) {
+    public IMessageConsumer addMessageListener(IMessageListener listener) {
         this.listeners.add(listener);
         return this;
     }
 
     @Override
-    public IMessageSubscriber consumerId(String consumerId) {
+    public IMessageConsumer consumerId(String consumerId) {
         this.consumerId = consumerId;
         return this;
     }

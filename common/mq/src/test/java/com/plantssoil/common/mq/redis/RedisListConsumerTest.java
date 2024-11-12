@@ -1,4 +1,4 @@
-package com.plantssoil.common.mq.simple;
+package com.plantssoil.common.mq.redis;
 
 import static org.junit.Assert.assertTrue;
 
@@ -16,16 +16,16 @@ import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
-import com.plantssoil.common.mq.IMessageSubscriber;
+import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.test.TempDirectoryUtility;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class InMemoryMQSubscriberTest {
+public class RedisListConsumerTest {
     public static void main(String[] args) throws Exception {
-        InMemoryMQSubscriberTest test = new InMemoryMQSubscriberTest();
+        RedisListConsumerTest test = new RedisListConsumerTest();
         setUpBeforeClass();
-        test.testSubscribeOrganization01();
-        test.testSubscribeOrganization02();
+        test.testConsumeOrganization01();
+        test.testConsumeOrganization02();
         tearDownAfterClass();
     }
 
@@ -37,7 +37,8 @@ public class InMemoryMQSubscriberTest {
         ConfigurableLoader.getInstance().removeSingleton(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE);
 
         Properties p = new Properties();
-        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE, MessageServiceFactory.class.getName());
+        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE, ListMessageServiceFactory.class.getName());
+        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_URI, "redis://192.168.0.116:6379");
 
         try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/" + LettuceConfiguration.CONFIGURATION_FILE_NAME)) {
             p.store(out, "## No comments");
@@ -54,11 +55,11 @@ public class InMemoryMQSubscriberTest {
     }
 
     @Test
-    public void testSubscribeOrganization01() {
+    public void testConsumeOrganization01() {
         for (int i = 0; i < 5; i++) {
-            IMessageSubscriber subscriber = IMessageServiceFactory.getDefaultFactory().createMessageSubscriber();
-            subscriber.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-01").version("V1.0").addMessageListener(new MessageListener());
-            subscriber.subscribe();
+            IMessageConsumer consumer = IMessageServiceFactory.getDefaultFactory().createMessageConsumer();
+            consumer.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-01").version("V1.0").addMessageListener(new MessageListener());
+            consumer.consume();
         }
         try {
             Thread.sleep(1000);
@@ -80,12 +81,12 @@ public class InMemoryMQSubscriberTest {
     }
 
     @Test
-    public void testSubscribeOrganization02() {
+    public void testConsumeOrganization02() {
         // setup 2 subscribers
         for (int i = 5; i < 8; i++) {
-            IMessageSubscriber subscriber = IMessageServiceFactory.getDefaultFactory().createMessageSubscriber();
-            subscriber.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-02").version("V2.0").addMessageListener(new MessageListener());
-            subscriber.subscribe();
+            IMessageConsumer consumer = IMessageServiceFactory.getDefaultFactory().createMessageConsumer();
+            consumer.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-02").version("V2.0").addMessageListener(new MessageListener());
+            consumer.consume();
         }
 
         try {

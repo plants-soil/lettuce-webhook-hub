@@ -7,7 +7,7 @@ import com.plantssoil.common.mq.exception.MessageQueueException;
 
 /**
  * Message service factory, could use this factory to create message publisher /
- * subscriber<br/>
+ * consumer<br/>
  * This factory implements AutoCloseable interface, could release all resources
  * attached in {@link AutoCloseable#close()}
  * 
@@ -23,12 +23,12 @@ public interface IMessageServiceFactory extends IConfigurable, AutoCloseable {
     public IMessagePublisher createMessagePublisher();
 
     /**
-     * create message subscriber (which is used to subscribe message from publisher
-     * + version)
+     * create message consumer (which is used to consume message from publisher +
+     * version)
      * 
-     * @return Message Subscriber instance
+     * @return Message Consumer instance
      */
-    public IMessageSubscriber createMessageSubscriber();
+    public IMessageConsumer createMessageConsumer();
 
     /**
      * Get the default implementation of this factory (which is singleton)<br/>

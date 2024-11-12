@@ -10,7 +10,7 @@
 	
 	<artifactId>lettuce-webhook</artifactId>
 	<packaging>pom</packaging>
-	<name>Webhook Engine</name>
+	<name>Plants Soil Webhook Engine</name>
 	
 	<modules>
 		<module>engine</module>

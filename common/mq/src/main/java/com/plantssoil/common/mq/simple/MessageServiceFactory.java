@@ -2,7 +2,7 @@ package com.plantssoil.common.mq.simple;
 
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
-import com.plantssoil.common.mq.IMessageSubscriber;
+import com.plantssoil.common.mq.IMessageConsumer;
 
 /**
  * This is the default Message Service Factory implementation (for Single JVM),
@@ -31,8 +31,8 @@ public class MessageServiceFactory implements IMessageServiceFactory {
     }
 
     @Override
-    public IMessageSubscriber createMessageSubscriber() {
-        return new MessageSubscriber(messageQueue);
+    public IMessageConsumer createMessageConsumer() {
+        return new MessageConsumer(messageQueue);
     }
 
 }

@@ -566,6 +566,7 @@
 	<modules>
 		<module>common</module>
 		<module>webhook</module>
+		<module>integration</module>
 	</modules>
 
 	<profiles>

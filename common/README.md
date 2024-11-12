@@ -41,12 +41,13 @@ Support 3 kind of clients:
 3. `com.plantssoil.common.httpclient.impl.SignaturedClientNotifier`, use encrypted payload as the signature in header when call remote API.
 
 ## lettuce-common-mq
-As message queue broker, could publish or subscribe messages, no need have any idea of MQ.
+As message queue broker, could publish or consume messages, no need have any idea of MQ.
 
-1. `com.plantssoil.common.mq.IMessageServiceFactory`, the singleton factory for IMessagePublisher & IMessageSubscriber creation.
+1. `com.plantssoil.common.mq.IMessageServiceFactory`, the singleton factory for IMessagePublisher & IMessageConsumer creation.
 2. `com.plantssoil.common.mq.IMessagePublisher`, could publish messages via this interface, careless MQ type / connection / channel (session).
-3. `com.plantssoil.common.mq.IMessageSubscriber`, could subscribe messages via this interface, careless MQ type / connection / channel (session).
-Support RabbitMQ / ActiveMQ / Redis as the MQ service provider.
+3. `com.plantssoil.common.mq.IMessageConsumer`, could consume messages via this interface, careless MQ type / connection / channel (session).
+
+Support In-Memory MQ / RabbitMQ / ActiveMQ / Redis as the MQ service provider.
 
 Example for message publisher:
 
@@ -59,12 +60,12 @@ for (int i = 0; i < 20; i++) {
 }
 ```
 
-Example for message publisher:
+Example for message consumer:
 
 ```java
-IMessageSubscriber subscriber = IMessageServiceFactory.getDefaultFactory().createMessageSubscriber();
-subscriber.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-01").version("V1.0").addMessageListener(new MessageListener());
-subscriber.subscribe();
+IMessageConsumer consumer = IMessageServiceFactory.getDefaultFactory().createMessageConsumer();
+consumer.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-01").version("V1.0").addMessageListener(new MessageListener());
+consumer.consume();
 ```
 
 
