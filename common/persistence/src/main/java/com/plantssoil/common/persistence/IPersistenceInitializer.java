@@ -6,7 +6,7 @@ import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.persistence.exception.PersistenceException;
 
 /**
- * Initializer<br/>
+ * Persistence Initializer<br/>
  * For example: Will execute all DDL to create tables, indexes, constraints,
  * etc. when use RDBMS<br/>
  * For example: Will create indexes or other essential components when use
@@ -16,7 +16,7 @@ import com.plantssoil.common.persistence.exception.PersistenceException;
  * @author danialdy
  *
  */
-public interface IInitializer extends IConfigurable {
+public interface IPersistenceInitializer extends IConfigurable {
     /**
      * Do the initialization<br/>
      * 
@@ -28,12 +28,12 @@ public interface IInitializer extends IConfigurable {
      * 
      * @return new instance of IInitializer
      */
-    public static IInitializer createDefaultInitializer() {
-        IConfigurable configurable = ConfigurableLoader.getInstance().createConfigurable(LettuceConfiguration.RDBMS_INIT_DDL_CONFIGURABLE);
-        if (configurable instanceof IInitializer) {
-            return (IInitializer) configurable;
+    public static IPersistenceInitializer createDefaultInitializer() {
+        IConfigurable configurable = ConfigurableLoader.getInstance().createConfigurable(LettuceConfiguration.PERSISTENCE_INITIALIZER_CONFIGURABLE);
+        if (configurable instanceof IPersistenceInitializer) {
+            return (IPersistenceInitializer) configurable;
         } else {
-            String err = String.format("The class %s don't implements %s!", configurable.getClass().getName(), IInitializer.class.getName());
+            String err = String.format("The class %s don't implements %s!", configurable.getClass().getName(), IPersistenceInitializer.class.getName());
             throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13002, err);
         }
     }

@@ -6,7 +6,7 @@ import java.net.URL;
 import java.sql.Connection;
 
 import com.plantssoil.common.fs.DatabaseChangeLogFileLocator;
-import com.plantssoil.common.persistence.IInitializer;
+import com.plantssoil.common.persistence.IPersistenceInitializer;
 import com.plantssoil.common.persistence.exception.PersistenceException;
 
 import liquibase.Liquibase;
@@ -39,7 +39,7 @@ import liquibase.resource.FileSystemResourceAccessor;
  * @author danialdy
  *
  */
-abstract class AbstractLiquibaseInitializer implements IInitializer {
+abstract class AbstractLiquibaseInitializer implements IPersistenceInitializer {
     /**
      * Get Database Connection on which to execute Liquibase database initialization
      * 

@@ -1,5 +1,7 @@
 package com.plantssoil.webhook.core;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * The webhook engine, the core of webhook<br/>
  * Webhook event producer could register and produce webhook events via this
@@ -23,32 +25,18 @@ public interface IWebhookEngine {
      * 
      * @return publisher registry
      */
-    public IPublisherRegistry getPublisherRegistry();
+    public IWebhookRegistry getRegistry();
 
     /**
-     * Get the subscriber registry<br/>
+     * publish webhook event with payload, the subscribers on the Webhook Event will
+     * receive this event.
      * 
-     * @return subscriber registry
-     */
-    public ISubscriberRegistry getSubscriberRegistry();
-
-    /**
-     * publish webhook event
+     * @param event   the webhook event, which includes all event related
+     *                information
+     * @param payload the business information to publish, mostly defined in JSON or
+     *                XML format
      * 
-     * @param publisherId publisher identity
-     * @param version     webhook version
-     * @param dataGroup   webhook data group
-     * @param event       webhook event
+     * @return completable future (asynchronized, in order to know success or not)
      */
-    public void publish(String publisherId, String version, String dataGroup, IWebhookEvent event);
-
-    /**
-     * subscriber subscribe events from publisher
-     * 
-     * @param subscriberId subscriber identity
-     * @param publisherId  publisher to subscribe
-     * @param version      publisher webhook to subscribe
-     * @param dataGroup    publisher data group to subscribe
-     */
-    public void subscribe(String subscriberId, String publisherId, String version, String dataGroup);
+    public CompletableFuture<Void> publish(IWebhookEvent event, String payload);
 }

@@ -53,6 +53,11 @@ public class LettuceConfiguration {
     public final static String CONFIGURATION_FILE_NAME = "lettuce.properties";
 
     /**
+     * Lettuce webhook engine version
+     */
+    public final static String WEBHOOK_ENGINE_VERSION = "webhook.engine.version";
+
+    /**
      * Persistence Factory Configuration
      */
     public final static String PERSISTENCE_FACTORY_CONFIGURABLE = "persistence.fatory.configurable"; // Persistence Factory Configuration
@@ -113,12 +118,12 @@ public class LettuceConfiguration {
      */
     public final static String PERSISTENCE_DATABASE_POOLSIZE = "persistence.database.poolsize";
 
-    // RDBMS connection related configurations
     /**
-     * RDBMS DDL Configurations to initialize database
+     * Persistence Initializer configuration which is used to initialize database
      */
-    public final static String RDBMS_INIT_DDL_CONFIGURABLE = "rdbms.init.ddl.configurable";
+    public final static String PERSISTENCE_INITIALIZER_CONFIGURABLE = "persistence.initializer.configurable";
 
+    // RDBMS connection related configurations
     /**
      * The RDBMS datasource JNDI naming which used in webserver.<br/>
      * <p>

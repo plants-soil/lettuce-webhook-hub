@@ -1,5 +1,5 @@
 package com.plantssoil.webhook.core;
 
-public interface IPublisherRegistry {
+public interface IWebhookEngineConfig {
 
 }
