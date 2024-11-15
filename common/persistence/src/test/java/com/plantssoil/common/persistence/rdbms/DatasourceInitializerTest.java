@@ -72,8 +72,8 @@ public class DatasourceInitializerTest {
         StringBuilder sb = endDatabaseChangeLog(initTable(new StringBuilder()));
         createFile(util.getSubDirectory("data") + "/lettuce-master.xml", sb);
         createInitTableFile();
-        IPersistenceInitializer.createDefaultInitializer().initialize();
-        try (Connection conn = ((DatasourceInitializer) IPersistenceInitializer.createDefaultInitializer()).getConnection()) {
+        IPersistenceInitializer.createInitializerInstance().initialize();
+        try (Connection conn = ((DatasourceInitializer) IPersistenceInitializer.createInitializerInstance()).getConnection()) {
             java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT * FROM client_info");
             stmt.executeQuery();
             assertTrue(true);
@@ -89,9 +89,9 @@ public class DatasourceInitializerTest {
         createFile(util.getSubDirectory("data") + "/lettuce-master.xml", sb);
         this.createInitTableFile();
         this.createAddTableFile();
-        IPersistenceInitializer.createDefaultInitializer().initialize();
+        IPersistenceInitializer.createInitializerInstance().initialize();
 
-        try (Connection conn = ((DatasourceInitializer) IPersistenceInitializer.createDefaultInitializer()).getConnection()) {
+        try (Connection conn = ((DatasourceInitializer) IPersistenceInitializer.createInitializerInstance()).getConnection()) {
             java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT * FROM client_address");
             stmt.executeQuery();
             assertTrue(true);
@@ -108,9 +108,9 @@ public class DatasourceInitializerTest {
         this.createInitTableFile();
         this.createAddTableFile();
         this.createAddColumnFile();
-        IPersistenceInitializer.createDefaultInitializer().initialize();
+        IPersistenceInitializer.createInitializerInstance().initialize();
 
-        try (Connection conn = ((DatasourceInitializer) IPersistenceInitializer.createDefaultInitializer()).getConnection()) {
+        try (Connection conn = ((DatasourceInitializer) IPersistenceInitializer.createInitializerInstance()).getConnection()) {
             java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT street, line1, line2, line3 FROM client_address");
             stmt.executeQuery();
             assertTrue(true);

@@ -53,9 +53,14 @@ public class LettuceConfiguration {
     public final static String CONFIGURATION_FILE_NAME = "lettuce.properties";
 
     /**
-     * Lettuce webhook engine version
+     * Lettuce Webhook engine version
      */
     public final static String WEBHOOK_ENGINE_VERSION = "webhook.engine.version";
+
+    /**
+     * Lettuce Webhook Engine Factory Configuration
+     */
+    public final static String WEBHOOK_ENGINE_FACTORY_CONFIGURABLE = "webhook.engine.factory.configurable";
 
     /**
      * Persistence Factory Configuration

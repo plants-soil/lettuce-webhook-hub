@@ -2,8 +2,6 @@ package com.plantssoil.common.persistence.mongodb;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.configuration.Configuration;
-
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
@@ -13,6 +11,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.connection.ConnectionPoolSettings;
 import com.plantssoil.common.config.ConfigFactory;
+import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
@@ -32,7 +31,7 @@ public class MongodbPersistenceFactory implements IPersistenceFactory {
     private MongoClient client;
 
     public MongodbPersistenceFactory() {
-        Configuration conf = ConfigFactory.getInstance().getConfiguration();
+        IConfiguration conf = ConfigFactory.getInstance().getConfiguration();
         String url = conf.getString(LettuceConfiguration.PERSISTENCE_DATABASE_URL);
         String username = null;
         if (conf.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_USERNAME)) {
@@ -42,10 +41,7 @@ public class MongodbPersistenceFactory implements IPersistenceFactory {
         if (conf.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_PASSWORD)) {
             password = conf.getString(LettuceConfiguration.PERSISTENCE_DATABASE_PASSWORD);
         }
-        int poolsize = 100;
-        if (conf.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_POOLSIZE)) {
-            poolsize = conf.getInt(LettuceConfiguration.PERSISTENCE_DATABASE_POOLSIZE);
-        }
+        int poolsize = conf.getInt(LettuceConfiguration.PERSISTENCE_DATABASE_POOLSIZE, 100);
         // Mongo DB server API
         ServerApi serverApi = ServerApi.builder().version(ServerApiVersion.V1).build();
         // Mongo DB connection pool settings

@@ -55,7 +55,7 @@ public class MongodbPersistenceTest {
         System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getTempDir());
         ConfigFactory.reload();
 
-        IPersistenceFactory.getDefaultFactory();
+        IPersistenceFactory.getFactoryInstance();
     }
 
     @AfterClass
@@ -96,7 +96,7 @@ public class MongodbPersistenceTest {
         List<String> successful = new ArrayList<String>();
         for (int i = 0; i < 25; i++) {
             Teacher teacher = newTeacherEntity();
-            try (IPersistence persists = IPersistenceFactory.getDefaultFactory().create()) {
+            try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
                 persists.create(teacher);
                 successful.add(teacher.getTeacherId() + ", " + teacher.getTeacherName() + " created.");
             } catch (Exception e) {
@@ -114,7 +114,7 @@ public class MongodbPersistenceTest {
             students.add(newStudentEntity());
         }
 
-        try (IPersistence persists = IPersistenceFactory.getDefaultFactory().create()) {
+        try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
             persists.create(students);
             assertTrue(true);
         } catch (Exception e) {
@@ -126,7 +126,7 @@ public class MongodbPersistenceTest {
     @Test
     public void testUpdateT() {
         List<Teacher> ts = null;
-        try (IPersistence persists = IPersistenceFactory.getDefaultFactory().create()) {
+        try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
             IEntityQuery<Teacher> q = persists.createQuery(Teacher.class).firstResult(0).maxResults(5);
             ts = q.resultList().get();
         } catch (Exception e) {
@@ -138,7 +138,7 @@ public class MongodbPersistenceTest {
         int i = 0;
         for (Teacher t : ts) {
             t.setTeacherName("Teacher" + i);
-            try (IPersistence p = IPersistenceFactory.getDefaultFactory().create()) {
+            try (IPersistence p = IPersistenceFactory.getFactoryInstance().create()) {
                 Teacher updated = p.update(t);
                 futures.add("Teacher name changed to: " + updated.getTeacherName());
             } catch (Exception e) {
@@ -154,7 +154,7 @@ public class MongodbPersistenceTest {
     @Test
     public void testUpdateListOfQ() {
         List<Student> ts = null;
-        try (IPersistence persists = IPersistenceFactory.getDefaultFactory().create()) {
+        try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
             IEntityQuery<Student> q = persists.createQuery(Student.class).firstResult(0).maxResults(5);
             ts = q.resultList().get();
         } catch (Exception e) {
@@ -167,7 +167,7 @@ public class MongodbPersistenceTest {
             i++;
         }
         List<Student> updated = null;
-        try (IPersistence p = IPersistenceFactory.getDefaultFactory().create()) {
+        try (IPersistence p = IPersistenceFactory.getFactoryInstance().create()) {
             updated = (List<Student>) p.update(ts);
         } catch (Exception e) {
             e.printStackTrace();
@@ -179,7 +179,7 @@ public class MongodbPersistenceTest {
     @Test
     public void testRemoveObject() {
         List<Teacher> ts = null;
-        try (IPersistence persists = IPersistenceFactory.getDefaultFactory().create()) {
+        try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
             IEntityQuery<Teacher> q = persists.createQuery(Teacher.class).firstResult(0).maxResults(5);
             ts = q.resultList().get();
         } catch (Exception e) {
@@ -189,7 +189,7 @@ public class MongodbPersistenceTest {
 
         List<String> deleted = new ArrayList<>();
         for (Teacher t : ts) {
-            try (IPersistence p = IPersistenceFactory.getDefaultFactory().create()) {
+            try (IPersistence p = IPersistenceFactory.getFactoryInstance().create()) {
                 p.remove(t);
                 deleted.add(t.getTeacherId() + ", " + t.getTeacherName() + " removed.");
             } catch (Exception e) {
@@ -203,7 +203,7 @@ public class MongodbPersistenceTest {
     @Test
     public void testRemoveListOfQ() {
         List<Student> ts = null;
-        try (IPersistence persists = IPersistenceFactory.getDefaultFactory().create()) {
+        try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
             IEntityQuery<Student> q = persists.createQuery(Student.class).firstResult(0).maxResults(5);
             ts = q.resultList().get();
         } catch (Exception e) {
@@ -211,7 +211,7 @@ public class MongodbPersistenceTest {
             fail(e.getMessage());
         }
 
-        try (IPersistence p = IPersistenceFactory.getDefaultFactory().create()) {
+        try (IPersistence p = IPersistenceFactory.getFactoryInstance().create()) {
             p.remove(ts);
         } catch (Exception e) {
             e.printStackTrace();
@@ -222,7 +222,7 @@ public class MongodbPersistenceTest {
 
     @Test
     public void testCreateQuery() {
-        try (IPersistence persists = IPersistenceFactory.getDefaultFactory().create()) {
+        try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
             IEntityQuery<Student> query = persists.createQuery(Student.class);
             CompletableFuture<List<Student>> students = query.filter("studentName", IEntityQuery.FilterOperator.like, "Student-1.")
                     .filter("gender", IEntityQuery.FilterOperator.equals, Student.Gender.Female).firstResult(0).maxResults(5).resultList();

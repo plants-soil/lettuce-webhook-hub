@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>io.plantssoil</groupId>
+	<groupId>com.plantssoil</groupId>
 	<artifactId>lettuce</artifactId>
 	<version>${version.parent}</version>
 	<packaging>pom</packaging>
@@ -55,6 +55,7 @@
 		<!-- DDL -->
 		<version.liquibase>4.16.1</version.liquibase>
 		<!-- Dependencies -->
+		<version.slf4j-api>2.0.13</version.slf4j-api>
 		<version.reactive-streams>1.0.4</version.reactive-streams>
 		<version.reactor-core>3.6.6</version.reactor-core>
 		<version.hibernate>5.3.36.Final</version.hibernate>
@@ -77,42 +78,42 @@
 		<dependencies>
 			<!-- Internal Projects -->
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-exception</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-test</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-filesystem</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-security</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-config</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-persistence</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-httpclient</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-mq</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
@@ -177,6 +178,11 @@
 			</dependency>
 
 			<!-- Apache commons configuration -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${version.slf4j-api}</version>
+			</dependency>
 			<dependency>
 				<groupId>commons-configuration</groupId>
 				<artifactId>commons-configuration</artifactId>

@@ -11,10 +11,10 @@ import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.pool.PooledConnectionFactory;
-import org.apache.commons.configuration.Configuration;
 
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.ConfigurableLoader;
+import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessagePublisher;
@@ -34,20 +34,17 @@ public class MessageServiceFactory implements IMessageServiceFactory {
     private PooledConnectionFactory publisherFactory;
     private List<Connection> consumerConnectionPool;
     private AtomicInteger nextConsumerSessionIndex = new AtomicInteger(0);
-    private int maxConnections = 18;
-    private int maxSessionsPerConnection = 500;
+    private int maxConnections;
+    private int maxSessionsPerConnection;
 
     /**
      * Constructor<br/>
      * Need setup the configuration {@link LettuceConfiguration#MESSAGE_SERVICE_URI}
      * first<br/>
      * Could setup the MQ connection pool size via configuration
-     * ({@link LettuceConfiguration#MESSAGE_SERVICE_POOL_MAXSIZE} [default 18],
-     * {@link LettuceConfiguration#MESSAGE_SERVICE_POOL_MAXIDLE} [default 6],
-     * {@link LettuceConfiguration#MESSAGE_SERVICE_POOL_MINIDLE} [default 2])
      */
     public MessageServiceFactory() {
-        Configuration configuration = ConfigFactory.getInstance().getConfiguration();
+        IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
         if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_URI)) {
             // initialize consumer & publisher factory
             String uri = ConfigFactory.getInstance().getConfiguration().getString(LettuceConfiguration.MESSAGE_SERVICE_URI);
@@ -58,39 +55,29 @@ public class MessageServiceFactory implements IMessageServiceFactory {
             this.consumerFactory.setTrustedPackages(new ArrayList<String>(Arrays.asList("com.plantssoil.common.mq.active".split(","))));
         } else {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15004,
-                    String.format("Don't find configuration '%s'!", LettuceConfiguration.MESSAGE_SERVICE_URI));
+                    String.format("Can't find configuration '%s'!", LettuceConfiguration.MESSAGE_SERVICE_URI));
         }
 
-        // max pooled connections
-        if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_MAX_CONNECTIONS)) {
-            this.maxConnections = configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_MAX_CONNECTIONS);
-        }
+        // max pooled connections, defaults to 18
+        this.maxConnections = configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_MAX_CONNECTIONS, 18);
         this.publisherFactory.setMaxConnections(this.maxConnections);
 
-        // max sessions per connection
-        if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_MAX_SESSIONS_PER_CONNECTION)) {
-            this.maxSessionsPerConnection = configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_MAX_SESSIONS_PER_CONNECTION);
-        }
+        // max sessions per connection, defaults to 500
+        this.maxSessionsPerConnection = configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_MAX_SESSIONS_PER_CONNECTION, 500);
         this.publisherFactory.setMaximumActiveSessionPerConnection(this.maxSessionsPerConnection);
 
         // Sets the connection timeout value for getting Connections from this pool in
         // Milliseconds,defaults to 30 seconds.
-        if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_CONNECTION_TIMEOUT)) {
-            this.publisherFactory.setConnectionTimeout(configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_CONNECTION_TIMEOUT));
-        }
+        this.publisherFactory.setConnectionTimeout(configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_CONNECTION_TIMEOUT, 30 * 1000));
 
         // Sets the idle timeout value for Connection's that are created by this pool in
         // Milliseconds,defaults to 30 seconds.
-        if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_IDLE_TIMEOUT)) {
-            this.publisherFactory.setIdleTimeout(configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_IDLE_TIMEOUT));
-        }
+        this.publisherFactory.setIdleTimeout(configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_IDLE_TIMEOUT, 30 * 1000));
 
         // allow connections to expire, irrespective of load or idle time. This is
         // useful with failover to force a reconnect from the pool, to reestablish load
         // balancing or use of the master post recovery
-        if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_EXPIRY_TIMEOUT)) {
-            this.publisherFactory.setExpiryTimeout(configuration.getLong(LettuceConfiguration.MESSAGE_SERVICE_EXPIRY_TIMEOUT));
-        }
+        this.publisherFactory.setExpiryTimeout(configuration.getLong(LettuceConfiguration.MESSAGE_SERVICE_EXPIRY_TIMEOUT, 30 * 1000));
 
         // initialize consumer pool and add 1 connection into it
         this.consumerConnectionPool = new ArrayList<>();

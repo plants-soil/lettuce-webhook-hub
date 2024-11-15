@@ -8,9 +8,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.configuration.Configuration;
-
 import com.plantssoil.common.config.ConfigFactory;
+import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 import com.rabbitmq.client.ConnectionFactory;
@@ -42,16 +41,16 @@ import com.rabbitmq.client.ConnectionFactory;
 class ConnectionPool implements Closeable {
     private ConnectionFactory factory;
     private BlockingQueue<PooledConnection> connections;
-    private int maxConnections = 18;
-    private int maxSessionsPerConnection = 500;
-    private int connectionTimeout = 30 * 1000;
+    private int maxConnections;
+    private int maxSessionsPerConnection;
+    private int connectionTimeout;
     private boolean closed = false;
 
     /**
      * Constructor of the pool
      */
     public ConnectionPool() {
-        Configuration configuration = ConfigFactory.getInstance().getConfiguration();
+        IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
 
         // initiate the connection factory
         if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_URI)) {
@@ -72,22 +71,16 @@ class ConnectionPool implements Closeable {
                     String.format("Don't find configuration '%s'!", LettuceConfiguration.MESSAGE_SERVICE_URI));
         }
 
-        // max pooled connections
-        if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_MAX_CONNECTIONS)) {
-            this.maxConnections = configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_MAX_CONNECTIONS);
-        }
+        // max pooled connections, defaults to 18
+        this.maxConnections = configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_MAX_CONNECTIONS, 18);
 
-        // max sessions per connection
-        if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_MAX_SESSIONS_PER_CONNECTION)) {
-            this.maxSessionsPerConnection = configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_MAX_SESSIONS_PER_CONNECTION);
-        }
+        // max sessions per connection, defaults to 500
+        this.maxSessionsPerConnection = configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_MAX_SESSIONS_PER_CONNECTION, 500);
 
         // Sets the connection timeout value for getting Connections from this pool in
         // Milliseconds,defaults to 30 seconds.
-        if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_CONNECTION_TIMEOUT)) {
-            this.connectionTimeout = configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_CONNECTION_TIMEOUT);
-            this.factory.setConnectionTimeout(this.connectionTimeout);
-        }
+        this.connectionTimeout = configuration.getInt(LettuceConfiguration.MESSAGE_SERVICE_CONNECTION_TIMEOUT, 30 * 1000);
+        this.factory.setConnectionTimeout(this.connectionTimeout);
 
         this.connections = new LinkedBlockingQueue<>(this.maxConnections);
         for (int i = 0; i < this.maxConnections; i++) {

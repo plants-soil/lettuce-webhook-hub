@@ -37,7 +37,7 @@ public interface IMessageServiceFactory extends IConfigurable, AutoCloseable {
      * 
      * @return Singleton instance of {@link IMessageServiceFactory}
      */
-    public static IMessageServiceFactory getDefaultFactory() {
+    public static IMessageServiceFactory getFactoryInstance() {
         IConfigurable configurable = ConfigurableLoader.getInstance().createSingleton(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE);
         if (configurable instanceof IMessageServiceFactory) {
             return (IMessageServiceFactory) configurable;

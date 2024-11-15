@@ -2,9 +2,8 @@ package com.plantssoil.common.mq.redis;
 
 import java.time.Duration;
 
-import org.apache.commons.configuration.Configuration;
-
 import com.plantssoil.common.config.ConfigFactory;
+import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessagePublisher;
@@ -26,7 +25,7 @@ import io.lettuce.core.api.StatefulRedisConnection;
  */
 public class StreamMessageServiceFactory implements IMessageServiceFactory {
     private RedisClient client;
-    private long connectionTimeout = 30 * 1000;
+    private long connectionTimeout;
     private StatefulRedisConnection<String, String> publisherConnection;
     private StatefulRedisConnection<String, String> consumerConnection;
 
@@ -35,7 +34,7 @@ public class StreamMessageServiceFactory implements IMessageServiceFactory {
      * Initialize connection pools for publisher and consumer<br/>
      */
     public StreamMessageServiceFactory() {
-        Configuration configuration = ConfigFactory.getInstance().getConfiguration();
+        IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
 
         // initiate the RedisClient
         if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_URI)) {
@@ -48,9 +47,7 @@ public class StreamMessageServiceFactory implements IMessageServiceFactory {
         }
         // Sets the connection timeout value for getting Connections and following
         // commands in milliseconds, defaults to 30 seconds.
-        if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_CONNECTION_TIMEOUT)) {
-            this.connectionTimeout = configuration.getLong(LettuceConfiguration.MESSAGE_SERVICE_CONNECTION_TIMEOUT);
-        }
+        this.connectionTimeout = configuration.getLong(LettuceConfiguration.MESSAGE_SERVICE_CONNECTION_TIMEOUT, 30 * 1000);
 
         // create publisher connection
         this.publisherConnection = this.client.connect();

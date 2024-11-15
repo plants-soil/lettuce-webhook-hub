@@ -47,7 +47,7 @@ public class InMemoryMQConcurrentTest {
         System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getTempDir());
         ConfigFactory.reload();
 
-        IMessageServiceFactory.getDefaultFactory();
+        IMessageServiceFactory.getFactoryInstance();
     }
 
     @AfterClass
@@ -68,7 +68,7 @@ public class InMemoryMQConcurrentTest {
 
         @Override
         public void run() {
-            IMessageConsumer consumer = IMessageServiceFactory.getDefaultFactory().createMessageConsumer();
+            IMessageConsumer consumer = IMessageServiceFactory.getFactoryInstance().createMessageConsumer();
             consumer.consumerId("Subscriber-" + this.no).publisherId(this.publisherId).version(this.version).addMessageListener(new MessageListener());
             consumer.consume();
         }
@@ -87,7 +87,7 @@ public class InMemoryMQConcurrentTest {
 
         @Override
         public void run() {
-            IMessagePublisher publisher = IMessageServiceFactory.getDefaultFactory().createMessagePublisher();
+            IMessagePublisher publisher = IMessageServiceFactory.getFactoryInstance().createMessagePublisher();
             publisher.publisherId(this.publisherId).version(this.version);
             String message = String.format("This is the %d message comes from %s (%s)", this.sequence, this.publisherId, this.version);
             publisher.publish(message);

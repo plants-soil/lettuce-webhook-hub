@@ -28,7 +28,7 @@ public interface IPersistenceInitializer extends IConfigurable {
      * 
      * @return new instance of IInitializer
      */
-    public static IPersistenceInitializer createDefaultInitializer() {
+    public static IPersistenceInitializer createInitializerInstance() {
         IConfigurable configurable = ConfigurableLoader.getInstance().createConfigurable(LettuceConfiguration.PERSISTENCE_INITIALIZER_CONFIGURABLE);
         if (configurable instanceof IPersistenceInitializer) {
             return (IPersistenceInitializer) configurable;

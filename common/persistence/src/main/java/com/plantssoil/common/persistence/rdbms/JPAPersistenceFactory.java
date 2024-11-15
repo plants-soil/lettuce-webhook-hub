@@ -7,9 +7,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import org.apache.commons.configuration.Configuration;
-
 import com.plantssoil.common.config.ConfigFactory;
+import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
@@ -122,7 +121,7 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
             return getDataConnectionProperties(this.databaseConnectionConfig);
         }
 
-        Configuration configuration = ConfigFactory.getInstance().getConfiguration();
+        IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
         if (configuration.containsKey(LettuceConfiguration.RDBMS_DATASOURCE)) {
             return getDataSourceProperties(configuration.getString(LettuceConfiguration.RDBMS_DATASOURCE));
         } else {
@@ -165,7 +164,7 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
     }
 
     private DatabaseConnectionConfig getEngineDatabaseConnectionConfig() {
-        Configuration conf = ConfigFactory.getInstance().getConfiguration();
+        IConfiguration conf = ConfigFactory.getInstance().getConfiguration();
         String driver = conf.getString(LettuceConfiguration.RDBMS_DATABASE_DRIVER);
         String url = conf.getString(LettuceConfiguration.PERSISTENCE_DATABASE_URL);
         String username = null;
@@ -176,14 +175,8 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
         if (conf.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_PASSWORD)) {
             password = conf.getString(LettuceConfiguration.PERSISTENCE_DATABASE_PASSWORD);
         }
-        int poolsize = 20;
-        if (conf.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_POOLSIZE)) {
-            poolsize = conf.getInt(LettuceConfiguration.PERSISTENCE_DATABASE_POOLSIZE);
-        }
-        boolean showsql = false;
-        if (conf.containsKey(LettuceConfiguration.RDBMS_DATABASE_SHOWSQL)) {
-            showsql = conf.getBoolean(LettuceConfiguration.RDBMS_DATABASE_SHOWSQL);
-        }
+        int poolsize = conf.getInt(LettuceConfiguration.PERSISTENCE_DATABASE_POOLSIZE, 20);
+        boolean showsql = conf.getBoolean(LettuceConfiguration.RDBMS_DATABASE_SHOWSQL, false);
         DatabaseConnectionConfig dbconfig = new DatabaseConnectionConfig(driver, url, username, password);
         dbconfig.setConnectionPoolSize(poolsize);
         dbconfig.setShowSql(showsql);

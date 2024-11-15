@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.MapConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -121,7 +120,7 @@ public class ConfigFactory {
      * 
      * @return Configuration Object
      */
-    public Configuration getConfiguration() {
-        return configuration;
+    public IConfiguration getConfiguration() {
+        return new ConfigurationDelegate(configuration);
     }
 }

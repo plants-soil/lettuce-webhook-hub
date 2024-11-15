@@ -24,7 +24,7 @@ public interface IPersistenceFactory extends IConfigurable, AutoCloseable {
      * 
      * @return default implementation singleton
      */
-    public static IPersistenceFactory getDefaultFactory() {
+    public static IPersistenceFactory getFactoryInstance() {
         IConfigurable configurable = ConfigurableLoader.getInstance().createSingleton(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE);
         if (configurable instanceof IPersistenceFactory) {
             return (IPersistenceFactory) configurable;

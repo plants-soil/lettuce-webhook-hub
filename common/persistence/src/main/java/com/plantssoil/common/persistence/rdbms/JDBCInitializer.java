@@ -4,9 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.apache.commons.configuration.Configuration;
-
 import com.plantssoil.common.config.ConfigFactory;
+import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.persistence.exception.PersistenceException;
 
@@ -24,7 +23,7 @@ public class JDBCInitializer extends AbstractLiquibaseInitializer {
     private String password;
 
     public JDBCInitializer() {
-        Configuration config = ConfigFactory.getInstance().getConfiguration();
+        IConfiguration config = ConfigFactory.getInstance().getConfiguration();
         if (config.containsKey(LettuceConfiguration.RDBMS_DATABASE_DRIVER)) {
             this.driverClass = config.getString(LettuceConfiguration.RDBMS_DATABASE_DRIVER);
         }

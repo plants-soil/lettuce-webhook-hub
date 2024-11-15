@@ -53,7 +53,7 @@ public class JPAPersistenceDatasourceTest {
         System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getTempDir());
         ConfigFactory.reload();
 
-        IPersistenceFactory.getDefaultFactory();
+        IPersistenceFactory.getFactoryInstance();
     }
 
     @AfterClass
@@ -63,36 +63,36 @@ public class JPAPersistenceDatasourceTest {
 
     @Test
     public void test1CreateObject() {
-        test.testCreate(IPersistenceFactory.getDefaultFactory());
+        test.testCreate(IPersistenceFactory.getFactoryInstance());
     }
 
     @Test
     public void test2CreateListOfQ() {
-        test.testCreateList(IPersistenceFactory.getDefaultFactory());
+        test.testCreateList(IPersistenceFactory.getFactoryInstance());
     }
 
     @Test
     public void test3UpdateT() {
-        test.testUpdate(IPersistenceFactory.getDefaultFactory());
+        test.testUpdate(IPersistenceFactory.getFactoryInstance());
     }
 
     @Test
     public void test4UpdateListOfT() {
-        test.testUpdateList(IPersistenceFactory.getDefaultFactory());
+        test.testUpdateList(IPersistenceFactory.getFactoryInstance());
     }
 
     @Test
     public void test5RemoveObject() {
-        test.testRemove(IPersistenceFactory.getDefaultFactory());
+        test.testRemove(IPersistenceFactory.getFactoryInstance());
     }
 
     @Test
     public void test6RemoveListOfQ() {
-        test.testRemoveList(IPersistenceFactory.getDefaultFactory());
+        test.testRemoveList(IPersistenceFactory.getFactoryInstance());
     }
 
     @Test
     public void test7QueryStudent() {
-        test.testEntityQuery(IPersistenceFactory.getDefaultFactory());
+        test.testEntityQuery(IPersistenceFactory.getFactoryInstance());
     }
 }

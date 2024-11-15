@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>io.plantssoil</groupId>
+		<groupId>com.plantssoil</groupId>
 		<artifactId>lettuce-common</artifactId>
 		<version>${version.parent}</version>
 	</parent>
@@ -15,7 +15,7 @@
 	<dependencies>
 		<!-- Internal Dependencies -->
 		<dependency>
-			<groupId>io.plantssoil</groupId>
+			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-common-exception</artifactId>
 			<scope>compile</scope>
 		</dependency>
@@ -27,7 +27,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.plantssoil</groupId>
+			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-common-test</artifactId>
 			<scope>compile</scope>
 		</dependency>

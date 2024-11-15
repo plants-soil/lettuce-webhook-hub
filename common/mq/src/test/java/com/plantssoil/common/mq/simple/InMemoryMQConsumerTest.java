@@ -45,7 +45,7 @@ public class InMemoryMQConsumerTest {
         System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getTempDir());
         ConfigFactory.reload();
 
-        IMessageServiceFactory.getDefaultFactory();
+        IMessageServiceFactory.getFactoryInstance();
     }
 
     @AfterClass
@@ -56,7 +56,7 @@ public class InMemoryMQConsumerTest {
     @Test
     public void testConsumeOrganization01() {
         for (int i = 0; i < 5; i++) {
-            IMessageConsumer consumer = IMessageServiceFactory.getDefaultFactory().createMessageConsumer();
+            IMessageConsumer consumer = IMessageServiceFactory.getFactoryInstance().createMessageConsumer();
             consumer.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-01").version("V1.0").addMessageListener(new MessageListener());
             consumer.consume();
         }
@@ -66,7 +66,7 @@ public class InMemoryMQConsumerTest {
             e.printStackTrace();
         }
         // publish message
-        IMessagePublisher publisher = IMessageServiceFactory.getDefaultFactory().createMessagePublisher();
+        IMessagePublisher publisher = IMessageServiceFactory.getFactoryInstance().createMessagePublisher();
         publisher.publisherId("PUBLISHER-ID-01").version("V1.0");
         for (int i = 0; i < 20; i++) {
             publisher.publish("This is the " + i + " message comes from PUBLISHER-ID-01 (V1.0)");
@@ -83,7 +83,7 @@ public class InMemoryMQConsumerTest {
     public void testConsumeOrganization02() {
         // setup 2 subscribers
         for (int i = 5; i < 8; i++) {
-            IMessageConsumer consumer = IMessageServiceFactory.getDefaultFactory().createMessageConsumer();
+            IMessageConsumer consumer = IMessageServiceFactory.getFactoryInstance().createMessageConsumer();
             consumer.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-02").version("V2.0").addMessageListener(new MessageListener());
             consumer.consume();
         }
@@ -94,7 +94,7 @@ public class InMemoryMQConsumerTest {
             e.printStackTrace();
         }
         // publish message
-        IMessagePublisher publisher = IMessageServiceFactory.getDefaultFactory().createMessagePublisher();
+        IMessagePublisher publisher = IMessageServiceFactory.getFactoryInstance().createMessagePublisher();
         publisher.publisherId("PUBLISHER-ID-02").version("V2.0");
         for (int i = 0; i < 30; i++) {
             publisher.publish("This is the " + i + " message comes from PUBLISHER-ID-02 (V2.0)");
