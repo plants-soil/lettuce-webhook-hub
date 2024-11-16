@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 
-public class PlainClientNotifierTest {
+public class SignaturedHttpPosterTest {
 
     @Test
     public void testPostNotification() {
@@ -22,8 +22,11 @@ public class PlainClientNotifierTest {
         String messageId = "msg_p5jXN8AQM9LWM0D4loKWxJek";
         String payload = "{\"test\": 2432232314}";
 
-        PlainClientNotifier notifier = new PlainClientNotifier();
-        CompletableFuture<HttpResponse<String>> future = notifier.postNotification(url, headers, messageId, payload, (HttpResponse<String> response) -> {
+        SignaturedHttpPoster notifier = new SignaturedHttpPoster();
+        notifier.setSecretKey("MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw");
+
+        CompletableFuture<HttpResponse<String>> future = notifier.post(url, headers, messageId, payload);
+        future.thenAccept(response -> {
             System.out.println(response.statusCode());
             System.out.println(response.body());
         });
@@ -47,8 +50,8 @@ public class PlainClientNotifierTest {
 
     private Map<String, String> createTestHeaders() {
         Map<String, String> headers = new HashMap<>();
-        headers.put("X-webhook-plain01", "X-webhook-value01");
-        headers.put("X-webhook-plain02", "X-webhook-value02");
+        headers.put("X-webhook-signatured01", "X-webhook-value01");
+        headers.put("X-webhook-signatured02", "X-webhook-value02");
         return headers;
     }
 

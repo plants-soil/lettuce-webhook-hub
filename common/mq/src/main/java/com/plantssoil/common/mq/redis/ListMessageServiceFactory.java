@@ -4,6 +4,9 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
@@ -26,6 +29,7 @@ import io.lettuce.core.api.StatefulRedisConnection;
  * @Date 6 Nov 2024 3:44:21 pm
  */
 public class ListMessageServiceFactory implements IMessageServiceFactory {
+    private final static Logger LOGGER = LoggerFactory.getLogger(ListMessageServiceFactory.class.getName());
     private RedisClient client;
     private long connectionTimeout;
     private StatefulRedisConnection<String, String> publisherConnection;
@@ -37,6 +41,7 @@ public class ListMessageServiceFactory implements IMessageServiceFactory {
      * Initialize connection pools for publisher and consumer<br/>
      */
     public ListMessageServiceFactory() {
+        LOGGER.info("Loading Redis List as the message service...");
         IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
 
         // initiate the RedisClient
@@ -62,6 +67,7 @@ public class ListMessageServiceFactory implements IMessageServiceFactory {
 
         // create consumers collection
         this.consumers = new ArrayList<>();
+        LOGGER.info("Redis List connected and loaded.");
     }
 
     @Override

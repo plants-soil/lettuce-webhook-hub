@@ -47,7 +47,7 @@ public class MongodbPersistenceTest {
         Properties p = new Properties();
         p.setProperty(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE, MongodbPersistenceFactory.class.getName());
         p.setProperty(LettuceConfiguration.PERSISTENCE_DATABASE_URL,
-                "mongodb://lettuce:lettuce20241101@192.168.0.116:27017/?retryWrites=false&retryReads=false");
+                "mongodb://lettuce:lettuce20241101@192.168.0.67:27017/?retryWrites=false&retryReads=false");
 
         try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/" + LettuceConfiguration.CONFIGURATION_FILE_NAME)) {
             p.store(out, "## No comments");

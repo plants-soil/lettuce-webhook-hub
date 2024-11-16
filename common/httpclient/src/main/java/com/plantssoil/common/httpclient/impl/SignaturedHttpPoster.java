@@ -11,7 +11,7 @@ import com.plantssoil.common.security.Sha512HmacEncrypter;
  * @author danialdy
  * @Date 26 Oct 2024 10:01:18 am
  */
-public class SignaturedClientNotifier extends AbstractClientNotifier {
+public class SignaturedHttpPoster extends AbstractHttpPoster {
     private String secretKey;
 
     /**

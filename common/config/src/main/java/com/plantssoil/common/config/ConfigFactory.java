@@ -11,6 +11,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.MapConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.interpol.ConfigurationInterpolator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.plantssoil.common.config.configuration.SystemEnvConfiguration;
 import com.plantssoil.common.config.configuration.SystemPropertiesConfiguration;
@@ -29,10 +31,12 @@ import com.plantssoil.common.security.KeyStoreEncrypter;
  *
  */
 public class ConfigFactory {
+    private final static Logger LOGGER = LoggerFactory.getLogger(ConfigFactory.class.getName());
     private CompositeConfiguration configuration;
     private static volatile ConfigFactory instance;
 
     private ConfigFactory() {
+        LOGGER.info("Loading configuration...");
         ConfigurationInterpolator.registerGlobalLookup("env", new EnvLookup()); //$NON-NLS-1$
         ConfigurationInterpolator.registerGlobalLookup("crypt", new CryptLookup()); //$NON-NLS-1$
 
@@ -55,6 +59,7 @@ public class ConfigFactory {
                 throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12011, e);
             }
         }
+        LOGGER.info("Configuration loaded.");
     }
 
     private URL getConfigurationPropertyFile() {
@@ -111,6 +116,7 @@ public class ConfigFactory {
     public static ConfigFactory reload() {
         synchronized (ConfigFactory.class) {
             instance = new ConfigFactory();
+            LOGGER.info("Configuration reloaded.");
         }
         return instance;
     }

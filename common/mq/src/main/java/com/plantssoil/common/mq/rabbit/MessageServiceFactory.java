@@ -1,5 +1,8 @@
 package com.plantssoil.common.mq.rabbit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
@@ -12,6 +15,7 @@ import com.rabbitmq.client.Channel;
  * @Date 3 Nov 2024 8:45:20 am
  */
 public class MessageServiceFactory implements IMessageServiceFactory {
+    private final static Logger LOGGER = LoggerFactory.getLogger(MessageServiceFactory.class.getName());
     private ConnectionPool publisherPool;
     private ConnectionPool consumerPool;
     private PooledConnection consumerConnection;
@@ -21,10 +25,12 @@ public class MessageServiceFactory implements IMessageServiceFactory {
      * Initialize connection pools for publisher and consumer<br/>
      */
     public MessageServiceFactory() {
+        LOGGER.info("Loading RabbitMQ as the message service...");
         this.publisherPool = new ConnectionPool();
         this.consumerPool = new ConnectionPool();
         // create initial consumer connection
         this.consumerConnection = this.consumerPool.getConnection();
+        LOGGER.info("RabbitMQ connected and loaded.");
     }
 
     @Override
@@ -64,9 +70,13 @@ public class MessageServiceFactory implements IMessageServiceFactory {
         if (this.consumerConnection.getActiveChannels() >= this.consumerPool.getMaxSessionsPerConnection()) {
             synchronized (this) {
                 if (this.consumerConnection.getActiveChannels() >= this.consumerPool.getMaxSessionsPerConnection()) {
+                    LOGGER.info("Current Rabbit MQ connection fulled with channels(%d), creating new connection...",
+                            this.consumerPool.getMaxSessionsPerConnection());
                     this.consumerPool.returnConnection(this.consumerConnection);
                     this.consumerConnection = this.consumerPool.getConnection();
-                    return this.consumerConnection.createChannel();
+                    Channel channel = this.consumerConnection.createChannel();
+                    LOGGER.info("Created session on the new connection.");
+                    return channel;
                 }
             }
         }

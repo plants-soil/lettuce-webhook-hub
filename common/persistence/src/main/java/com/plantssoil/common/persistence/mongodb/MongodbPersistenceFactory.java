@@ -2,6 +2,9 @@ package com.plantssoil.common.persistence.mongodb;
 
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
@@ -27,10 +30,12 @@ import com.plantssoil.common.persistence.IPersistenceFactory;
  * @Date 8 Nov 2024 1:18:35 pm
  */
 public class MongodbPersistenceFactory implements IPersistenceFactory {
+    private final static Logger LOGGER = LoggerFactory.getLogger(MongodbPersistenceFactory.class.getName());
     public final static String DATABASE_NAME = "lettucedb";
     private MongoClient client;
 
     public MongodbPersistenceFactory() {
+        LOGGER.info("Loading and connectiong Mongodb as the persistence service...");
         IConfiguration conf = ConfigFactory.getInstance().getConfiguration();
         String url = conf.getString(LettuceConfiguration.PERSISTENCE_DATABASE_URL);
         String username = null;
@@ -57,6 +62,7 @@ public class MongodbPersistenceFactory implements IPersistenceFactory {
         }
         // Create a new client and connect to the server
         this.client = MongoClients.create(settingsBuilder.build());
+        LOGGER.info("Mongodb connected and loaded.");
     }
 
     @Override

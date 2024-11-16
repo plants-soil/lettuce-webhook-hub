@@ -11,9 +11,11 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
-import com.plantssoil.common.httpclient.IClientNotifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.plantssoil.common.httpclient.IHttpPoster;
 
 /**
  * will prepare the request and do the remote call
@@ -21,7 +23,8 @@ import com.plantssoil.common.httpclient.IClientNotifier;
  * @author danialdy
  * @Date 25 Oct 2024 10:16:10 pm
  */
-public abstract class AbstractClientNotifier implements IClientNotifier {
+public abstract class AbstractHttpPoster implements IHttpPoster {
+    protected final static Logger LOGGER = LoggerFactory.getLogger(AbstractHttpPoster.class.getName());
     protected final static String HEADER_WEBHOOK_ID = "webhook-id";
     protected final static String HEADER_WEBHOOK_TIMESTAMP = "webhook-timestamp";
     protected final static String HEADER_WEBHOOK_SIGNATURE = "webhook-signature";
@@ -41,10 +44,13 @@ public abstract class AbstractClientNotifier implements IClientNotifier {
     }
 
     @Override
-    public CompletableFuture<HttpResponse<String>> postNotification(String url, Map<String, String> headers, String messageId, String payload,
-            Consumer<? super HttpResponse<String>> action) {
+    public CompletableFuture<HttpResponse<String>> post(String url, Map<String, String> headers, String messageId, String payload) {
         // call the preparation
         beforePost(url, headers, messageId, payload);
+        if (LOGGER.isInfoEnabled()) {
+            String info = String.format("beforePost(url[%s], headers, messageId[%s], payload[%s]) completed.", url, messageId, payload);
+            LOGGER.info(info);
+        }
 
         // build http client
         HttpClient client = HttpClient.newBuilder().followRedirects(Redirect.NORMAL).connectTimeout(Duration.ofSeconds(30)).proxy(ProxySelector.getDefault())
@@ -57,11 +63,12 @@ public abstract class AbstractClientNotifier implements IClientNotifier {
         }
 
         // call remote url async
-        CompletableFuture<HttpResponse<String>> completableResponse = client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
-        completableResponse.thenAccept((HttpResponse<String> response) -> {
-            action.accept(response);
-        });
-        return completableResponse;
+        CompletableFuture<HttpResponse<String>> future = client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Sent request messageId[%s] to url[%s].", messageId, url);
+        }
+
+        return future;
     }
 
 }

@@ -5,6 +5,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Connection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.plantssoil.common.fs.DatabaseChangeLogFileLocator;
 import com.plantssoil.common.persistence.IPersistenceInitializer;
 import com.plantssoil.common.persistence.exception.PersistenceException;
@@ -40,6 +43,8 @@ import liquibase.resource.FileSystemResourceAccessor;
  *
  */
 abstract class AbstractLiquibaseInitializer implements IPersistenceInitializer {
+    private final static Logger LOGGER = LoggerFactory.getLogger(AbstractLiquibaseInitializer.class.getName());
+
     /**
      * Get Database Connection on which to execute Liquibase database initialization
      * 
@@ -76,6 +81,7 @@ abstract class AbstractLiquibaseInitializer implements IPersistenceInitializer {
 
     @Override
     public void initialize() {
+        LOGGER.info("Connecting and loading JDBC to initialize RDBMS...");
         String changeLogFileWithFullPath = getChangeLogFile();
         int lastSeperator = changeLogFileWithFullPath.lastIndexOf(File.separator);
         String path = changeLogFileWithFullPath.substring(0, lastSeperator);

@@ -1,8 +1,11 @@
 package com.plantssoil.common.mq.simple;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
-import com.plantssoil.common.mq.IMessageConsumer;
 
 /**
  * This is the default Message Service Factory implementation (for Single JVM),
@@ -14,10 +17,13 @@ import com.plantssoil.common.mq.IMessageConsumer;
  * @Date 11 Nov 2024 8:12:20 pm
  */
 public class MessageServiceFactory implements IMessageServiceFactory {
+    private final static Logger LOGGER = LoggerFactory.getLogger(MessageServiceFactory.class.getName());
     private InMemoryMessageQueue messageQueue;
 
     public MessageServiceFactory() {
+        LOGGER.info("Initializing InMemory Message Queue as the message service...");
         this.messageQueue = new InMemoryMessageQueue();
+        LOGGER.info("InMemory Message Queue initialized.");
     }
 
     @Override

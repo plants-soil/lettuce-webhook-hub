@@ -8,7 +8,7 @@ import java.util.Map;
  * @author danialdy
  * @Date 26 Oct 2024 9:02:28 am
  */
-public class PlainClientNotifier extends AbstractClientNotifier {
+public class BlankHttpPoster extends AbstractHttpPoster {
 
     @Override
     protected void beforePost(String url, Map<String, String> headers, String messageId, String payload) {

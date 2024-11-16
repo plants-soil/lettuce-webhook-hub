@@ -14,9 +14,9 @@ import org.junit.runners.MethodSorters;
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.LettuceConfiguration;
+import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
-import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.test.TempDirectoryUtility;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -38,7 +38,7 @@ public class RedisListConsumerTest {
 
         Properties p = new Properties();
         p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE, ListMessageServiceFactory.class.getName());
-        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_URI, "redis://192.168.0.116:6379");
+        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_URI, "redis://192.168.0.67:6379");
 
         try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/" + LettuceConfiguration.CONFIGURATION_FILE_NAME)) {
             p.store(out, "## No comments");

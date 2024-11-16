@@ -10,7 +10,7 @@ import com.plantssoil.common.httpclient.exception.HttpClientException;
  * @author danialdy
  * @Date 25 Oct 2024 10:48:34 pm
  */
-public class FixedKeyClientNotifier extends AbstractClientNotifier {
+public class FixedKeyHttpPoster extends AbstractHttpPoster {
     private String accessToken;
 
     /**

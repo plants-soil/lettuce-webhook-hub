@@ -11,6 +11,8 @@ import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.pool.PooledConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.ConfigurableLoader;
@@ -30,6 +32,7 @@ import com.plantssoil.common.mq.exception.MessageQueueException;
  * @Date 3 Nov 2024 8:45:20 am
  */
 public class MessageServiceFactory implements IMessageServiceFactory {
+    private final static Logger LOGGER = LoggerFactory.getLogger(MessageServiceFactory.class.getName());
     private ActiveMQConnectionFactory consumerFactory;
     private PooledConnectionFactory publisherFactory;
     private List<Connection> consumerConnectionPool;
@@ -44,6 +47,7 @@ public class MessageServiceFactory implements IMessageServiceFactory {
      * Could setup the MQ connection pool size via configuration
      */
     public MessageServiceFactory() {
+        LOGGER.info("Loading ActiveMQ as the message service...");
         IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
         if (configuration.containsKey(LettuceConfiguration.MESSAGE_SERVICE_URI)) {
             // initialize consumer & publisher factory
@@ -82,6 +86,7 @@ public class MessageServiceFactory implements IMessageServiceFactory {
         // initialize consumer pool and add 1 connection into it
         this.consumerConnectionPool = new ArrayList<>();
         addConsumerConnection();
+        LOGGER.info("ActiveMQ connected and loaded.");
     }
 
     @Override
@@ -121,6 +126,7 @@ public class MessageServiceFactory implements IMessageServiceFactory {
                         throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15006,
                                 String.format("Subscriber connections exceed maximium pool size (%d)!", this.maxConnections));
                     }
+                    LOGGER.info("Current Active MQ connection fulled with sessions(%d), creating new connection...", this.maxSessionsPerConnection);
                     addConsumerConnection();
 
                     // need acquire the first session within the synchronized block
@@ -128,6 +134,7 @@ public class MessageServiceFactory implements IMessageServiceFactory {
                     try {
                         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
                         this.nextConsumerSessionIndex.getAndSet(1);
+                        LOGGER.info("Created session on the new connection.");
                         return session;
                     } catch (JMSException e) {
                         throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15007, e);

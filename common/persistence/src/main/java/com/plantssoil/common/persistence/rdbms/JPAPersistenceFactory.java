@@ -7,6 +7,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
@@ -23,6 +26,7 @@ import com.plantssoil.common.persistence.IPersistenceFactory;
  *
  */
 public class JPAPersistenceFactory implements IPersistenceFactory {
+    private final static Logger LOGGER = LoggerFactory.getLogger(JPAPersistenceFactory.class.getName());
     private String persistenceUnitName;
     private String datasourceName;
     private DatabaseConnectionConfig databaseConnectionConfig;
@@ -96,8 +100,10 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
         if (this.entityManagerFactory == null) {
             synchronized (this) {
                 if (this.entityManagerFactory == null) {
+                    LOGGER.info("Loading and connectiong RDBMS JPA as the persistence service...");
                     Map<String, String> connectionProperties = getConnectionProperties();
                     this.entityManagerFactory = Persistence.createEntityManagerFactory(getPersistenceUnitName(), connectionProperties);
+                    LOGGER.info("RDBMS connected and loaded.");
                 }
             }
         }
