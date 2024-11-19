@@ -38,11 +38,22 @@ public interface IWebhookRegistry {
     public CompletableFuture<Void> subscribe(String subscriberId, List<IWebhookEvent> events);
 
     /**
+     * Find all publishers, could pagination the result
+     * 
+     * @param page     page no
+     * @param pageSize how many items on current page (the maximum items return)
+     * 
+     * @return completable future (asynchronized) with the publisher list
+     */
+    public CompletableFuture<List<IWebhookPublisher>> findPublishers(int page, int pageSize);
+
+    /**
      * Find the webhooks of one publisher, could pagination the result
      * 
      * @param publisherId publisher id
      * @param page        page no
      * @param pageSize    how many items on current page (the maximum items return)
+     * 
      * @return completable future (asynchronized) with the webhook list
      */
     public CompletableFuture<List<IWebhookEvent>> findWebhooks(String publisherId, int page, int pageSize);
@@ -53,6 +64,7 @@ public interface IWebhookRegistry {
      * @param webhook  webhook definition
      * @param page     page no
      * @param pageSize how many items on current page (the maximum items return)
+     * 
      * @return completable future (asynchronized) with the subscriber list
      */
     public CompletableFuture<List<IWebhookSubscriber>> findSubscribers(IWebhookEvent webhook, int page, int pageSize);

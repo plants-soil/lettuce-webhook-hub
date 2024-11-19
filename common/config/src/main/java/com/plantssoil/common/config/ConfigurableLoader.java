@@ -97,7 +97,11 @@ public class ConfigurableLoader {
     }
 
     private IConfigurable createConfigurable(String configName, boolean singleton) {
-        String clazzName = ConfigFactory.getInstance().getConfiguration().getString(configName);
+        IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
+        if (!configuration.containsKey(configName)) {
+            return null;
+        }
+        String clazzName = configuration.getString(configName);
         if (clazzName == null || clazzName.strip().length() == 0) {
             throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12001, "Can't find the configuration: " + configName);
         }

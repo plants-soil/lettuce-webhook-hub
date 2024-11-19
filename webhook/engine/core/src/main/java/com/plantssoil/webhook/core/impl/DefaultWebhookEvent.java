@@ -3,6 +3,7 @@ package com.plantssoil.webhook.core.impl;
 import com.plantssoil.webhook.core.IWebhookEvent;
 
 public class DefaultWebhookEvent implements IWebhookEvent {
+    private static final long serialVersionUID = -260484714382405368L;
 
     @Override
     public String getPublisherId() {

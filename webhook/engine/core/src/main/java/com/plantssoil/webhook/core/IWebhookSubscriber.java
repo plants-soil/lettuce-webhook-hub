@@ -8,17 +8,16 @@ import java.util.Map;
  * @author danialdy
  * @Date 13 Nov 2024 1:43:39 pm
  */
-public interface IWebhookSubscriber {
+public interface IWebhookSubscriber extends IOrganization {
     /**
      * The Security Strategy<br/>
      * <ul>
      * <li>{@link SecurityStrategy#SIGNATURE} - Will generate signature in header
-     * when callback subscriber ({@link IWebhookSubscriber#getWebhookUrl()})</li>
+     * when callback subscriber ({@link IOrganization#getWebhookUrl()})</li>
      * <li>{@link SecurityStrategy#TOKEN} - Will add the secret key as signature in
-     * header when callback subscriber
-     * ({@link IWebhookSubscriber#getWebhookUrl()})</li>
+     * header when callback subscriber ({@link IOrganization#getWebhookUrl()})</li>
      * <li>{@link SecurityStrategy#NONE} - Won't add signature in header when
-     * callback subscriber ({@link IWebhookSubscriber#getWebhookUrl()})</li>
+     * callback subscriber ({@link IOrganization#getWebhookUrl()})</li>
      * </ul>
      * 
      * @author danialdy
@@ -29,37 +28,11 @@ public interface IWebhookSubscriber {
     }
 
     /**
-     * The subscriber identity
-     * 
-     * @return subscriber id
-     */
-    public String getSubscriberId();
-
-    /**
      * The subscriber app identity, may subscriber has multiple Applications
      * 
      * @return subscriber app id
      */
     public String getSubscriberAppId();
-
-    /**
-     * The secret key which is used to be Token or generate signature<br/>
-     * <p>
-     * This key will be as the token which is added in callback request
-     * ({@link IWebhookSubscriber#getWebhookUrl()}) http header, if subscriber
-     * choose {@link SecurityStrategy#TOKEN} as the security strategy
-     * ({@link IWebhookSubscriber#getSecurityStrategy()})
-     * </p>
-     * <p>
-     * The key is used to generate signature, the signature will be added in
-     * callback request ({@link IWebhookSubscriber#getWebhookUrl()}) http header, if
-     * subscriber choose {@link SecurityStrategy#SIGNATURE} as the security strategy
-     * ({@link IWebhookSubscriber#getSecurityStrategy()})
-     * </p>
-     * 
-     * @return secret key
-     */
-    public String getSecretKey();
 
     /**
      * The security strategy subscriber chosen<br/>
@@ -90,12 +63,4 @@ public interface IWebhookSubscriber {
      *         value
      */
     public Map<String, String> getCustomizedHeaders();
-
-    /**
-     * The trusted IP list, if the callback URL domain is not one of the trusted,
-     * will fail to callback
-     * 
-     * @return trusted IP list
-     */
-    public String[] getTrustedIps();
 }

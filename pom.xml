@@ -117,6 +117,12 @@
 				<artifactId>lettuce-common-mq</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
+			
+			<dependency>
+				<groupId>com.plantssoil</groupId>
+				<artifactId>lettuce-webhook-engine-beans</artifactId>
+				<version>${version.parent}</version>
+			</dependency>
 
 			<!-- External Projects -->
 			<!-- JMS -->

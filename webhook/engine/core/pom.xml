@@ -11,6 +11,7 @@
 	<name>Webhook Engine Core</name>
 
 	<dependencies>
+		<!-- Internal Dependencies -->
 		<dependency>
 			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-common-exception</artifactId>
@@ -18,6 +19,23 @@
 		<dependency>
 			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-common-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-common-persistence</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-common-mq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-common-httpclient</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-webhook-engine-beans</artifactId>
 		</dependency>
 	</dependencies>
 </project>

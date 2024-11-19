@@ -31,12 +31,14 @@ public interface IWebhookEngine {
      * publish webhook event with payload, the subscribers on the Webhook Event will
      * receive this event.
      * 
-     * @param event   the webhook event, which includes all event related
-     *                information
-     * @param payload the business information to publish, mostly defined in JSON or
-     *                XML format
+     * @param event     the webhook event, which includes all event related
+     *                  information
+     * @param requestId the identifier of one specific request, will be considered
+     *                  as duplicated request if requests have same requestId
+     * @param payload   the business information to publish, mostly defined in JSON
+     *                  or XML format
      * 
      * @return completable future (asynchronized, in order to know success or not)
      */
-    public CompletableFuture<Void> publish(IWebhookEvent event, String payload);
+    public CompletableFuture<Void> publish(IWebhookEvent event, String requestId, String payload);
 }

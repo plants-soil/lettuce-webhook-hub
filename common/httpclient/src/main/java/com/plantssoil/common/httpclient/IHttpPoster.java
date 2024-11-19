@@ -18,11 +18,12 @@ public interface IHttpPoster {
      *                  method)
      * @param headers   headerName and value, additional headers for special
      *                  customer needs (not mandatory)
-     * @param messageId Message ID (Webhook ID), this is the unique id for client
-     *                  side to avoid duplicated consume the message
+     * @param requestId Request ID (post as Webhook ID in header), this is the
+     *                  unique id for client side to avoid duplicated consume the
+     *                  message
      * @param payload   request payload string (xml, json, etc)
      * 
      * @return HttpResponse client response completableFuture
      */
-    public CompletableFuture<HttpResponse<String>> post(String url, Map<String, String> headers, String messageId, String payload);
+    public CompletableFuture<HttpResponse<String>> post(String url, Map<String, String> headers, String requestId, String payload);
 }

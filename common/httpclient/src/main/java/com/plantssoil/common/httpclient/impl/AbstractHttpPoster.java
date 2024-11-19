@@ -35,20 +35,20 @@ public abstract class AbstractHttpPoster implements IHttpPoster {
      * @param url       remote client url
      * @param headers   headers will post to client (could add additional headers if
      *                  needed)
-     * @param messageId unique message id, which client side will use to avoid
-     *                  duplication
+     * @param requestId unique request id, which client side will use to avoid
+     *                  duplication (post as webhook id in header)
      * @param payload   original request payload string (maybe JSON or XML), should
      *                  not be changed
      */
-    protected void beforePost(final String url, Map<String, String> headers, final String messageId, final String payload) {
+    protected void beforePost(final String url, Map<String, String> headers, final String requestId, final String payload) {
     }
 
     @Override
-    public CompletableFuture<HttpResponse<String>> post(String url, Map<String, String> headers, String messageId, String payload) {
+    public CompletableFuture<HttpResponse<String>> post(String url, Map<String, String> headers, String requestId, String payload) {
         // call the preparation
-        beforePost(url, headers, messageId, payload);
+        beforePost(url, headers, requestId, payload);
         if (LOGGER.isInfoEnabled()) {
-            String info = String.format("beforePost(url[%s], headers, messageId[%s], payload[%s]) completed.", url, messageId, payload);
+            String info = String.format("beforePost(url[%s], headers, requestId[%s], payload[%s]) completed.", url, requestId, payload);
             LOGGER.info(info);
         }
 
@@ -65,7 +65,7 @@ public abstract class AbstractHttpPoster implements IHttpPoster {
         // call remote url async
         CompletableFuture<HttpResponse<String>> future = client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
         if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Sent request messageId[%s] to url[%s].", messageId, url);
+            LOGGER.info("Sent request requestId[%s] to url[%s].", requestId, url);
         }
 
         return future;

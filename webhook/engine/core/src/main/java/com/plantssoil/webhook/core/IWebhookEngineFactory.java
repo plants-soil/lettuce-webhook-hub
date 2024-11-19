@@ -6,8 +6,19 @@ import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.webhook.core.exception.EngineException;
 
 /**
- * Factory for creating the wehook engine<br/>
+ * Factory for creating the webhook engine<br/>
  * Should have singleton IWebhookEngineFactory instance in one JVM<br/>
+ * Could get the singleton instance just call the static factory method of this
+ * class {@link IWebhookEngineFactory#getFactoryInstance()}<br/>
+ * e.g:
+ * 
+ * <pre>
+ * <code>
+ *   IWebhookEngineFactory factory = IWebhookEngineFactory.getFactoryInstance();
+ *   IWebhookEngine engine = factory.getWebhookEngine();
+ *   ...
+ * </code>
+ * </pre>
  * 
  * @author danialdy
  * @Date 12 Nov 2024 1:09:34 pm

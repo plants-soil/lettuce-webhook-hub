@@ -23,9 +23,9 @@ public class FixedKeyHttpPoster extends AbstractHttpPoster {
     }
 
     @Override
-    protected void beforePost(String url, Map<String, String> headers, String messageId, String payload) {
-        super.beforePost(url, headers, messageId, payload);
-        headers.put(HEADER_WEBHOOK_ID, messageId);
+    protected void beforePost(String url, Map<String, String> headers, String requestId, String payload) {
+        super.beforePost(url, headers, requestId, payload);
+        headers.put(HEADER_WEBHOOK_ID, requestId);
         headers.put(HEADER_WEBHOOK_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
         if (this.accessToken != null) {
             headers.put(HEADER_WEBHOOK_SIGNATURE, this.accessToken);
