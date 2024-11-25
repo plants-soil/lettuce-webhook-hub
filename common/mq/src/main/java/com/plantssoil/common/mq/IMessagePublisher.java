@@ -12,7 +12,7 @@ package com.plantssoil.common.mq;
  * @author danialdy
  * @Date 1 Nov 2024 4:48:32 pm
  */
-public interface IMessagePublisher {
+public interface IMessagePublisher<T> {
     /**
      * Provide the identity of publisher, (mandatory)<br/>
      * Which is used to create MQ Queue (with version, and data group)<br/>
@@ -25,7 +25,7 @@ public interface IMessagePublisher {
      * @see IMessagePublisher#version(String)
      * @see IMessagePublisher#dataGroup(String)
      */
-    public IMessagePublisher publisherId(String publisherId);
+//    public IMessagePublisher<T> publisherId(String publisherId);
 
     /**
      * Provide the version of publisher, (mandatory)<br/>
@@ -37,7 +37,7 @@ public interface IMessagePublisher {
      * @see IMessagePublisher#publisherId(String)
      * @see IMessagePublisher#dataGroup(String)
      */
-    public IMessagePublisher version(String version);
+//    public IMessagePublisher<T> version(String version);
 
     /**
      * Provide the data group of publisher, (NOT mandatory)<br/>
@@ -49,10 +49,10 @@ public interface IMessagePublisher {
      * @see IMessagePublisher#publisherId(String)
      * @see IMessagePublisher#version(String)
      */
-    public IMessagePublisher dataGroup(String dataGroup);
+//    public IMessagePublisher<T> dataGroup(String dataGroup);
 
     /**
-     * Send message to message queue<br/>
+     * Send string message to message queue<br/>
      * This Publisher will choose which channel should be used to send message by
      * {@link IMessagePublisher#publisherId()} + {@link IMessagePublisher#version()}
      * + {@link IMessagePublisher#dataGroup()}<br/>
@@ -61,5 +61,25 @@ public interface IMessagePublisher {
      * 
      * @param message informations to be sent
      */
-    public void publish(String message);
+//    public void publish(String message);
+
+    /**
+     * The queue name to be used to send message
+     * 
+     * @param queueName queue name
+     * @return current publisher instance
+     */
+    public IMessagePublisher<T> queueName(String queueName);
+
+    /**
+     * Send object message to message queue<br/>
+     * This Publisher will choose which channel should be used to send message by
+     * {@link IMessagePublisher#publisherId()} + {@link IMessagePublisher#version()}
+     * + {@link IMessagePublisher#dataGroup()}<br/>
+     * Subscribers should subscribe messages from different organization + version +
+     * dataGroup binding<br/>
+     * 
+     * @param message object to be sent
+     */
+    public void publish(T message);
 }

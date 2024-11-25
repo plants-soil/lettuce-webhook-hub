@@ -63,6 +63,11 @@ public class LettuceConfiguration {
     public final static String WEBHOOK_ENGINE_FACTORY_CONFIGURABLE = "webhook.engine.factory.configurable";
 
     /**
+     * Lettuce Webhook Engine Registry Configuration
+     */
+    public final static String WEBHOOK_ENGINE_REGISTRY_CONFIGURABLE = "webhook.engine.registry.configurable";
+
+    /**
      * Persistence Factory Configuration
      */
     public final static String PERSISTENCE_FACTORY_CONFIGURABLE = "persistence.fatory.configurable"; // Persistence Factory Configuration

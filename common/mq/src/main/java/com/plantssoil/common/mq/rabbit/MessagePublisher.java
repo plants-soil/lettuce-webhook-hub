@@ -3,6 +3,7 @@ package com.plantssoil.common.mq.rabbit;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+import com.plantssoil.common.io.ObjectJsonSerializer;
 import com.plantssoil.common.mq.AbstractMessagePublisher;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 import com.rabbitmq.client.Channel;
@@ -13,9 +14,9 @@ import com.rabbitmq.client.Channel;
  * @author danialdy
  * @Date 3 Nov 2024 8:51:37 am
  */
-class MessagePublisher extends AbstractMessagePublisher {
+class MessagePublisher<T> extends AbstractMessagePublisher<T> {
     private final static String EXCHANGE_NAME = "com.plantssoil.message.exchange";
-    private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
+//    private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private ConnectionPool pool;
     private PooledConnection connection;
 
@@ -30,10 +31,10 @@ class MessagePublisher extends AbstractMessagePublisher {
         this.pool.returnConnection(this.connection);
     }
 
-    private String createRoutingKey() {
-        return String.format("%s%s%s%s%s", this.getPublisherId(), ROUTING_KEY_SEPARATOR, this.getVersion(), ROUTING_KEY_SEPARATOR,
-                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
-    }
+//    private String createRoutingKey() {
+//        return String.format("%s%s%s%s%s", this.getPublisherId(), ROUTING_KEY_SEPARATOR, this.getVersion(), ROUTING_KEY_SEPARATOR,
+//                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
+//    }
 
     /**
      * Get MQ channel from connection<br/>
@@ -59,15 +60,15 @@ class MessagePublisher extends AbstractMessagePublisher {
     }
 
     @Override
-    public void publish(String message) {
-        if (this.getPublisherId() == null || this.getVersion() == null) {
-            throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15008, "The [publisherId] or [version] should not be null!");
+    public void publish(T message) {
+        if (getQueueName() == null) {
+            throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15008, "The [queueName] should not be null!");
         }
         try (Channel channel = this.getChannel()) {
             // create exchange for every publiserId + version
-            String routingKey = createRoutingKey();
+            String routingKey = getQueueName();
             channel.exchangeDeclare(EXCHANGE_NAME, "direct");
-            channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"));
+            channel.basicPublish(EXCHANGE_NAME, routingKey, null, ObjectJsonSerializer.getInstance().serialize(message).getBytes("UTF-8"));
         } catch (IOException e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15009, e);
         } catch (TimeoutException e) {

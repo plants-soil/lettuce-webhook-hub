@@ -2,9 +2,9 @@ package com.plantssoil.common.mq.rabbit;
 
 import java.io.IOException;
 
+import com.plantssoil.common.io.ObjectJsonSerializer;
 import com.plantssoil.common.mq.AbstractMessageConsumer;
 import com.plantssoil.common.mq.IMessageListener;
-import com.plantssoil.common.mq.SimpleMessage;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 import com.rabbitmq.client.Channel;
 
@@ -14,9 +14,9 @@ import com.rabbitmq.client.Channel;
  * @author danialdy
  * @Date 3 Nov 2024 8:37:13 pm
  */
-class MessageConsumer extends AbstractMessageConsumer {
+class MessageConsumer<T> extends AbstractMessageConsumer<T> {
     private final static String EXCHANGE_NAME = "com.plantssoil.message.exchange";
-    private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
+//    private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private Channel channel;
 
     /**
@@ -28,24 +28,22 @@ class MessageConsumer extends AbstractMessageConsumer {
         this.channel = channel;
     }
 
-    protected String createRoutingKey() {
-        return String.format("%s%s%s%s%s", this.getPublisherId(), ROUTING_KEY_SEPARATOR, this.getVersion(), ROUTING_KEY_SEPARATOR,
-                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
-    }
+//    protected String createRoutingKey() {
+//        return String.format("%s%s%s%s%s", this.getPublisherId(), ROUTING_KEY_SEPARATOR, this.getVersion(), ROUTING_KEY_SEPARATOR,
+//                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
+//    }
 
-    protected String[] decreateRoutingKey(String routingKey) {
-        return routingKey.split(ROUTING_KEY_SEPARATOR);
-    }
+//    protected String[] decreateRoutingKey(String routingKey) {
+//        return routingKey.split(ROUTING_KEY_SEPARATOR);
+//    }
 
     @Override
-    public void consume() {
-        String routingKey = createRoutingKey();
-        // create exchange for every publiserId + version + dataGroup
+    public void consume(Class<T> clazz) {
+        String routingKey = getQueueName();
         try {
             this.channel.exchangeDeclare(EXCHANGE_NAME, "direct");
             // declare queue and bind with exchange
-            String queueName = String.format("QUEUE-%s-%s-%s", this.getPublisherId(), this.getVersion(),
-                    this.getDataGroup() == null ? "NULL" : this.getDataGroup());
+            String queueName = getQueueName();
             this.channel.queueDeclare(queueName, false, false, false, null);
             this.channel.queueBind(queueName, EXCHANGE_NAME, routingKey);
 
@@ -60,10 +58,9 @@ class MessageConsumer extends AbstractMessageConsumer {
 
             // consume message with auto-ack
             this.channel.basicConsume(queueName, true, this.getConsumerId(), (consumerTag, message) -> {
-                SimpleMessage msg = new SimpleMessage(this.getPublisherId(), this.getVersion(), this.getDataGroup(), this.getConsumerId(),
-                        new String(message.getBody(), "UTF-8"));
-                for (IMessageListener listener : this.getListeners()) {
-                    listener.onMessage(msg);
+                T msg = ObjectJsonSerializer.getInstance().unserialize(new String(message.getBody(), "UTF-8"), clazz);
+                for (IMessageListener<T> listener : getListeners()) {
+                    listener.onMessage(msg, getConsumerId());
                 }
             }, (consumerTag) -> {
             });

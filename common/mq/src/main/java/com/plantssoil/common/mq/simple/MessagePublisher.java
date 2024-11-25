@@ -9,17 +9,16 @@ import com.plantssoil.common.mq.exception.MessageQueueException;
  * @author danialdy
  * @Date 11 Nov 2024 10:37:19 pm
  */
-class MessagePublisher extends AbstractMessagePublisher {
-    private InMemoryMessageQueue messageQueue;
+class MessagePublisher<T> extends AbstractMessagePublisher<T> {
+    private InMemoryMessageQueue<T> messageQueue;
 
-    MessagePublisher(InMemoryMessageQueue messageQueue) {
+    MessagePublisher(InMemoryMessageQueue<T> messageQueue) {
         this.messageQueue = messageQueue;
     }
 
     @Override
-    public void publish(String message) {
-        String queueName = String.format("QUEUE-%s-%s-%s", this.getPublisherId(), this.getVersion(),
-                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
+    public void publish(T message) {
+        String queueName = getQueueName();
         try {
             this.messageQueue.publish(queueName, message);
         } catch (InterruptedException e) {

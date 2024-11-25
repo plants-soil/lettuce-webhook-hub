@@ -8,18 +8,16 @@ import com.plantssoil.common.mq.AbstractMessageConsumer;
  * @author danialdy
  * @Date 11 Nov 2024 10:36:21 pm
  */
-class MessageConsumer extends AbstractMessageConsumer {
-    private InMemoryMessageQueue messageQueue;
+class MessageConsumer<T> extends AbstractMessageConsumer<T> {
+    private InMemoryMessageQueue<T> messageQueue;
 
-    MessageConsumer(InMemoryMessageQueue messageQueue) {
+    MessageConsumer(InMemoryMessageQueue<T> messageQueue) {
         this.messageQueue = messageQueue;
     }
 
     @Override
-    public void consume() {
-        String queueName = String.format("QUEUE-%s-%s-%s", this.getPublisherId(), this.getVersion(),
-                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
-
+    public void consume(Class<T> clazz) {
+        String queueName = getQueueName();
         messageQueue.consume(queueName, this);
     }
 

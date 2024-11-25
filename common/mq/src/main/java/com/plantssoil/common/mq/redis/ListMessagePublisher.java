@@ -1,5 +1,6 @@
 package com.plantssoil.common.mq.redis;
 
+import com.plantssoil.common.io.ObjectJsonSerializer;
 import com.plantssoil.common.mq.AbstractMessagePublisher;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 
@@ -11,9 +12,9 @@ import io.lettuce.core.api.async.RedisAsyncCommands;
  * @author danialdy
  * @Date 6 Nov 2024 4:34:30 pm
  */
-class ListMessagePublisher extends AbstractMessagePublisher {
+class ListMessagePublisher<T> extends AbstractMessagePublisher<T> {
     private RedisAsyncCommands<String, String> command;
-    private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
+//    private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
 
     /**
      * Constructor mandatory
@@ -24,17 +25,17 @@ class ListMessagePublisher extends AbstractMessagePublisher {
         this.command = command;
     }
 
-    private String createRoutingKey() {
-        return String.format("%s%s%s%s%s", this.getPublisherId(), ROUTING_KEY_SEPARATOR, this.getVersion(), ROUTING_KEY_SEPARATOR,
-                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
-    }
+//    private String createRoutingKey() {
+//        return String.format("%s%s%s%s%s", this.getPublisherId(), ROUTING_KEY_SEPARATOR, this.getVersion(), ROUTING_KEY_SEPARATOR,
+//                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
+//    }
 
     @Override
-    public void publish(String message) {
-        if (this.getPublisherId() == null || this.getVersion() == null) {
-            throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15008, "The [publisherId] or [version] should not be null!");
+    public void publish(T message) {
+        if (this.getQueueName() == null) {
+            throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15008, "The [queueName] should not be null!");
         }
-        String channel = createRoutingKey();
-        this.command.lpush(channel, message);
+        String channel = getQueueName();
+        this.command.lpush(channel, ObjectJsonSerializer.getInstance().serialize(message));
     }
 }

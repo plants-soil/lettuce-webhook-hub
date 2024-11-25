@@ -16,9 +16,11 @@ import org.junit.runners.MethodSorters;
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.LettuceConfiguration;
+import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
-import com.plantssoil.common.mq.IMessageConsumer;
+import com.plantssoil.common.mq.MessageListener;
+import com.plantssoil.common.mq.TestEventMessage;
 import com.plantssoil.common.test.TempDirectoryUtility;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -68,9 +70,10 @@ public class InMemoryMQConcurrentTest {
 
         @Override
         public void run() {
-            IMessageConsumer consumer = IMessageServiceFactory.getFactoryInstance().createMessageConsumer();
-            consumer.consumerId("Subscriber-" + this.no).publisherId(this.publisherId).version(this.version).addMessageListener(new MessageListener());
-            consumer.consume();
+            IMessageServiceFactory<TestEventMessage> f = IMessageServiceFactory.getFactoryInstance();
+            IMessageConsumer<TestEventMessage> consumer = f.createMessageConsumer().consumerId("Subscriber-" + this.no)
+                    .queueName(this.publisherId + "-" + this.version).addMessageListener(new MessageListener());
+            consumer.consume(TestEventMessage.class);
         }
     }
 
@@ -87,10 +90,11 @@ public class InMemoryMQConcurrentTest {
 
         @Override
         public void run() {
-            IMessagePublisher publisher = IMessageServiceFactory.getFactoryInstance().createMessagePublisher();
-            publisher.publisherId(this.publisherId).version(this.version);
-            String message = String.format("This is the %d message comes from %s (%s)", this.sequence, this.publisherId, this.version);
-            publisher.publish(message);
+            IMessageServiceFactory<TestEventMessage> f = IMessageServiceFactory.getFactoryInstance();
+            IMessagePublisher<TestEventMessage> publisher = f.createMessagePublisher().queueName(this.publisherId + "-" + this.version);
+            TestEventMessage om = new TestEventMessage("order.approved", String.valueOf(this.sequence),
+                    String.format("This is the %d message comes from %s (%s)", this.sequence, this.publisherId, this.version));
+            publisher.publish(om);
         }
     }
 

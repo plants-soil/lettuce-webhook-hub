@@ -79,6 +79,11 @@
 			<!-- Internal Projects -->
 			<dependency>
 				<groupId>com.plantssoil</groupId>
+				<artifactId>lettuce-common-io</artifactId>
+				<version>${version.parent}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-exception</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
@@ -121,6 +126,11 @@
 			<dependency>
 				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-webhook-engine-beans</artifactId>
+				<version>${version.parent}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.plantssoil</groupId>
+				<artifactId>lettuce-webhook-engine-persistence</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 

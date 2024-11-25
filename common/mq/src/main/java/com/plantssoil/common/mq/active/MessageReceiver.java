@@ -7,28 +7,23 @@ import javax.jms.MessageConsumer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
+import com.plantssoil.common.io.ObjectJsonSerializer;
 import com.plantssoil.common.mq.IMessageListener;
-import com.plantssoil.common.mq.SimpleMessage;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 
-class MessageReceiver implements Runnable {
+class MessageReceiver<T> implements Runnable {
     private Session session;
     private String queueName;
-    private String publisherId;
-    private String version;
-    private String dataGroup;
-    private String consumerTag;
-    private List<IMessageListener> listeners;
+    private String consumerId;
+    private List<IMessageListener<T>> listeners;
+    private Class<T> clazz;
 
-    public MessageReceiver(Session session, String queueName, String publisherId, String version, String dataGroup, String consumerTag,
-            List<IMessageListener> listeners) {
+    public MessageReceiver(Session session, String queueName, String consumerId, List<IMessageListener<T>> listeners, Class<T> clazz) {
         this.session = session;
         this.queueName = queueName;
-        this.publisherId = publisherId;
-        this.version = version;
-        this.dataGroup = dataGroup;
-        this.consumerTag = consumerTag;
+        this.consumerId = consumerId;
         this.listeners = listeners;
+        this.clazz = clazz;
     }
 
     @Override
@@ -57,11 +52,9 @@ class MessageReceiver implements Runnable {
                 if (msg == null || !(msg instanceof TextMessage)) {
                     continue;
                 }
-                String text = ((TextMessage) msg).getText();
-
-                SimpleMessage message = new SimpleMessage(this.publisherId, this.version, this.dataGroup, this.consumerTag, text);
-                for (IMessageListener listener : listeners) {
-                    listener.onMessage(message);
+                T message = ObjectJsonSerializer.getInstance().unserialize(((TextMessage) msg).getText(), clazz);
+                for (IMessageListener<T> listener : listeners) {
+                    listener.onMessage(message, consumerId);
                 }
             }
         } catch (JMSException e) {

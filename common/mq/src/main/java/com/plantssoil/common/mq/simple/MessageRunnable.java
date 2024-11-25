@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.plantssoil.common.mq.AbstractMessageConsumer;
 import com.plantssoil.common.mq.IMessageListener;
-import com.plantssoil.common.mq.SimpleMessage;
 
 /**
  * The message runnable implementation base on in-memory message queue<br/>
@@ -20,12 +19,12 @@ import com.plantssoil.common.mq.SimpleMessage;
  * @author danialdy
  * @Date 11 Nov 2024 10:38:01 pm
  */
-class MessageRunnable implements Runnable {
-    private LinkedBlockingQueue<String> mq;
-    private List<AbstractMessageConsumer> consumers = new ArrayList<>();
+class MessageRunnable<T> implements Runnable {
+    private LinkedBlockingQueue<T> mq;
+    private List<AbstractMessageConsumer<T>> consumers = new ArrayList<>();
     private AtomicBoolean running = new AtomicBoolean(true);
 
-    MessageRunnable(LinkedBlockingQueue<String> mq) {
+    MessageRunnable(LinkedBlockingQueue<T> mq) {
         this.mq = mq;
     }
 
@@ -37,13 +36,11 @@ class MessageRunnable implements Runnable {
                     Thread.sleep(100);
                     continue;
                 }
-                String message = mq.take();
+                T message = mq.take();
                 int i = ThreadLocalRandom.current().nextInt(consumers.size());
-                AbstractMessageConsumer subscriber = consumers.get(i);
-                SimpleMessage simpleMessage = new SimpleMessage(subscriber.getPublisherId(), subscriber.getVersion(), subscriber.getDataGroup(),
-                        subscriber.getConsumerId(), message);
-                for (IMessageListener l : subscriber.getListeners()) {
-                    l.onMessage(simpleMessage);
+                AbstractMessageConsumer<T> subscriber = consumers.get(i);
+                for (IMessageListener<T> l : subscriber.getListeners()) {
+                    l.onMessage(message, subscriber.getConsumerId());
                 }
                 Thread.sleep(0);
             } catch (InterruptedException e) {
@@ -66,7 +63,7 @@ class MessageRunnable implements Runnable {
      * 
      * @param consumer consumer
      */
-    void addConsumer(AbstractMessageConsumer consumer) {
+    void addConsumer(AbstractMessageConsumer<T> consumer) {
         consumers.add(consumer);
     }
 

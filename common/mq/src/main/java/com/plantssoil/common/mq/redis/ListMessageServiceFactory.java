@@ -28,13 +28,13 @@ import io.lettuce.core.api.StatefulRedisConnection;
  * @author danialdy
  * @Date 6 Nov 2024 3:44:21 pm
  */
-public class ListMessageServiceFactory implements IMessageServiceFactory {
+public class ListMessageServiceFactory<T extends java.io.Serializable> implements IMessageServiceFactory<T> {
     private final static Logger LOGGER = LoggerFactory.getLogger(ListMessageServiceFactory.class.getName());
     private RedisClient client;
     private long connectionTimeout;
     private StatefulRedisConnection<String, String> publisherConnection;
     private StatefulRedisConnection<String, String> consumerConnection;
-    private List<ListMessageConsumer> consumers;
+    private List<ListMessageConsumer<T>> consumers;
 
     /**
      * Constructor<br/>
@@ -73,7 +73,7 @@ public class ListMessageServiceFactory implements IMessageServiceFactory {
     @Override
     public void close() throws Exception {
         if (this.consumers != null) {
-            for (ListMessageConsumer consumer : this.consumers) {
+            for (ListMessageConsumer<T> consumer : this.consumers) {
                 consumer.stop();
             }
         }
@@ -87,13 +87,13 @@ public class ListMessageServiceFactory implements IMessageServiceFactory {
     }
 
     @Override
-    public IMessagePublisher createMessagePublisher() {
-        return new ListMessagePublisher(this.publisherConnection.async());
+    public IMessagePublisher<T> createMessagePublisher() {
+        return new ListMessagePublisher<T>(this.publisherConnection.async());
     }
 
     @Override
-    public IMessageConsumer createMessageConsumer() {
-        ListMessageConsumer consumer = new ListMessageConsumer(this.consumerConnection.async());
+    public IMessageConsumer<T> createMessageConsumer() {
+        ListMessageConsumer<T> consumer = new ListMessageConsumer<T>(this.consumerConnection.async());
         this.consumers.add(consumer);
         return consumer;
     }

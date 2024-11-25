@@ -13,6 +13,7 @@
 	<name>Plants Soil common functions</name>
 	
 	<modules>
+		<module>io</module>
 		<module>exception</module>
 		<module>test</module>
 		<module>security</module>

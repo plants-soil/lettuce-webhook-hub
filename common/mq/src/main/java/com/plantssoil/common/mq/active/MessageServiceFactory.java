@@ -31,7 +31,7 @@ import com.plantssoil.common.mq.exception.MessageQueueException;
  * @author danialdy
  * @Date 3 Nov 2024 8:45:20 am
  */
-public class MessageServiceFactory implements IMessageServiceFactory {
+public class MessageServiceFactory<T extends java.io.Serializable> implements IMessageServiceFactory<T> {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageServiceFactory.class.getName());
     private ActiveMQConnectionFactory consumerFactory;
     private PooledConnectionFactory publisherFactory;
@@ -155,17 +155,17 @@ public class MessageServiceFactory implements IMessageServiceFactory {
     }
 
     @Override
-    public IMessagePublisher createMessagePublisher() {
+    public IMessagePublisher<T> createMessagePublisher() {
         try {
-            return new MessagePublisher(this.publisherFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE));
+            return new MessagePublisher<T>(this.publisherFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE));
         } catch (JMSException e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15008, e);
         }
     }
 
     @Override
-    public IMessageConsumer createMessageConsumer() {
-        return new MessageConsumer(getConsumerSession());
+    public IMessageConsumer<T> createMessageConsumer() {
+        return new MessageConsumer<T>(getConsumerSession());
     }
 
 }

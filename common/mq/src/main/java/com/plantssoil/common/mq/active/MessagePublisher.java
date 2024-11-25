@@ -6,6 +6,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
+import com.plantssoil.common.io.ObjectJsonSerializer;
 import com.plantssoil.common.mq.AbstractMessagePublisher;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 
@@ -15,7 +16,7 @@ import com.plantssoil.common.mq.exception.MessageQueueException;
  * @author danialdy
  * @Date 3 Nov 2024 8:51:37 am
  */
-class MessagePublisher extends AbstractMessagePublisher {
+class MessagePublisher<T> extends AbstractMessagePublisher<T> {
     private Session session;
 
     /**
@@ -28,15 +29,13 @@ class MessagePublisher extends AbstractMessagePublisher {
     }
 
     @Override
-    public void publish(String message) {
-        if (this.getPublisherId() == null || this.getVersion() == null) {
-            throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15001, "The [publisherId] or [version] should not be null!");
+    public void publish(T message) {
+        if (this.getQueueName() == null) {
+            throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15001, "The [queueName] should not be null!");
         }
-        String queueName = String.format("QUEUE-%s-%s-%s", this.getPublisherId(), this.getVersion(),
-                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
-        try (MessageProducer producer = session.createProducer(session.createQueue(queueName))) {
+        try (MessageProducer producer = session.createProducer(session.createQueue(this.getQueueName()))) {
             producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-            TextMessage tm = session.createTextMessage(message);
+            TextMessage tm = session.createTextMessage(ObjectJsonSerializer.getInstance().serialize(message));
             producer.send(tm);
         } catch (JMSException e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15002, e);

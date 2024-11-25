@@ -4,75 +4,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The abstract message consumer which hold publisher id + version + data group
- * + consumer id, and listeners
+ * The abstract message consumer which hold queue name & consumer id & listeners
  * 
  * @author danialdy
  * @Date 6 Nov 2024 7:42:02 pm
  */
-public abstract class AbstractMessageConsumer implements IMessageConsumer {
-    private String publisherId;
-    private String version;
-    private String dataGroup;
+public abstract class AbstractMessageConsumer<T> implements IMessageConsumer<T> {
+    private String queueName;
     private String consumerId;
-    private List<IMessageListener> listeners = new ArrayList<>();
+    private List<IMessageListener<T>> listeners = new ArrayList<>();
 
     @Override
-    public IMessageConsumer publisherId(String publisherId) {
-        this.publisherId = publisherId;
+    public IMessageConsumer<T> queueName(String queueName) {
+        this.queueName = queueName;
         return this;
     }
 
     @Override
-    public IMessageConsumer version(String version) {
-        this.version = version;
-        return this;
-    }
-
-    @Override
-    public IMessageConsumer dataGroup(String dataGroup) {
-        this.dataGroup = dataGroup;
-        return this;
-    }
-
-    @Override
-    public IMessageConsumer addMessageListener(IMessageListener listener) {
+    public IMessageConsumer<T> addMessageListener(IMessageListener<T> listener) {
         this.listeners.add(listener);
         return this;
     }
 
     @Override
-    public IMessageConsumer consumerId(String consumerId) {
+    public IMessageConsumer<T> consumerId(String consumerId) {
         this.consumerId = consumerId;
         return this;
     }
 
     /**
-     * Get the publisher id (organization id)
+     * Get queue name
      * 
-     * @return publisher id
+     * @return queue name
      */
-    public String getPublisherId() {
-        return publisherId;
-    }
-
-    /**
-     * Get the publisher version
-     * 
-     * @return publisher version
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
-     * Get data group, some organizations need separate data from business unit or
-     * merchants
-     * 
-     * @return data group
-     */
-    public String getDataGroup() {
-        return dataGroup;
+    public String getQueueName() {
+        return queueName;
     }
 
     /**
@@ -89,7 +55,7 @@ public abstract class AbstractMessageConsumer implements IMessageConsumer {
      * 
      * @return message listeners
      */
-    public List<IMessageListener> getListeners() {
+    public List<IMessageListener<T>> getListeners() {
         return listeners;
     }
 }

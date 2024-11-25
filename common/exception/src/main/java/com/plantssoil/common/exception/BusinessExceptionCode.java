@@ -39,9 +39,14 @@ public class BusinessExceptionCode {
     public final static int BUSINESS_EXCEPTION_CODE_15000 = 15000;
 
     /**
-     * TODO not specified yet
+     * IO Exception (16000 - 16999)
      */
     public final static int BUSINESS_EXCEPTION_CODE_16000 = 16000;
+
+    /**
+     * TODO not specified yet
+     */
+    public final static int BUSINESS_EXCEPTION_CODE_17000 = 17000;
 
     /**
      * Webhook Engine Exception (20000 - 20999)

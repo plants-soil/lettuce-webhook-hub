@@ -14,7 +14,7 @@ import com.rabbitmq.client.Channel;
  * @author danialdy
  * @Date 3 Nov 2024 8:45:20 am
  */
-public class MessageServiceFactory implements IMessageServiceFactory {
+public class MessageServiceFactory<T> implements IMessageServiceFactory<T> {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageServiceFactory.class.getName());
     private ConnectionPool publisherPool;
     private ConnectionPool consumerPool;
@@ -44,8 +44,8 @@ public class MessageServiceFactory implements IMessageServiceFactory {
     }
 
     @Override
-    public IMessagePublisher createMessagePublisher() {
-        return new MessagePublisher(publisherPool);
+    public IMessagePublisher<T> createMessagePublisher() {
+        return new MessagePublisher<T>(publisherPool);
     }
 
     /**
@@ -85,10 +85,10 @@ public class MessageServiceFactory implements IMessageServiceFactory {
     }
 
     @Override
-    public IMessageConsumer createMessageConsumer() {
+    public IMessageConsumer<T> createMessageConsumer() {
         // don't close connection and channel, in order to receive message from server
         // continuously
-        return new MessageConsumer(getConsumerChannel());
+        return new MessageConsumer<T>(getConsumerChannel());
     }
 
 }

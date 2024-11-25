@@ -14,6 +14,10 @@
 		<!-- Internal Dependencies -->
 		<dependency>
 			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-common-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-common-config</artifactId>
 			<scope>compile</scope>
 		</dependency>

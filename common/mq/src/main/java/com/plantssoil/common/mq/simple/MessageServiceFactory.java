@@ -16,13 +16,13 @@ import com.plantssoil.common.mq.IMessageServiceFactory;
  * @author danialdy
  * @Date 11 Nov 2024 8:12:20 pm
  */
-public class MessageServiceFactory implements IMessageServiceFactory {
+public class MessageServiceFactory<T> implements IMessageServiceFactory<T> {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageServiceFactory.class.getName());
-    private InMemoryMessageQueue messageQueue;
+    private InMemoryMessageQueue<T> messageQueue;
 
     public MessageServiceFactory() {
         LOGGER.info("Initializing InMemory Message Queue as the message service...");
-        this.messageQueue = new InMemoryMessageQueue();
+        this.messageQueue = new InMemoryMessageQueue<>();
         LOGGER.info("InMemory Message Queue initialized.");
     }
 
@@ -32,13 +32,13 @@ public class MessageServiceFactory implements IMessageServiceFactory {
     }
 
     @Override
-    public IMessagePublisher createMessagePublisher() {
-        return new MessagePublisher(messageQueue);
+    public IMessagePublisher<T> createMessagePublisher() {
+        return new MessagePublisher<T>(messageQueue);
     }
 
     @Override
-    public IMessageConsumer createMessageConsumer() {
-        return new MessageConsumer(messageQueue);
+    public IMessageConsumer<T> createMessageConsumer() {
+        return new MessageConsumer<T>(messageQueue);
     }
 
 }

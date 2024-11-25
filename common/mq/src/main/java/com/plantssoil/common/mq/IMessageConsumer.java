@@ -8,45 +8,8 @@ package com.plantssoil.common.mq;
  * @author danialdy
  * @Date 1 Nov 2024 4:55:17 pm
  */
-public interface IMessageConsumer {
-    /**
-     * Provide the identity of publisher to consume, (mandatory)<br/>
-     * Which is used to determine MQ Queue Name (with version, and data group)<br/>
-     * Mostly it's the organization id of the publisher<br/>
-     * 
-     * @param publisherId publisher id
-     * @return current consumer instance
-     * 
-     * @see IMessageConsumer#version(String)
-     * @see IMessageConsumer#dataGroup(String)
-     */
-    public IMessageConsumer publisherId(String publisherId);
-
-    /**
-     * Provide the version of publisher to consume, (mandatory)<br/>
-     * Which is used to determine MQ Queue Name (with publisher id, and data
-     * group)<br/>
-     *
-     * @param version publisher version
-     * @return current consumer instance
-     * 
-     * @see IMessageConsumer#publisherId(String)
-     * @see IMessageConsumer#dataGroup(String)
-     */
-    public IMessageConsumer version(String version);
-
-    /**
-     * Provide the data group of publisher to consume, (NOT mandatory)<br/>
-     * Which is used to determine MQ Queue Name (with publisher id, and
-     * version)<br/>
-     * 
-     * @param dataGroup data group of current message
-     * @return current consumer instance
-     * 
-     * @see IMessageConsumer#publisherId(String)
-     * @see IMessageConsumer#version(String)
-     */
-    public IMessageConsumer dataGroup(String dataGroup);
+public interface IMessageConsumer<T> {
+    public IMessageConsumer<T> queueName(String queueName);
 
     /**
      * Add the listener which to receive and process messages from publisher<br/>
@@ -55,22 +18,28 @@ public interface IMessageConsumer {
      * @param listener the message receiver and handler
      * @return current consumer instance
      */
-    public IMessageConsumer addMessageListener(IMessageListener listener);
+    public IMessageConsumer<T> addMessageListener(IMessageListener<T> listener);
 
     /**
-     * set the consumer id which will be brought to {@link IMessageListener} <br/>
+     * set the consumer id which will be brought to {@link IStringMessageListener}
+     * <br/>
      * if not set consumer id via this method, null consumerTag will be passed to
      * {@link DeliverCallback#}<br/>
      * 
      * @param consumerId consumer id
+     * @return current consumer instance
      */
-    public IMessageConsumer consumerId(String consumerId);
+    public IMessageConsumer<T> consumerId(String consumerId);
 
     /**
-     * Consume the message from specific publisher + version + data group<br/>
+     * Consume the message from the specific queue<br/>
      * Consumer could get message from Message Queue Server which publisher created
-     * (so the MQ topic name should be consistent with publisher)<br/>
+     * (so the MQ queue name should be consistent with publisher)<br/>
+     * 
+     * @param clazz the Message Object class,
+     *              {@link IMessageListener#onMessage(Object, String)} will receive
+     *              the instance of this class as the first parameter
      * 
      */
-    public void consume();
+    public void consume(Class<T> clazz);
 }

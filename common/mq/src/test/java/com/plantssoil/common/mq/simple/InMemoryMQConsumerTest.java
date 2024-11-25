@@ -14,9 +14,11 @@ import org.junit.runners.MethodSorters;
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.LettuceConfiguration;
+import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
-import com.plantssoil.common.mq.IMessageConsumer;
+import com.plantssoil.common.mq.MessageListener;
+import com.plantssoil.common.mq.TestEventMessage;
 import com.plantssoil.common.test.TempDirectoryUtility;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -56,9 +58,10 @@ public class InMemoryMQConsumerTest {
     @Test
     public void testConsumeOrganization01() {
         for (int i = 0; i < 5; i++) {
-            IMessageConsumer consumer = IMessageServiceFactory.getFactoryInstance().createMessageConsumer();
-            consumer.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-01").version("V1.0").addMessageListener(new MessageListener());
-            consumer.consume();
+            IMessageServiceFactory<TestEventMessage> f = IMessageServiceFactory.getFactoryInstance();
+            IMessageConsumer<TestEventMessage> consumer = f.createMessageConsumer().consumerId("consumerId-" + i).queueName("PUBLISHER-ID-01-V1.0")
+                    .addMessageListener(new MessageListener());
+            consumer.consume(TestEventMessage.class);
         }
         try {
             Thread.sleep(1000);
@@ -66,10 +69,12 @@ public class InMemoryMQConsumerTest {
             e.printStackTrace();
         }
         // publish message
-        IMessagePublisher publisher = IMessageServiceFactory.getFactoryInstance().createMessagePublisher();
-        publisher.publisherId("PUBLISHER-ID-01").version("V1.0");
+        IMessageServiceFactory<TestEventMessage> f = IMessageServiceFactory.getFactoryInstance();
+        IMessagePublisher<TestEventMessage> publisher = f.createMessagePublisher().queueName("PUBLISHER-ID-01-V1.0");
+
         for (int i = 0; i < 20; i++) {
-            publisher.publish("This is the " + i + " message comes from PUBLISHER-ID-01 (V1.0)");
+            TestEventMessage om = new TestEventMessage("order.created", String.valueOf(i), "This is the " + i + " message comes from PUBLISHER-ID-01 (V1.0)");
+            publisher.publish(om);
         }
         try {
             Thread.sleep(1000);
@@ -81,11 +86,12 @@ public class InMemoryMQConsumerTest {
 
     @Test
     public void testConsumeOrganization02() {
-        // setup 2 subscribers
+        // setup 2 consumers
         for (int i = 5; i < 8; i++) {
-            IMessageConsumer consumer = IMessageServiceFactory.getFactoryInstance().createMessageConsumer();
-            consumer.consumerId("consumerId-" + i).publisherId("PUBLISHER-ID-02").version("V2.0").addMessageListener(new MessageListener());
-            consumer.consume();
+            IMessageServiceFactory<TestEventMessage> f = IMessageServiceFactory.getFactoryInstance();
+            IMessageConsumer<TestEventMessage> consumer = f.createMessageConsumer().consumerId("consumerId-" + i).queueName("PUBLISHER-ID-02-V2.0")
+                    .addMessageListener(new MessageListener());
+            consumer.consume(TestEventMessage.class);
         }
 
         try {
@@ -94,10 +100,11 @@ public class InMemoryMQConsumerTest {
             e.printStackTrace();
         }
         // publish message
-        IMessagePublisher publisher = IMessageServiceFactory.getFactoryInstance().createMessagePublisher();
-        publisher.publisherId("PUBLISHER-ID-02").version("V2.0");
+        IMessageServiceFactory<TestEventMessage> f = IMessageServiceFactory.getFactoryInstance();
+        IMessagePublisher<TestEventMessage> publisher = f.createMessagePublisher().queueName("PUBLISHER-ID-02-V2.0");
         for (int i = 0; i < 30; i++) {
-            publisher.publish("This is the " + i + " message comes from PUBLISHER-ID-02 (V2.0)");
+            TestEventMessage om = new TestEventMessage("order.updated", String.valueOf(i), "This is the " + i + " message comes from PUBLISHER-ID-02 (V2.0)");
+            publisher.publish(om);
         }
         try {
             Thread.sleep(1000);

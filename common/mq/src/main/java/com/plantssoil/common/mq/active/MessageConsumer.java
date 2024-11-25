@@ -5,12 +5,12 @@ import javax.jms.Session;
 import com.plantssoil.common.mq.AbstractMessageConsumer;
 
 /**
- * The IMessageConsumer implementation base on Rabbit MQ
+ * The IMessageConsumer implementation base on Active MQ
  * 
  * @author danialdy
  * @Date 3 Nov 2024 8:37:13 pm
  */
-class MessageConsumer extends AbstractMessageConsumer {
+class MessageConsumer<T> extends AbstractMessageConsumer<T> {
     private Session session;
 
     /**
@@ -23,12 +23,9 @@ class MessageConsumer extends AbstractMessageConsumer {
     }
 
     @Override
-    public void consume() {
-        String queueName = String.format("QUEUE-%s-%s-%s", this.getPublisherId(), this.getVersion(),
-                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
-        MessageReceiver mc = new MessageReceiver(this.session, queueName, this.getPublisherId(), this.getVersion(), this.getDataGroup(), this.getConsumerId(),
-                this.getListeners());
-        new Thread(mc, String.format("MQ Subscriber: %s", queueName)).start();
+    public void consume(Class<T> clazz) {
+        MessageReceiver<T> mc = new MessageReceiver<T>(this.session, getQueueName(), getConsumerId(), getListeners(), clazz);
+        new Thread(mc, String.format("MQ Subscriber: %s", getQueueName())).start();
     }
 
 }
