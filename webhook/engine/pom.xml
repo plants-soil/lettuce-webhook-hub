@@ -11,7 +11,7 @@
   <modules>
   	<module>core</module>
   	<module>beans</module>
-  	<module>jpa</module>
+  	<module>persistence</module>
   	<module>redis</module>
   </modules>
 </project>

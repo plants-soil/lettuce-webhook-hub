@@ -4,6 +4,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * The logging handler (within standalone thread) to log every webhook event
  * operate
@@ -16,7 +19,11 @@ import java.lang.reflect.Proxy;
  * @Date 18 Nov 2024 1:00:42 pm
  */
 public class WebhookLoggingHandler implements InvocationHandler {
+    private final static Logger LOGGER = LoggerFactory.getLogger(WebhookLoggingHandler.class.getName());
     private final Object target;
+    private final static String PUBLISH_METHOD_NAME = "publish";
+    private final static String LISTENER_METHOD_NAME = "onMessage";
+    private final static String POST_METHOD_NAME = "post";
 
     /**
      * Constructor of the logging handler
@@ -29,13 +36,21 @@ public class WebhookLoggingHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Debugging for %s.%s: ", proxy.getClass().getName(), method.getName());
+            for (Object arg : args) {
+                LOGGER.debug(arg.toString());
+            }
+        }
         IWebhookLogging logging = IWebhookLogging.createInstance(proxy);
-        if (logging != null) {
+        boolean blogging = logging != null && (PUBLISH_METHOD_NAME.equals(method.getName()) || LISTENER_METHOD_NAME.equals(method.getName())
+                || POST_METHOD_NAME.equals(method.getName())) /* && args.length == 4 */;
+        if (blogging) {
             logging.logBefore(proxy, method, args);
         }
         // Proceed to the original method
         Object result = method.invoke(target, args);
-        if (logging != null) {
+        if (blogging) {
             logging.logAfter(proxy, method, args);
         }
 

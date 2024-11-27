@@ -1,11 +1,16 @@
 package com.plantssoil.webhook.beans;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 @Entity
@@ -13,6 +18,16 @@ import javax.persistence.UniqueConstraint;
         @Index(name = "idx_whevent_orgid", columnList = "organizationId") })
 public class WebhookEvent implements Serializable {
     private static final long serialVersionUID = 5996607146075281389L;
+
+    /**
+     * The status of webhook event
+     * 
+     * @author danialdy
+     * @Date 21 Nov 2024 2:57:36 pm
+     */
+    public enum EventStatus {
+        SUBMITTED, PUBLISHED, RETIRED
+    }
 
     @Id
     private String eventId;
@@ -22,6 +37,14 @@ public class WebhookEvent implements Serializable {
     private String eventTag;
     private String contentType;
     private String charset;
+    @Enumerated(EnumType.STRING)
+    private EventStatus eventStatus;
+    private String createdBy;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationTime;
+
+    public WebhookEvent() {
+    }
 
     public String getEventId() {
         return eventId;
@@ -77,6 +100,30 @@ public class WebhookEvent implements Serializable {
 
     public void setCharset(String charset) {
         this.charset = charset;
+    }
+
+    public EventStatus getEventStatus() {
+        return eventStatus;
+    }
+
+    public void setEventStatus(EventStatus eventStatus) {
+        this.eventStatus = eventStatus;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
     }
 
 }

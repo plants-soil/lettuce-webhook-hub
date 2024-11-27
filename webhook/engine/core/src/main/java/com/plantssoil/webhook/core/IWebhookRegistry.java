@@ -11,6 +11,24 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface IWebhookRegistry {
     /**
+     * add data group to publisher
+     * 
+     * @param publisher the publisher owns the data group
+     * @param dataGroup the data group identity
+     * @return completable future (asynchronized, in order to know success or not)
+     */
+    public CompletableFuture<Void> addDataGroup(IWebhookPublisher publisher, String dataGroup);
+
+    /**
+     * add data groups to publisher
+     * 
+     * @param publisher  the publisher owns the data groups
+     * @param dataGroups the data group identities
+     * @return completable future (asynchronized, in order to know success or not)
+     */
+    public CompletableFuture<Void> addDataGroup(IWebhookPublisher publisher, String[] dataGroups);
+
+    /**
      * Publisher publish webhook to be active
      * 
      * @param webhook webhook definition
@@ -46,6 +64,16 @@ public interface IWebhookRegistry {
      * @return completable future (asynchronized) with the publisher list
      */
     public CompletableFuture<List<IWebhookPublisher>> findPublishers(int page, int pageSize);
+
+    /**
+     * Find the data groups of one publisher, could pagination the result
+     * 
+     * @param publisherId publisher id
+     * @param page        page no
+     * @param pageSize    how many items on current page (the maximum items return)
+     * @return completable future (asynchronized) with the publisher list
+     */
+    public CompletableFuture<List<String>> findDataGroups(String publisherId, int page, int pageSize);
 
     /**
      * Find the webhooks of one publisher, could pagination the result

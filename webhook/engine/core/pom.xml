@@ -22,20 +22,15 @@
 		</dependency>
 		<dependency>
 			<groupId>com.plantssoil</groupId>
-			<artifactId>lettuce-common-persistence</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-common-mq</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-common-httpclient</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>com.plantssoil</groupId>
-			<artifactId>lettuce-webhook-engine-beans</artifactId>
+			<artifactId>lettuce-webhook-engine-persistence</artifactId>
 		</dependency>
 	</dependencies>
 </project>

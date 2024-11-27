@@ -24,7 +24,7 @@ public class FixedKeyHttpPosterTest {
         String payload = "{\"test\": 2432232314}";
 
         FixedKeyHttpPoster notifier = new FixedKeyHttpPoster();
-        notifier.setAccessToken("whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw");
+        notifier.setSecretKey("whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw");
 
         CompletableFuture<HttpResponse<String>> future = notifier.post(url, headers, messageId, payload);
         future.thenAccept(response -> {

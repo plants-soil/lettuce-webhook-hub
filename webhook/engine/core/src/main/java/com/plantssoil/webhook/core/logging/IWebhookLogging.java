@@ -3,7 +3,7 @@ package com.plantssoil.webhook.core.logging;
 import java.lang.reflect.Method;
 
 import com.plantssoil.common.mq.IMessageListener;
-import com.plantssoil.webhook.core.IWebhookConsumer;
+import com.plantssoil.webhook.core.IWebhookPoster;
 import com.plantssoil.webhook.core.IWebhookEngine;
 
 /**
@@ -64,9 +64,9 @@ public interface IWebhookLogging {
         if (IWebhookEngine.class.isAssignableFrom(proxy.getClass())) {
             return new WebhookPublishLogging();
         } else if (IMessageListener.class.isAssignableFrom(proxy.getClass())) {
-            return new WebhookHttpPostLogging();
-        } else if (IWebhookConsumer.class.isAssignableFrom(proxy.getClass())) {
             return new WebhookConsumLogging();
+        } else if (IWebhookPoster.class.isAssignableFrom(proxy.getClass())) {
+            return new WebhookPostLogging();
         } else {
             return null;
         }

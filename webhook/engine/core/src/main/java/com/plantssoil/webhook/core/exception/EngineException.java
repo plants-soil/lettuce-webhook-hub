@@ -19,6 +19,11 @@ public class EngineException extends BusinessException {
     private int code = BusinessExceptionCode.BUSINESS_EXCEPTION_CODE_20000;
     public final static int BUSINESS_EXCEPTION_CODE_20001 = 20001;
     public final static int BUSINESS_EXCEPTION_CODE_20002 = 20002;
+    public final static int BUSINESS_EXCEPTION_CODE_20003 = 20003;
+    public final static int BUSINESS_EXCEPTION_CODE_20004 = 20004;
+    public final static int BUSINESS_EXCEPTION_CODE_20005 = 20005;
+    public final static int BUSINESS_EXCEPTION_CODE_20006 = 20006;
+    public final static int BUSINESS_EXCEPTION_CODE_20007 = 20007;
 
     public EngineException(String message, Throwable cause) {
         super(message, cause);

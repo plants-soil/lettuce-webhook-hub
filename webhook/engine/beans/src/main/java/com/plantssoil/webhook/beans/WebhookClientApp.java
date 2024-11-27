@@ -43,6 +43,10 @@ public class WebhookClientApp implements java.io.Serializable {
         SIGNATURE, TOKEN, NONE
     }
 
+    public enum ClientAppStatus {
+        TEST, AWAITING_FOR_APPROVEL, PRODUCTION
+    }
+
     @Id
     private String clientAppId;
     private String organizationId;
@@ -54,6 +58,8 @@ public class WebhookClientApp implements java.io.Serializable {
     private String WebhookUrl;
     private Map<String, String> customizedHeaders;
     private String[] trustedIps;
+    @Enumerated(EnumType.STRING)
+    private ClientAppStatus clientAppStatus;
     private String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationTime;
@@ -128,6 +134,14 @@ public class WebhookClientApp implements java.io.Serializable {
 
     public void setTrustedIps(String[] trustedIps) {
         this.trustedIps = trustedIps;
+    }
+
+    public ClientAppStatus getClientAppStatus() {
+        return clientAppStatus;
+    }
+
+    public void setClientAppStatus(ClientAppStatus clientAppStatus) {
+        this.clientAppStatus = clientAppStatus;
     }
 
     public String getCreatedBy() {

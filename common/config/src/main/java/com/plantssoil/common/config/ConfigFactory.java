@@ -32,7 +32,7 @@ import com.plantssoil.common.security.KeyStoreEncrypter;
  */
 public class ConfigFactory {
     private final static Logger LOGGER = LoggerFactory.getLogger(ConfigFactory.class.getName());
-    private CompositeConfiguration configuration;
+    private ConfigurationDelegate configuration;
     private static volatile ConfigFactory instance;
 
     private ConfigFactory() {
@@ -40,25 +40,26 @@ public class ConfigFactory {
         ConfigurationInterpolator.registerGlobalLookup("env", new EnvLookup()); //$NON-NLS-1$
         ConfigurationInterpolator.registerGlobalLookup("crypt", new CryptLookup()); //$NON-NLS-1$
 
-        configuration = new CompositeConfiguration();
+        CompositeConfiguration conf = new CompositeConfiguration();
         // add OS env variables
-        configuration.addConfiguration(new SystemEnvConfiguration());
+        conf.addConfiguration(new SystemEnvConfiguration());
         // add system property
-        configuration.addConfiguration(new SystemPropertiesConfiguration());
+        conf.addConfiguration(new SystemPropertiesConfiguration());
         // add keystore configuration
         Map<String, String> keystoreMap = getConfigurationFromKeystore();
         if (keystoreMap.size() > 0) {
-            configuration.addConfiguration(new MapConfiguration(keystoreMap));
+            conf.addConfiguration(new MapConfiguration(keystoreMap));
         }
         // add lettuce configuration property file
         URL url = getConfigurationPropertyFile();
         if (url != null) {
             try {
-                configuration.addConfiguration(new PropertiesConfiguration(url));
+                conf.addConfiguration(new PropertiesConfiguration(url));
             } catch (ConfigurationException e) {
                 throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12011, e);
             }
         }
+        configuration = new ConfigurationDelegate(conf);
         LOGGER.info("Configuration loaded.");
     }
 
@@ -127,6 +128,6 @@ public class ConfigFactory {
      * @return Configuration Object
      */
     public IConfiguration getConfiguration() {
-        return new ConfigurationDelegate(configuration);
+        return configuration;
     }
 }

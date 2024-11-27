@@ -18,6 +18,7 @@ public class DefaultWebhookEngineFactory implements IWebhookEngineFactory {
     private IWebhookEngine engine;
 
     public DefaultWebhookEngineFactory() {
+        // create engine instance (use proxy to AOP logging)
         DefaultWebhookEngine engineImpl = new DefaultWebhookEngine();
         this.engine = (IWebhookEngine) WebhookLoggingHandler.createProxy(engineImpl);
     }

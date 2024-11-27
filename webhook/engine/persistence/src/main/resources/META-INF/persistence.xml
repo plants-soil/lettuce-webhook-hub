@@ -8,5 +8,7 @@
         <class>com.plantssoil.webhook.beans.WebhookClientApp</class>
         <class>com.plantssoil.webhook.beans.WebhookEvent</class>
         <class>com.plantssoil.webhook.beans.WebhookSubscribed</class>
+        <class>com.plantssoil.webhook.beans.WebhookEventLog</class>
+        <class>com.plantssoil.webhook.beans.WebhookEventLogLine</class>
     </persistence-unit>
 </persistence>

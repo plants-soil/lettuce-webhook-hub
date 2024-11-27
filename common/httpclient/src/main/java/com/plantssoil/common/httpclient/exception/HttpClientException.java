@@ -27,6 +27,7 @@ public class HttpClientException extends BusinessException {
     public final static int BUSINESS_EXCEPTION_CODE_14009 = 14009;
     public final static int BUSINESS_EXCEPTION_CODE_14010 = 14010;
     public final static int BUSINESS_EXCEPTION_CODE_14011 = 14011;
+    public final static int BUSINESS_EXCEPTION_CODE_14012 = 14012;
 
     public HttpClientException(String message, Throwable cause) {
         super(message, cause);

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
@@ -23,6 +25,11 @@ import javax.persistence.UniqueConstraint;
         @Index(name = "idx_organization_email", columnList = "email") })
 public class Organization implements Serializable {
     private static final long serialVersionUID = -1431122765874295449L;
+
+    public enum OrganizationStatus {
+        ACTIVE, INACTIVE, LOCKED
+    }
+
     @Id
     private String organizationId;
     private String organizationName;
@@ -30,6 +37,8 @@ public class Organization implements Serializable {
     private String website;
     private String logoLink;
     private String secretKey;
+    @Enumerated(EnumType.STRING)
+    private OrganizationStatus organizationStatus;
     private String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationTime;
@@ -80,6 +89,14 @@ public class Organization implements Serializable {
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+
+    public OrganizationStatus getOrganizationStatus() {
+        return organizationStatus;
+    }
+
+    public void setOrganizationStatus(OrganizationStatus organizationStatus) {
+        this.organizationStatus = organizationStatus;
     }
 
     public String getCreatedBy() {

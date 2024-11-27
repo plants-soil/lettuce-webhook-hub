@@ -2,6 +2,8 @@ package com.plantssoil.webhook.core;
 
 import java.util.Map;
 
+import com.plantssoil.common.httpclient.IHttpPoster.SecurityStrategy;
+
 /**
  * The subscriber of webhook
  * 
@@ -9,23 +11,6 @@ import java.util.Map;
  * @Date 13 Nov 2024 1:43:39 pm
  */
 public interface IWebhookSubscriber extends IOrganization {
-    /**
-     * The Security Strategy<br/>
-     * <ul>
-     * <li>{@link SecurityStrategy#SIGNATURE} - Will generate signature in header
-     * when callback subscriber ({@link IOrganization#getWebhookUrl()})</li>
-     * <li>{@link SecurityStrategy#TOKEN} - Will add the secret key as signature in
-     * header when callback subscriber ({@link IOrganization#getWebhookUrl()})</li>
-     * <li>{@link SecurityStrategy#NONE} - Won't add signature in header when
-     * callback subscriber ({@link IOrganization#getWebhookUrl()})</li>
-     * </ul>
-     * 
-     * @author danialdy
-     * @Date 13 Nov 2024 2:13:00 pm
-     */
-    public enum SecurityStrategy {
-        SIGNATURE, TOKEN, NONE
-    }
 
     /**
      * The subscriber app identity, may subscriber has multiple Applications

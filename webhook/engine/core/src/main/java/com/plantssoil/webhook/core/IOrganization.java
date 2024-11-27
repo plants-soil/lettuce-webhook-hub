@@ -1,7 +1,5 @@
 package com.plantssoil.webhook.core;
 
-import com.plantssoil.webhook.core.IWebhookSubscriber.SecurityStrategy;
-
 /**
  * The organization interface, publisher or subscriber are all belong to
  * IOrganization

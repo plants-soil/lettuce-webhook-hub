@@ -32,13 +32,16 @@ public interface IWebhookEngine {
      * receive this event.
      * 
      * @param event     the webhook event, which includes all event related
-     *                  information
+     *                  information, mandatory and should not be null
+     * @param dataGroup the data group used to separate data between business units
+     *                  or merchants, could be null if don't have multi-datagroups
      * @param requestId the identifier of one specific request, will be considered
-     *                  as duplicated request if requests have same requestId
+     *                  as duplicated request if requests have same requestId,
+     *                  mandatory and should not be null
      * @param payload   the business information to publish, mostly defined in JSON
-     *                  or XML format
+     *                  or XML format, mandatory and should not be null
      * 
      * @return completable future (asynchronized, in order to know success or not)
      */
-    public CompletableFuture<Void> publish(IWebhookEvent event, String requestId, String payload);
+    public CompletableFuture<Void> publish(IWebhookEvent event, String dataGroup, String requestId, String payload);
 }

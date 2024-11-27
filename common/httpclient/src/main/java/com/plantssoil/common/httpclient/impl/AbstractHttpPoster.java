@@ -28,6 +28,21 @@ public abstract class AbstractHttpPoster implements IHttpPoster {
     protected final static String HEADER_WEBHOOK_ID = "webhook-id";
     protected final static String HEADER_WEBHOOK_TIMESTAMP = "webhook-timestamp";
     protected final static String HEADER_WEBHOOK_SIGNATURE = "webhook-signature";
+    private String secretKey;
+
+    /**
+     * set the secret key which is used to create signature
+     * 
+     * @param secretKey
+     */
+    @Override
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    protected String getSecretKey() {
+        return this.secretKey;
+    }
 
     /**
      * do preparation before call remote request to the URL

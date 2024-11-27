@@ -6,7 +6,7 @@ package com.plantssoil.webhook.core;
  * @author danialdy
  * @Date 12 Nov 2024 3:12:39 pm
  */
-public interface IWebhookEvent extends java.io.Serializable {
+public interface IWebhookEvent {
     /**
      * The publisher id (mostly it's the organization id which produces Webhook
      * events)
@@ -29,7 +29,7 @@ public interface IWebhookEvent extends java.io.Serializable {
      * 
      * @return data group
      */
-    public String getDataGroup();
+//    public String getDataGroup();
 
     /**
      * The event type, may include business domain and action (or status) name<br/>

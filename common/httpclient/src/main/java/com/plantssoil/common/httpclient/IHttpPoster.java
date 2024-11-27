@@ -4,6 +4,11 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import com.plantssoil.common.httpclient.exception.HttpClientException;
+import com.plantssoil.common.httpclient.impl.BlankHttpPoster;
+import com.plantssoil.common.httpclient.impl.FixedKeyHttpPoster;
+import com.plantssoil.common.httpclient.impl.SignaturedHttpPoster;
+
 /**
  * Post payload via java HttpClient<br/>
  * 
@@ -11,6 +16,24 @@ import java.util.concurrent.CompletableFuture;
  * @Date 25 Oct 2024 7:28:23 pm
  */
 public interface IHttpPoster {
+    /**
+     * The Security Strategy<br/>
+     * <ul>
+     * <li>{@link SecurityStrategy#SIGNATURE} - Will generate signature in header
+     * when callback subscriber ({@link IOrganization#getWebhookUrl()})</li>
+     * <li>{@link SecurityStrategy#TOKEN} - Will add the secret key as signature in
+     * header when callback subscriber ({@link IOrganization#getWebhookUrl()})</li>
+     * <li>{@link SecurityStrategy#NONE} - Won't add signature in header when
+     * callback subscriber ({@link IOrganization#getWebhookUrl()})</li>
+     * </ul>
+     * 
+     * @author danialdy
+     * @Date 13 Nov 2024 2:13:00 pm
+     */
+    public enum SecurityStrategy {
+        SIGNATURE, TOKEN, NONE
+    }
+
     /**
      * post request to url with the headers and payload string
      * 
@@ -26,4 +49,29 @@ public interface IHttpPoster {
      * @return HttpResponse client response completableFuture
      */
     public CompletableFuture<HttpResponse<String>> post(String url, Map<String, String> headers, String requestId, String payload);
+
+    /**
+     * set the secret key which is used to create signature
+     * 
+     * @param secretKey
+     */
+    public void setSecretKey(String secretKey);
+
+    /**
+     * create IHttpPoster instance base security strategy
+     * 
+     * @param securityStrategy the security strategy chosen
+     * @return IHttpPoster instance
+     */
+    public static IHttpPoster createInstance(SecurityStrategy securityStrategy) {
+        if (SecurityStrategy.NONE.equals(securityStrategy)) {
+            return new BlankHttpPoster();
+        } else if (SecurityStrategy.TOKEN.equals(securityStrategy)) {
+            return new FixedKeyHttpPoster();
+        } else if (SecurityStrategy.SIGNATURE.equals(securityStrategy)) {
+            return new SignaturedHttpPoster();
+        } else {
+            throw new HttpClientException(HttpClientException.BUSINESS_EXCEPTION_CODE_14012, "No security strategy specified!");
+        }
+    }
 }

@@ -7,14 +7,18 @@
 		<version>${version.parent}</version>
 	</parent>
 
-	<artifactId>lettuce-webhook-engine-beans</artifactId>
-	<name>Webhook Engine beans</name>
-	
+	<artifactId>lettuce-webhook-engine-persistence</artifactId>
+	<name>Webhook Engine - persistence</name>
+
 	<dependencies>
-		<!-- JPA -->
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-common-persistence</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-webhook-engine-beans</artifactId>
 		</dependency>
 	</dependencies>
+
 </project>

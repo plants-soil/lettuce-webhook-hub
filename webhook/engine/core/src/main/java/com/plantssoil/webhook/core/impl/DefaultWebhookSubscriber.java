@@ -2,69 +2,81 @@ package com.plantssoil.webhook.core.impl;
 
 import java.util.Map;
 
+import com.plantssoil.common.httpclient.IHttpPoster;
+import com.plantssoil.webhook.beans.Organization;
+import com.plantssoil.webhook.beans.WebhookClientApp;
 import com.plantssoil.webhook.core.IWebhookSubscriber;
 
+/**
+ * The default implementation of webhook subscriber (with persistence)
+ * 
+ * @author danialdy
+ * @Date 21 Nov 2024 3:19:30 pm
+ */
 public class DefaultWebhookSubscriber implements IWebhookSubscriber {
     private static final long serialVersionUID = 3029888345870011663L;
+    private Organization organization;
+    private WebhookClientApp webhookClientApp;
+
+    /**
+     * The default constructor from persisted organization & webhookClientApp
+     * 
+     * @param organization     organization instance
+     * @param webhookClientApp webhook client app instance
+     */
+    protected DefaultWebhookSubscriber(Organization organization, WebhookClientApp webhookClientApp) {
+        this.organization = organization;
+        this.webhookClientApp = webhookClientApp;
+    }
 
     @Override
     public String getOrganizationId() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.organization.getOrganizationId();
     }
 
     @Override
     public String getOrganizationName() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.organization.getOrganizationId();
     }
 
     @Override
     public String getWebsite() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.organization.getWebsite();
     }
 
     @Override
     public String getLogoLink() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.organization.getLogoLink();
     }
 
     @Override
     public String getSecretKey() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.organization.getSecretKey();
     }
 
     @Override
     public String getSubscriberAppId() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.webhookClientApp.getClientAppId();
     }
 
     @Override
-    public SecurityStrategy getSecurityStrategy() {
-        // TODO Auto-generated method stub
-        return null;
+    public IHttpPoster.SecurityStrategy getSecurityStrategy() {
+        return IHttpPoster.SecurityStrategy.valueOf(this.webhookClientApp.getSecurityStrategy().name());
     }
 
     @Override
     public String getWebhookUrl() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.webhookClientApp.getWebhookUrl();
     }
 
     @Override
     public Map<String, String> getCustomizedHeaders() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.webhookClientApp.getCustomizedHeaders();
     }
 
     @Override
     public String[] getTrustedIps() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.webhookClientApp.getTrustedIps();
     }
 
 }
