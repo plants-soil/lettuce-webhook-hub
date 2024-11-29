@@ -23,15 +23,6 @@ public interface IWebhookEvent {
     public String getVersion();
 
     /**
-     * Webhook data group (could be null if not multi-datagroup managed). Some
-     * organization need separate data between different business units or
-     * merchants, could use data group to identify
-     * 
-     * @return data group
-     */
-//    public String getDataGroup();
-
-    /**
      * The event type, may include business domain and action (or status) name<br/>
      * From some best practices, could named event type as:
      * 

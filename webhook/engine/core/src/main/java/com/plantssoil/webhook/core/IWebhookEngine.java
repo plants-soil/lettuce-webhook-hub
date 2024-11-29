@@ -20,15 +20,7 @@ public interface IWebhookEngine {
     public String getVersion();
 
     /**
-     * Get the publisher registry<br/>
-     * Could register webhook events, and manage webhook events<br/>
-     * 
-     * @return publisher registry
-     */
-    public IWebhookRegistry getRegistry();
-
-    /**
-     * publish webhook event with payload, the subscribers on the Webhook Event will
+     * post webhook event with payload, the subscribers on the Webhook Event will
      * receive this event.
      * 
      * @param event     the webhook event, which includes all event related
@@ -43,5 +35,5 @@ public interface IWebhookEngine {
      * 
      * @return completable future (asynchronized, in order to know success or not)
      */
-    public CompletableFuture<Void> publish(IWebhookEvent event, String dataGroup, String requestId, String payload);
+    public CompletableFuture<Void> post(IWebhookEvent event, String dataGroup, String requestId, String payload);
 }

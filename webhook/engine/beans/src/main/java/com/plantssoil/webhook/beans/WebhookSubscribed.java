@@ -7,10 +7,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "LETTUCE_WEBHOOKSUBSCRIBED", uniqueConstraints = @UniqueConstraint(columnNames = "clientAppId,eventId"), indexes = {
+@Table(name = "LETTUCE_WEBHOOKSUBSCRIBED", uniqueConstraints = @UniqueConstraint(columnNames = "clientAppId,eventOrganizationId,eventDataGroup,eventId"), indexes = {
         @Index(name = "idx_whsubscribed_clientorgid", columnList = "clientOrganizationId"),
         @Index(name = "idx_whsubscribed_clientappid", columnList = "clientAppId"),
-        @Index(name = "idx_whsubscribed_eventorgid", columnList = "eventOrganizationId"), @Index(name = "idx_whsubscribed_eventid", columnList = "eventId") })
+        @Index(name = "idx_whsubscribed_eventorgid", columnList = "eventOrganizationId"),
+        @Index(name = "idx_whsubscribed_datagroup", columnList = "eventDataGroup"), @Index(name = "idx_whsubscribed_eventid", columnList = "eventId") })
 public class WebhookSubscribed implements java.io.Serializable {
     private static final long serialVersionUID = -3373068800005798198L;
     @Id
@@ -18,6 +19,7 @@ public class WebhookSubscribed implements java.io.Serializable {
     private String clientOrganizationId;
     private String clientAppId;
     private String eventOrganizationId;
+    private String eventDataGroup;
     private String eventId;
 
     public String getSubscribedId() {
@@ -50,6 +52,14 @@ public class WebhookSubscribed implements java.io.Serializable {
 
     public void setEventOrganizationId(String eventOrganizationId) {
         this.eventOrganizationId = eventOrganizationId;
+    }
+
+    public String getEventDataGroup() {
+        return eventDataGroup;
+    }
+
+    public void setEventDataGroup(String eventDataGroup) {
+        this.eventDataGroup = eventDataGroup;
     }
 
     public String getEventId() {

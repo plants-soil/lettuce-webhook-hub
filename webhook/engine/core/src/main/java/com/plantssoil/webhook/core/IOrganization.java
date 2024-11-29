@@ -7,7 +7,7 @@ package com.plantssoil.webhook.core;
  * @author danialdy
  * @Date 13 Nov 2024 1:43:39 pm
  */
-public interface IOrganization extends java.io.Serializable {
+public interface IOrganization {
     /**
      * The organization identity
      * 

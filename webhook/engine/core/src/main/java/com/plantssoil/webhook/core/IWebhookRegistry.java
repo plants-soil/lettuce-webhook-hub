@@ -3,6 +3,11 @@ package com.plantssoil.webhook.core;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import com.plantssoil.common.config.ConfigurableLoader;
+import com.plantssoil.common.config.IConfigurable;
+import com.plantssoil.common.config.LettuceConfiguration;
+import com.plantssoil.webhook.core.exception.EngineException;
+
 /**
  * The registry API for webhook registration, retire, subscribe, query, etc.
  * 
@@ -96,5 +101,20 @@ public interface IWebhookRegistry {
      * @return completable future (asynchronized) with the subscriber list
      */
     public CompletableFuture<List<IWebhookSubscriber>> findSubscribers(IWebhookEvent webhook, int page, int pageSize);
+
+    /**
+     * Get the singleton instance of IWebhookRegistry
+     * 
+     * @return IWebhookRegistry singleton instance
+     */
+    public static IWebhookRegistry getRegistryInstance() {
+        IConfigurable configurable = ConfigurableLoader.getInstance().createSingleton(LettuceConfiguration.WEBHOOK_ENGINE_REGISTRY_CONFIGURABLE);
+        if (configurable instanceof IWebhookRegistry) {
+            return (IWebhookRegistry) configurable;
+        } else {
+            String err = String.format("The class %s don't implements %s!", configurable.getClass().getName(), IWebhookRegistry.class.getName());
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20003, err);
+        }
+    }
 
 }

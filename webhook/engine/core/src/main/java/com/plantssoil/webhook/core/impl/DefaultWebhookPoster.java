@@ -13,9 +13,9 @@ import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.httpclient.IHttpPoster;
-import com.plantssoil.webhook.core.IWebhookEngineFactory;
 import com.plantssoil.webhook.core.IWebhookEvent;
 import com.plantssoil.webhook.core.IWebhookPoster;
+import com.plantssoil.webhook.core.IWebhookRegistry;
 import com.plantssoil.webhook.core.IWebhookSubscriber;
 import com.plantssoil.webhook.core.exception.EngineException;
 import com.plantssoil.webhook.core.logging.WebhookLoggingHandler;
@@ -123,8 +123,7 @@ public class DefaultWebhookPoster implements IWebhookPoster {
             executor.submit(() -> {
                 try {
                     int page = 0;
-                    CompletableFuture<List<IWebhookSubscriber>> f = IWebhookEngineFactory.getFactoryInstance().getWebhookEngine().getRegistry()
-                            .findSubscribers(event, page, PAGE_SIZE);
+                    CompletableFuture<List<IWebhookSubscriber>> f = IWebhookRegistry.getRegistryInstance().findSubscribers(event, page, PAGE_SIZE);
                     List<IWebhookSubscriber> subscribers = f.get();
                     while (subscribers.size() > 0) {
                         for (IWebhookSubscriber subscriber : subscribers) {
@@ -134,7 +133,7 @@ public class DefaultWebhookPoster implements IWebhookPoster {
                             break;
                         }
                         page++;
-                        f = IWebhookEngineFactory.getFactoryInstance().getWebhookEngine().getRegistry().findSubscribers(event, page, PAGE_SIZE);
+                        f = IWebhookRegistry.getRegistryInstance().findSubscribers(event, page, PAGE_SIZE);
                         subscribers = f.get();
                     }
                 } catch (Exception e) {

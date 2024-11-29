@@ -14,7 +14,6 @@ import com.plantssoil.webhook.core.IWebhookSubscriber;
  * @Date 21 Nov 2024 3:19:30 pm
  */
 public class DefaultWebhookSubscriber implements IWebhookSubscriber {
-    private static final long serialVersionUID = 3029888345870011663L;
     private Organization organization;
     private WebhookClientApp webhookClientApp;
 
