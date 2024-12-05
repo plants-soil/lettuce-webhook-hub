@@ -32,29 +32,17 @@ public abstract class AbstractMessageConsumer<T> implements IMessageConsumer<T> 
         return this;
     }
 
-    /**
-     * Get queue name
-     * 
-     * @return queue name
-     */
+    @Override
     public String getQueueName() {
         return queueName;
     }
 
-    /**
-     * Get consumer id, if provided
-     * 
-     * @return consumer id
-     */
+    @Override
     public String getConsumerId() {
         return consumerId;
     }
 
-    /**
-     * Get message listeners registered to the subscriber
-     * 
-     * @return message listeners
-     */
+    @Override
     public List<IMessageListener<T>> getListeners() {
         return listeners;
     }

@@ -51,11 +51,11 @@ public interface IHttpPoster {
     public CompletableFuture<HttpResponse<String>> post(String url, Map<String, String> headers, String requestId, String payload);
 
     /**
-     * set the secret key which is used to create signature
+     * set the access token which is used to create signature
      * 
-     * @param secretKey
+     * @param accessToken
      */
-    public void setSecretKey(String secretKey);
+    public void setAccessToken(String accessToken);
 
     /**
      * create IHttpPoster instance base security strategy

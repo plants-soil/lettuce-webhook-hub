@@ -64,7 +64,16 @@ class MessageRunnable<T> implements Runnable {
      * @param consumer consumer
      */
     void addConsumer(AbstractMessageConsumer<T> consumer) {
-        consumers.add(consumer);
+        this.consumers.add(consumer);
+    }
+
+    /**
+     * Remove consumer
+     * 
+     * @param consumer
+     */
+    void removeConsumer(AbstractMessageConsumer<T> consumer) {
+        this.consumers.remove(consumer);
     }
 
 }

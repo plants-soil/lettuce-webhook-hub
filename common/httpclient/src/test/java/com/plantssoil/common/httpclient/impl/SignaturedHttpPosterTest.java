@@ -23,7 +23,7 @@ public class SignaturedHttpPosterTest {
         String payload = "{\"test\": 2432232314}";
 
         SignaturedHttpPoster notifier = new SignaturedHttpPoster();
-        notifier.setSecretKey("MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw");
+        notifier.setAccessToken("MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw");
 
         CompletableFuture<HttpResponse<String>> future = notifier.post(url, headers, messageId, payload);
         future.thenAccept(response -> {

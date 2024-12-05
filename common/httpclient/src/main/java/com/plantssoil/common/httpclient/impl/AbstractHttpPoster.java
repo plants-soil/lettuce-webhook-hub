@@ -28,20 +28,20 @@ public abstract class AbstractHttpPoster implements IHttpPoster {
     protected final static String HEADER_WEBHOOK_ID = "webhook-id";
     protected final static String HEADER_WEBHOOK_TIMESTAMP = "webhook-timestamp";
     protected final static String HEADER_WEBHOOK_SIGNATURE = "webhook-signature";
-    private String secretKey;
+    private String accessToken;
 
     /**
-     * set the secret key which is used to create signature
+     * set the access token which is used to create signature
      * 
-     * @param secretKey
+     * @param accessToken
      */
     @Override
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
-    protected String getSecretKey() {
-        return this.secretKey;
+    protected String getAccessToken() {
+        return this.accessToken;
     }
 
     /**

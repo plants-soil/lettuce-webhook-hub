@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>lettuce-webhook-engine-core</artifactId>
-	<name>Webhook Engine Core</name>
+	<name>Webhook Engine - core</name>
 
 	<dependencies>
 		<!-- Internal Dependencies -->
@@ -31,6 +31,18 @@
 		<dependency>
 			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-webhook-engine-persistence</artifactId>
+		</dependency>
+        
+        <!-- Testing -->
+        <dependency>
+            <groupId>com.plantssoil</groupId>
+            <artifactId>lettuce-common-test</artifactId>
+            <scope>compile</scope>
+        </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

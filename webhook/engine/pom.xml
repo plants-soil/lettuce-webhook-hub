@@ -5,13 +5,15 @@
     <artifactId>lettuce-webhook</artifactId>
 	<version>${version.parent}</version>
   </parent>
+
   <artifactId>lettuce-webhook-engine</artifactId>
   <packaging>pom</packaging>
-  <name>Webhook Engine Related</name>
+  <name>Webhook Engine</name>
+  
   <modules>
-  	<module>core</module>
   	<module>beans</module>
+  	<module>core</module>
   	<module>persistence</module>
-  	<module>redis</module>
   </modules>
+  
 </project>

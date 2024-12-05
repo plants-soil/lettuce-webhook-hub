@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.plantssoil.webhook.core.IWebhookSubscriber;
+import com.plantssoil.webhook.core.IWebhook;
+import com.plantssoil.webhook.core.Message;
 import com.plantssoil.webhook.core.exception.EngineException;
 
 /**
@@ -33,15 +34,15 @@ class RetryWebhookQueue {
      * retry queue
      * 
      * @param message             The webhook event message
-     * @param subscriber          The subscriber to receive the message
+     * @param webhook             The webhook to receive the message
      * @param executeMilliseconds The milliseconds at which the retry will execute
      */
-    void add(DefaultWebhookMessage message, IWebhookSubscriber subscriber, long executeMilliseconds) {
+    void add(Message message, IWebhook webhook, long executeMilliseconds) {
         if (this.queue.size() >= this.capacity) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20005,
                     String.format("Two many tasks in retry queue (maximum: %d), can't re-try!", this.capacity));
         }
-        queue.offer(new RetryWebhookTask(message, subscriber, executeMilliseconds));
+        queue.offer(new RetryWebhookTask(message, webhook, executeMilliseconds));
     }
 
     /**

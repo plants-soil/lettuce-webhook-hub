@@ -13,7 +13,6 @@ public class WebhookEventLogLine implements java.io.Serializable {
     @Id
     private String logLineId;
     private String subscriberId;
-    private String subscriberAppId;
     private String requestId;
     private long executeMillseconds;
     private int responseCode;
@@ -33,14 +32,6 @@ public class WebhookEventLogLine implements java.io.Serializable {
 
     public void setSubscriberId(String subscriberId) {
         this.subscriberId = subscriberId;
-    }
-
-    public String getSubscriberAppId() {
-        return subscriberAppId;
-    }
-
-    public void setSubscriberAppId(String subscriberAppId) {
-        this.subscriberAppId = subscriberAppId;
     }
 
     public String getRequestId() {

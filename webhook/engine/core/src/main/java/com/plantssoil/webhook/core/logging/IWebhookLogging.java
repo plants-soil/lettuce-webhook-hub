@@ -2,9 +2,8 @@ package com.plantssoil.webhook.core.logging;
 
 import java.lang.reflect.Method;
 
-import com.plantssoil.common.mq.IMessageListener;
+import com.plantssoil.webhook.core.IEngine;
 import com.plantssoil.webhook.core.IWebhookPoster;
-import com.plantssoil.webhook.core.IWebhookEngine;
 
 /**
  * Webhook event logging
@@ -61,10 +60,10 @@ public interface IWebhookLogging {
      * @return webhook logging instance
      */
     public static IWebhookLogging createInstance(Object proxy) {
-        if (IWebhookEngine.class.isAssignableFrom(proxy.getClass())) {
-            return new WebhookPublishLogging();
-        } else if (IMessageListener.class.isAssignableFrom(proxy.getClass())) {
-            return new WebhookConsumLogging();
+        if (IEngine.class.isAssignableFrom(proxy.getClass())) {
+            return new WebhookTriggerLogging();
+//        } else if (IMessageListener.class.isAssignableFrom(proxy.getClass())) {
+//            return new WebhookConsumeLogging();
         } else if (IWebhookPoster.class.isAssignableFrom(proxy.getClass())) {
             return new WebhookPostLogging();
         } else {

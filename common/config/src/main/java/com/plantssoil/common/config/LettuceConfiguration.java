@@ -61,11 +61,11 @@ public class LettuceConfiguration {
      * Lettuce Webhook Engine Factory implementation configuration
      */
     public final static String WEBHOOK_ENGINE_FACTORY_CONFIGURABLE = "webhook.engine.factory.configurable";
-
-    /**
-     * Lettuce Webhook Engine Registry implementation configuration
-     */
-    public final static String WEBHOOK_ENGINE_REGISTRY_CONFIGURABLE = "webhook.engine.registry.configurable";
+//
+//    /**
+//     * Lettuce Webhook Engine Registry implementation configuration
+//     */
+//    public final static String WEBHOOK_ENGINE_REGISTRY_CONFIGURABLE = "webhook.engine.registry.configurable";
 
     /**
      * Lettuce Webhook Engine HTTP Poster implementation configuration

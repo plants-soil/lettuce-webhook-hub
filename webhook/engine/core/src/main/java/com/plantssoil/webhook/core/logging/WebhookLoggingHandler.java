@@ -21,8 +21,7 @@ import org.slf4j.LoggerFactory;
 public class WebhookLoggingHandler implements InvocationHandler {
     private final static Logger LOGGER = LoggerFactory.getLogger(WebhookLoggingHandler.class.getName());
     private final Object target;
-    private final static String PUBLISH_METHOD_NAME = "publish";
-    private final static String LISTENER_METHOD_NAME = "onMessage";
+    private final static String TRIGGER_METHOD_NAME = "trigger";
     private final static String POST_METHOD_NAME = "post";
 
     /**
@@ -43,8 +42,8 @@ public class WebhookLoggingHandler implements InvocationHandler {
             }
         }
         IWebhookLogging logging = IWebhookLogging.createInstance(proxy);
-        boolean blogging = logging != null && (PUBLISH_METHOD_NAME.equals(method.getName()) || LISTENER_METHOD_NAME.equals(method.getName())
-                || POST_METHOD_NAME.equals(method.getName())) /* && args.length == 4 */;
+        boolean blogging = logging != null
+                && (TRIGGER_METHOD_NAME.equals(method.getName()) || POST_METHOD_NAME.equals(method.getName())) /* && args.length == 4 */;
         if (blogging) {
             logging.logBefore(proxy, method, args);
         }

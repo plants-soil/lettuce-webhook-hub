@@ -3,8 +3,6 @@ package com.plantssoil.webhook.core;
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
-import com.plantssoil.webhook.core.impl.DefaultWebhookMessage;
-
 /**
  * Webhook Poster
  * 
@@ -13,18 +11,19 @@ import com.plantssoil.webhook.core.impl.DefaultWebhookMessage;
  */
 public interface IWebhookPoster {
     /**
-     * Post webbhok with message & event
+     * Post webbhok with message & webhook
      * 
      * @param message message to post
-     * @param event   the message event
+     * @param webhook the destination to post the message
      */
-    public void postWebhook(final DefaultWebhookMessage message, final IWebhookEvent event);
+    public void postWebhook(final Message message, final IWebhook webhook);
 
     /**
-     * Post webhook message to subscriber (this method mostly used for logging)
+     * Post message to webhook (this method mostly used for logging & internal
+     * retry)
      * 
-     * @param message    webhook message
-     * @param subscriber the destination to post the message
+     * @param message webhook message
+     * @param webhook the destination to post the message
      */
-    public CompletableFuture<HttpResponse<String>> post(DefaultWebhookMessage message, IWebhookSubscriber subscriber);
+    public CompletableFuture<HttpResponse<String>> post(Message message, IWebhook webhook);
 }

@@ -16,8 +16,8 @@ public class FixedKeyHttpPoster extends AbstractHttpPoster {
         super.beforePost(url, headers, requestId, payload);
         headers.put(HEADER_WEBHOOK_ID, requestId);
         headers.put(HEADER_WEBHOOK_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
-        if (getSecretKey() != null) {
-            headers.put(HEADER_WEBHOOK_SIGNATURE, getSecretKey());
+        if (getAccessToken() != null) {
+            headers.put(HEADER_WEBHOOK_SIGNATURE, getAccessToken());
         } else {
             throw new HttpClientException(HttpClientException.BUSINESS_EXCEPTION_CODE_14001, "The secret key should not be null!");
         }

@@ -24,6 +24,13 @@ class InMemoryMessageQueue<T> {
         this.messageConsumers.clear();
     }
 
+    void removeConsumer(String queueName, AbstractMessageConsumer<T> consumer) {
+        MessageRunnable<T> mr = messageConsumers.get(queueName);
+        if (mr != null) {
+            mr.removeConsumer(consumer);
+        }
+    }
+
     private LinkedBlockingQueue<T> getMessageQueue(String queueName) {
         LinkedBlockingQueue<T> mq = this.messageQueues.get(queueName);
         if (mq == null) {
@@ -42,6 +49,11 @@ class InMemoryMessageQueue<T> {
     }
 
     void publish(String queueName, T message) throws InterruptedException {
+        // discard message if there is no consumer to avoid memory exhausted
+        if (!messageConsumers.containsKey(queueName)) {
+            return;
+        }
+        // put message into queue
         LinkedBlockingQueue<T> mq = getMessageQueue(queueName);
         mq.put(message);
     }

@@ -7,15 +7,15 @@ import com.plantssoil.webhook.core.exception.EngineException;
 
 /**
  * Factory for creating the webhook engine<br/>
- * Should have singleton IWebhookEngineFactory instance in one JVM<br/>
+ * Should have singleton IEngineFactory instance in one JVM<br/>
  * Could get the singleton instance just call the static factory method of this
- * class {@link IWebhookEngineFactory#getFactoryInstance()}<br/>
+ * class {@link IEngineFactory#getFactoryInstance()}<br/>
  * e.g:
  * 
  * <pre>
  * <code>
- *   IWebhookEngineFactory factory = IWebhookEngineFactory.getFactoryInstance();
- *   IWebhookEngine engine = factory.getWebhookEngine();
+ *   IEngineFactory factory = IEngineFactory.getFactoryInstance();
+ *   IEngine engine = factory.getEngine();
  *   ...
  * </code>
  * </pre>
@@ -23,19 +23,19 @@ import com.plantssoil.webhook.core.exception.EngineException;
  * @author danialdy
  * @Date 12 Nov 2024 1:09:34 pm
  */
-public interface IWebhookEngineFactory {
+public interface IEngineFactory {
     /**
      * Call this to create the webhook engine<br/>
-     * Publisher could use this engine to publish webhook event<br/>
-     * Subscriber could user this engine to subscribe webhook event from
+     * Publisher could use this engine to trigger events<br/>
+     * Subscriber could use this engine to subscribe webhook event from
      * publisher<br/>
      * 
      * @return Webhook engine instance
      */
-    public IWebhookEngine getWebhookEngine();
+    public IEngine getEngine();
 
     /**
-     * Get the factory instance of IWebhookEngineFactory
+     * Get the factory instance of IEngineFactory
      * 
      * @return factory instance
      */
@@ -44,14 +44,14 @@ public interface IWebhookEngineFactory {
      * The default implementation is specified by configuration
      * {@link LettuceConfiguration#WEBHOOK_ENGINE_FACTORY_CONFIGURABLE}
      * 
-     * @return Singleton instance of {@link IWebhookEngineFactory}
+     * @return Singleton instance of {@link IEngineFactory}
      */
-    public static IWebhookEngineFactory getFactoryInstance() {
+    public static IEngineFactory getFactoryInstance() {
         IConfigurable configurable = ConfigurableLoader.getInstance().createSingleton(LettuceConfiguration.WEBHOOK_ENGINE_FACTORY_CONFIGURABLE);
-        if (configurable instanceof IWebhookEngineFactory) {
-            return (IWebhookEngineFactory) configurable;
+        if (configurable instanceof IEngineFactory) {
+            return (IEngineFactory) configurable;
         } else {
-            String err = String.format("The class %s don't implements %s!", configurable.getClass().getName(), IWebhookEngineFactory.class.getName());
+            String err = String.format("The class %s don't implements %s!", configurable.getClass().getName(), IEngineFactory.class.getName());
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20001, err);
         }
     }

@@ -17,6 +17,7 @@ class MessageReceiver<T> implements Runnable {
     private String consumerId;
     private List<IMessageListener<T>> listeners;
     private Class<T> clazz;
+    private boolean closed = false;
 
     public MessageReceiver(Session session, String queueName, String consumerId, List<IMessageListener<T>> listeners, Class<T> clazz) {
         this.session = session;
@@ -29,7 +30,7 @@ class MessageReceiver<T> implements Runnable {
     @Override
     public void run() {
         try (MessageConsumer consumer = this.session.createConsumer(this.session.createQueue(this.queueName))) {
-            while (true) {
+            while (!this.closed) {
                 javax.jms.Message msg = null;
                 // try to receive message from consumer
                 // will re-try 3 times if connection is broken and exit if still can't
@@ -60,5 +61,9 @@ class MessageReceiver<T> implements Runnable {
         } catch (JMSException e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15003, e);
         }
+    }
+
+    public void close() {
+        this.closed = true;
     }
 }

@@ -1,6 +1,7 @@
 package com.plantssoil.common.mq.rabbit;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import com.plantssoil.common.io.ObjectJsonSerializer;
 import com.plantssoil.common.mq.AbstractMessageConsumer;
@@ -16,7 +17,6 @@ import com.rabbitmq.client.Channel;
  */
 class MessageConsumer<T> extends AbstractMessageConsumer<T> {
     private final static String EXCHANGE_NAME = "com.plantssoil.message.exchange";
-//    private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private Channel channel;
 
     /**
@@ -27,15 +27,6 @@ class MessageConsumer<T> extends AbstractMessageConsumer<T> {
     protected MessageConsumer(Channel channel) {
         this.channel = channel;
     }
-
-//    protected String createRoutingKey() {
-//        return String.format("%s%s%s%s%s", this.getPublisherId(), ROUTING_KEY_SEPARATOR, this.getVersion(), ROUTING_KEY_SEPARATOR,
-//                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
-//    }
-
-//    protected String[] decreateRoutingKey(String routingKey) {
-//        return routingKey.split(ROUTING_KEY_SEPARATOR);
-//    }
 
     @Override
     public void consume(Class<T> clazz) {
@@ -58,6 +49,7 @@ class MessageConsumer<T> extends AbstractMessageConsumer<T> {
 
             // consume message with auto-ack
             this.channel.basicConsume(queueName, true, this.getConsumerId(), (consumerTag, message) -> {
+                // receive message
                 T msg = ObjectJsonSerializer.getInstance().unserialize(new String(message.getBody(), "UTF-8"), clazz);
                 for (IMessageListener<T> listener : getListeners()) {
                     listener.onMessage(msg, getConsumerId());
@@ -66,6 +58,15 @@ class MessageConsumer<T> extends AbstractMessageConsumer<T> {
             });
         } catch (IOException e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15011, e);
+        }
+    }
+
+    @Override
+    public void close() {
+        try {
+            this.channel.close();
+        } catch (IOException | TimeoutException e) {
+            e.printStackTrace();
         }
     }
 

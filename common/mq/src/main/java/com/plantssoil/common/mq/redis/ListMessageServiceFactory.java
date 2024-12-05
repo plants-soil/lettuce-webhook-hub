@@ -74,7 +74,7 @@ public class ListMessageServiceFactory<T extends java.io.Serializable> implement
     public void close() throws Exception {
         if (this.consumers != null) {
             for (ListMessageConsumer<T> consumer : this.consumers) {
-                consumer.stop();
+                consumer.close();
             }
         }
         if (this.publisherConnection != null) {

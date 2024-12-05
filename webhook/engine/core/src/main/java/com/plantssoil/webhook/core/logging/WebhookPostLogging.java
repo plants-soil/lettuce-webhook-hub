@@ -9,8 +9,8 @@ import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
 import com.plantssoil.webhook.beans.WebhookEventLog;
 import com.plantssoil.webhook.beans.WebhookEventLogLine;
-import com.plantssoil.webhook.core.IWebhookSubscriber;
-import com.plantssoil.webhook.core.impl.DefaultWebhookMessage;
+import com.plantssoil.webhook.core.IWebhook;
+import com.plantssoil.webhook.core.Message;
 
 /**
  * Webhook HTTP Post Logging
@@ -25,15 +25,15 @@ public class WebhookPostLogging implements IWebhookLogging {
         if (args.length != 2) {
             return;
         }
-        if (args[0] == null || !(args[0] instanceof DefaultWebhookMessage)) {
+        if (args[0] == null || !(args[0] instanceof Message)) {
             return;
         }
-        if (args[1] == null || !(args[1] instanceof IWebhookSubscriber)) {
+        if (args[1] == null || !(args[1] instanceof IWebhook)) {
             return;
         }
         CompletableFuture.runAsync(() -> {
-            DefaultWebhookMessage message = (DefaultWebhookMessage) args[0];
-            IWebhookSubscriber subscriber = (IWebhookSubscriber) args[1];
+            Message message = (Message) args[0];
+            IWebhook subscriber = (IWebhook) args[1];
             try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
                 IEntityQuery<WebhookEventLog> query = persists.createQuery(WebhookEventLog.class);
                 WebhookEventLog log = query.singleResult(message.getRequestId()).get();
@@ -41,8 +41,7 @@ public class WebhookPostLogging implements IWebhookLogging {
                     WebhookEventLogLine line = new WebhookEventLogLine();
                     line.setLogLineId(EntityIdUtility.getInstance().generateUniqueId());
                     line.setRequestId(message.getRequestId());
-                    line.setSubscriberId(subscriber.getOrganizationId());
-                    line.setSubscriberAppId(subscriber.getSubscriberAppId());
+                    line.setSubscriberId(subscriber.getWebhookId());
                     line.setExecuteMillseconds(System.currentTimeMillis());
                     persists.create(line);
                 }

@@ -1,9 +1,10 @@
 package com.plantssoil.webhook.core.impl;
 
-import com.plantssoil.webhook.core.IWebhookSubscriber;
+import com.plantssoil.webhook.core.IWebhook;
+import com.plantssoil.webhook.core.Message;
 
 /**
- * The retry webhook task which holds webhook message & subscriber information &
+ * The retry webhook task which holds webhook message & webhook information &
  * execute milliseconds
  * 
  * @author danialdy
@@ -11,19 +12,19 @@ import com.plantssoil.webhook.core.IWebhookSubscriber;
  */
 class RetryWebhookTask {
     private long executeMilliseconds;
-    private DefaultWebhookMessage message;
-    private IWebhookSubscriber subscriber;
+    private Message message;
+    private IWebhook webhook;
 
     /**
      * The constructor
      * 
      * @param message            the webhook message
-     * @param subscriber         the subscriber to receive message
+     * @param webhook            the webhook to receive message
      * @param executeMillseconds the milliseconds at which to retry the webhook post
      */
-    RetryWebhookTask(DefaultWebhookMessage message, IWebhookSubscriber subscriber, long executeMillseconds) {
+    RetryWebhookTask(Message message, IWebhook webhook, long executeMillseconds) {
         this.message = message;
-        this.subscriber = subscriber;
+        this.webhook = webhook;
         this.executeMilliseconds = executeMillseconds;
     }
 
@@ -41,16 +42,16 @@ class RetryWebhookTask {
      * 
      * @return the webhook message
      */
-    DefaultWebhookMessage getMessage() {
+    Message getMessage() {
         return this.message;
     }
 
     /**
-     * get the subscriber to receive message
+     * get the webhook to receive message
      * 
-     * @return the subscriber
+     * @return the webhook
      */
-    IWebhookSubscriber getSubscriber() {
-        return this.subscriber;
+    IWebhook getWebhook() {
+        return this.webhook;
     }
 }

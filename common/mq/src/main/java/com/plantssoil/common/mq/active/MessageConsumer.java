@@ -1,5 +1,6 @@
 package com.plantssoil.common.mq.active;
 
+import javax.jms.JMSException;
 import javax.jms.Session;
 
 import com.plantssoil.common.mq.AbstractMessageConsumer;
@@ -12,6 +13,7 @@ import com.plantssoil.common.mq.AbstractMessageConsumer;
  */
 class MessageConsumer<T> extends AbstractMessageConsumer<T> {
     private Session session;
+    private MessageReceiver<T> mc;
 
     /**
      * Constructor mandatory, used for factory to initiate
@@ -24,8 +26,18 @@ class MessageConsumer<T> extends AbstractMessageConsumer<T> {
 
     @Override
     public void consume(Class<T> clazz) {
-        MessageReceiver<T> mc = new MessageReceiver<T>(this.session, getQueueName(), getConsumerId(), getListeners(), clazz);
-        new Thread(mc, String.format("MQ Subscriber: %s", getQueueName())).start();
+        this.mc = new MessageReceiver<T>(this.session, getQueueName(), getConsumerId(), getListeners(), clazz);
+        new Thread(this.mc, String.format("MQ Subscriber: %s", getQueueName())).start();
+    }
+
+    @Override
+    public void close() {
+        this.mc.close();
+        try {
+            this.session.close();
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
     }
 
 }

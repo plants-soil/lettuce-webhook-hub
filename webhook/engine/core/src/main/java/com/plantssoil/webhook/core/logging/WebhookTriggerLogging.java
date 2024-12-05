@@ -7,7 +7,7 @@ import com.plantssoil.common.persistence.IEntityQuery;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
 import com.plantssoil.webhook.beans.WebhookEventLog;
-import com.plantssoil.webhook.core.IWebhookEvent;
+import com.plantssoil.webhook.core.Message;
 
 /**
  * Webhook Publish Logging
@@ -15,44 +15,32 @@ import com.plantssoil.webhook.core.IWebhookEvent;
  * @author danialdy
  * @Date 18 Nov 2024 2:07:37 pm
  */
-public class WebhookPublishLogging implements IWebhookLogging {
+public class WebhookTriggerLogging implements IWebhookLogging {
 
     @Override
     public void logBefore(Object proxy, Method method, Object[] args) {
-        if (args.length != 4) {
+        if (args.length != 1) {
             return;
         }
-        if (args[0] == null || !(args[0] instanceof IWebhookEvent)) {
-            return;
-        }
-        if (args[1] != null && !(args[1] instanceof String)) {
-            return;
-        }
-        if (args[2] == null || !(args[2] instanceof String)) {
-            return;
-        }
-        if (args[3] == null || !(args[3] instanceof String)) {
+        if (args[0] == null || !(args[0] instanceof Message)) {
             return;
         }
         CompletableFuture.runAsync(() -> {
-            IWebhookEvent event = (IWebhookEvent) args[0];
-            String dataGroup = args[1] == null ? null : (String) args[1];
-            String requestId = (String) args[2];
-            String payload = (String) args[3];
+            Message event = (Message) args[0];
             try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
                 IEntityQuery<WebhookEventLog> query = persists.createQuery(WebhookEventLog.class);
-                WebhookEventLog log = query.singleResult(requestId).get();
+                WebhookEventLog log = query.singleResult(event.getRequestId()).get();
                 if (log == null) {
                     log = new WebhookEventLog();
                     log.setPublisherId(event.getPublisherId());
                     log.setVersion(event.getVersion());
-                    log.setDataGroup(dataGroup);
+                    log.setDataGroup(event.getDataGroup());
                     log.setEventType(event.getEventType());
                     log.setEventTag(event.getEventTag());
                     log.setContentType(event.getContentType());
                     log.setCharset(event.getCharset());
-                    log.setRequestId(requestId);
-                    log.setPayload(payload);
+                    log.setRequestId(event.getRequestId());
+                    log.setPayload(event.getPayload());
                     log.setWebhookStatus("publish");
                     persists.create(log);
                 }

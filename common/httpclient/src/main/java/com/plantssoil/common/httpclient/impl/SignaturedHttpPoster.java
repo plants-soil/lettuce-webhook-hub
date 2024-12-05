@@ -23,7 +23,7 @@ public class SignaturedHttpPoster extends AbstractHttpPoster {
 
     private String signature(String messageId, String timestamp, String payload) {
         String toSign = String.format("%s.%s.%s", messageId, timestamp, payload);
-        String signature = String.format("v1,%s", Sha512HmacEncrypter.getInstance().encrypt(getSecretKey(), toSign));
+        String signature = String.format("v1,%s", Sha512HmacEncrypter.getInstance().encrypt(getAccessToken(), toSign));
         return signature;
     }
 }

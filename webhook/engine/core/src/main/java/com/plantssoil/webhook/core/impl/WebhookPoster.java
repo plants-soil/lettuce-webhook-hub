@@ -13,11 +13,11 @@ import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.httpclient.IHttpPoster;
-import com.plantssoil.webhook.core.IWebhookEvent;
+import com.plantssoil.webhook.core.IEngineFactory;
+import com.plantssoil.webhook.core.IEvent;
+import com.plantssoil.webhook.core.IWebhook;
 import com.plantssoil.webhook.core.IWebhookPoster;
-import com.plantssoil.webhook.core.IWebhookRegistry;
-import com.plantssoil.webhook.core.IWebhookSubscriber;
-import com.plantssoil.webhook.core.exception.EngineException;
+import com.plantssoil.webhook.core.Message;
 import com.plantssoil.webhook.core.logging.WebhookLoggingHandler;
 
 /**
@@ -35,7 +35,7 @@ import com.plantssoil.webhook.core.logging.WebhookLoggingHandler;
  * @author danialdy
  * @Date 27 Nov 2024 11:24:20 am
  */
-public class DefaultWebhookPoster implements IWebhookPoster {
+public class WebhookPoster implements IWebhookPoster {
     private final static int PAGE_SIZE = 50;
     private static volatile IWebhookPoster instance;
     private ThreadPoolExecutor executor;
@@ -44,7 +44,7 @@ public class DefaultWebhookPoster implements IWebhookPoster {
     private ScheduledExecutorService retryScheduler30; // scheduler 30 seconds delay
     private RetryWebhookQueue retryWebhooks30; // retry webhook queue 30 seconds delay
 
-    private DefaultWebhookPoster() {
+    private WebhookPoster() {
         // initial thread pool for webhook poster
         initialExecutor();
         // initial retry scheduler 5 seconds delay, don't use ScheduledExecutorService
@@ -71,13 +71,13 @@ public class DefaultWebhookPoster implements IWebhookPoster {
         this.retryScheduler5.scheduleAtFixedRate(() -> {
             List<RetryWebhookTask> list = retryWebhooks5.webhookTasksTimeUp();
             for (RetryWebhookTask task : list) {
-                CompletableFuture<HttpResponse<String>> f = post(task.getMessage(), task.getSubscriber());
+                CompletableFuture<HttpResponse<String>> f = post(task.getMessage(), task.getWebhook());
                 f.thenAccept(response -> {
                     // the response code should be 20x, indicates call webhook url successfully
                     // otherwise, put the message into retry queue, which will retry 30 seconds
                     // later
                     if (!(response.statusCode() >= 200 && response.statusCode() < 210)) {
-                        this.retryWebhooks30.add(task.getMessage(), task.getSubscriber(), System.currentTimeMillis() + 30 * 1000);
+                        this.retryWebhooks30.add(task.getMessage(), task.getWebhook(), System.currentTimeMillis() + 30 * 1000);
                     }
                 });
             }
@@ -94,7 +94,7 @@ public class DefaultWebhookPoster implements IWebhookPoster {
             for (RetryWebhookTask task : list) {
                 // this is the last try, just post webhook url
                 // no more further process, no matter success or not
-                post(task.getMessage(), task.getSubscriber());
+                post(task.getMessage(), task.getWebhook());
             }
         }, 1, 1, TimeUnit.SECONDS);
     }
@@ -106,10 +106,10 @@ public class DefaultWebhookPoster implements IWebhookPoster {
      */
     public static IWebhookPoster getInstance() {
         if (instance == null) {
-            synchronized (DefaultWebhookPoster.class) {
+            synchronized (WebhookPoster.class) {
                 if (instance == null) {
                     // create poster instance (use proxy to AOP logging)
-                    DefaultWebhookPoster poster = new DefaultWebhookPoster();
+                    WebhookPoster poster = new WebhookPoster();
                     instance = (IWebhookPoster) WebhookLoggingHandler.createProxy(poster);
                 }
             }
@@ -118,51 +118,62 @@ public class DefaultWebhookPoster implements IWebhookPoster {
     }
 
     @Override
-    public void postWebhook(final DefaultWebhookMessage message, final IWebhookEvent event) {
+    public void postWebhook(final Message message, final IWebhook webhook) {
+        // if event is not subscribed, not need post webhook
+        if (!eventSubscried(message, webhook)) {
+            return;
+        }
+
         try {
             executor.submit(() -> {
-                try {
-                    int page = 0;
-                    CompletableFuture<List<IWebhookSubscriber>> f = IWebhookRegistry.getRegistryInstance().findSubscribers(event, page, PAGE_SIZE);
-                    List<IWebhookSubscriber> subscribers = f.get();
-                    while (subscribers.size() > 0) {
-                        for (IWebhookSubscriber subscriber : subscribers) {
-                            postWebhook(message, subscriber);
-                        }
-                        if (subscribers.size() < PAGE_SIZE) {
-                            break;
-                        }
-                        page++;
-                        f = IWebhookRegistry.getRegistryInstance().findSubscribers(event, page, PAGE_SIZE);
-                        subscribers = f.get();
-                    }
-                } catch (Exception e) {
-                    throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20006, e);
-                }
+                postWebhook1(message, webhook);
             });
         } catch (Exception ex) {
-            // TODO exception happens when thread pool full and queue full
-            // TODO should return the message back to queue?
+            // return the message back to queue, if exception happens when thread pool full
+            // and queue full
             ex.printStackTrace();
+            IEngineFactory.getFactoryInstance().getEngine().trigger(message);
         }
     }
 
-    private void postWebhook(DefaultWebhookMessage message, IWebhookSubscriber subscriber) {
-        CompletableFuture<HttpResponse<String>> f = post(message, subscriber);
+    private boolean eventSubscried(Message message, IWebhook webhook) {
+        boolean subscribed = false;
+        int page = 0;
+
+        List<IEvent> events = webhook.findSubscribedEvents(page, PAGE_SIZE);
+        while (events != null && events.size() > 0) {
+            for (IEvent event : events) {
+                if (event.getEventType().equals(message.getEventType())) {
+                    subscribed = true;
+                    break;
+                }
+            }
+            if (events.size() < PAGE_SIZE) {
+                break;
+            }
+            page++;
+            events = webhook.findSubscribedEvents(page, PAGE_SIZE);
+        }
+        return subscribed;
+    }
+
+    private void postWebhook1(Message message, IWebhook webhook) {
+        CompletableFuture<HttpResponse<String>> f = post(message, webhook);
         f.thenAccept(response -> {
             // the response code should be 20x, indicates call webhook url successfully
             // otherwise, put the message into retry queue, which will retry 5 seconds later
             if (!(response.statusCode() >= 200 && response.statusCode() < 210)) {
-                this.retryWebhooks5.add(message, subscriber, System.currentTimeMillis() + 5 * 1000);
+                this.retryWebhooks5.add(message, webhook, System.currentTimeMillis() + 5 * 1000);
             }
         });
     }
 
     @Override
-    public CompletableFuture<HttpResponse<String>> post(DefaultWebhookMessage message, IWebhookSubscriber subscriber) {
-        IHttpPoster poster = IHttpPoster.createInstance(subscriber.getSecurityStrategy());
-        poster.setSecretKey(subscriber.getSecretKey());
-        CompletableFuture<HttpResponse<String>> f = poster.post(subscriber.getWebhookUrl(), subscriber.getCustomizedHeaders(), message.getRequestId(),
+    public CompletableFuture<HttpResponse<String>> post(Message message, IWebhook webhook) {
+        IHttpPoster poster = IHttpPoster
+                .createInstance(com.plantssoil.common.httpclient.IHttpPoster.SecurityStrategy.valueOf(webhook.getSecurityStrategy().name()));
+        poster.setAccessToken(webhook.getAccessToken());
+        CompletableFuture<HttpResponse<String>> f = poster.post(webhook.getWebhookUrl(), webhook.getCustomizedHeaders(), message.getRequestId(),
                 message.getPayload());
         return f;
     }

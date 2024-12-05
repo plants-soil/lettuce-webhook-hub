@@ -1,4 +1,4 @@
-package com.plantssoil.webhook.core.impl;
+package com.plantssoil.webhook.core;
 
 /**
  * The message used to publish & consume by message service
@@ -6,7 +6,7 @@ package com.plantssoil.webhook.core.impl;
  * @author danialdy
  * @Date 25 Nov 2024 12:04:11 pm
  */
-public class DefaultWebhookMessage {
+public class Message {
     private String publisherId;
     private String version;
     private String eventType;
@@ -17,10 +17,10 @@ public class DefaultWebhookMessage {
     private String requestId;
     private String payload;
 
-    public DefaultWebhookMessage() {
+    public Message() {
     }
 
-    public DefaultWebhookMessage(String publisherId, String version, String eventType, String eventTag, String contentType, String charset, String dataGroup,
+    public Message(String publisherId, String version, String eventType, String eventTag, String contentType, String charset, String dataGroup,
             String requestId, String payload) {
         super();
         this.publisherId = publisherId;
@@ -34,47 +34,47 @@ public class DefaultWebhookMessage {
         this.payload = payload;
     }
 
-    public DefaultWebhookMessage publisherId(String publisherId) {
+    public Message publisherId(String publisherId) {
         this.publisherId = publisherId;
         return this;
     }
 
-    public DefaultWebhookMessage version(String version) {
+    public Message version(String version) {
         this.version = version;
         return this;
     }
 
-    public DefaultWebhookMessage eventType(String eventType) {
+    public Message eventType(String eventType) {
         this.eventType = eventType;
         return this;
     }
 
-    public DefaultWebhookMessage eventTag(String eventTag) {
+    public Message eventTag(String eventTag) {
         this.eventTag = eventTag;
         return this;
     }
 
-    public DefaultWebhookMessage contentType(String contentType) {
+    public Message contentType(String contentType) {
         this.contentType = contentType;
         return this;
     }
 
-    public DefaultWebhookMessage charset(String charset) {
+    public Message charset(String charset) {
         this.charset = charset;
         return this;
     }
 
-    public DefaultWebhookMessage dataGroup(String dataGroup) {
+    public Message dataGroup(String dataGroup) {
         this.dataGroup = dataGroup;
         return this;
     }
 
-    public DefaultWebhookMessage requestId(String requestId) {
+    public Message requestId(String requestId) {
         this.requestId = requestId;
         return this;
     }
 
-    public DefaultWebhookMessage payload(String payload) {
+    public Message payload(String payload) {
         this.payload = payload;
         return this;
     }
