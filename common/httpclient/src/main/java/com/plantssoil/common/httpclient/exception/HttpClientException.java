@@ -19,15 +19,6 @@ public class HttpClientException extends BusinessException {
     public final static int BUSINESS_EXCEPTION_CODE_14001 = 14001;
     public final static int BUSINESS_EXCEPTION_CODE_14002 = 14002;
     public final static int BUSINESS_EXCEPTION_CODE_14003 = 14003;
-    public final static int BUSINESS_EXCEPTION_CODE_14004 = 14004;
-    public final static int BUSINESS_EXCEPTION_CODE_14005 = 14005;
-    public final static int BUSINESS_EXCEPTION_CODE_14006 = 14006;
-    public final static int BUSINESS_EXCEPTION_CODE_14007 = 14007;
-    public final static int BUSINESS_EXCEPTION_CODE_14008 = 14008;
-    public final static int BUSINESS_EXCEPTION_CODE_14009 = 14009;
-    public final static int BUSINESS_EXCEPTION_CODE_14010 = 14010;
-    public final static int BUSINESS_EXCEPTION_CODE_14011 = 14011;
-    public final static int BUSINESS_EXCEPTION_CODE_14012 = 14012;
 
     public HttpClientException(String message, Throwable cause) {
         super(message, cause);

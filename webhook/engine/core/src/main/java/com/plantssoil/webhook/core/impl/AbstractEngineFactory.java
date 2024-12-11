@@ -1,5 +1,6 @@
 package com.plantssoil.webhook.core.impl;
 
+import com.plantssoil.common.config.IConfigurable;
 import com.plantssoil.webhook.core.IEngine;
 import com.plantssoil.webhook.core.IEngineFactory;
 import com.plantssoil.webhook.core.logging.WebhookLoggingHandler;
@@ -11,7 +12,7 @@ import com.plantssoil.webhook.core.logging.WebhookLoggingHandler;
  * @author danialdy
  * @Date 4 Dec 2024 3:23:25 pm
  */
-abstract class AbstractEngineFactory implements IEngineFactory {
+abstract class AbstractEngineFactory implements IConfigurable, IEngineFactory {
     private IEngine engine;
 
     /**

@@ -2,6 +2,7 @@ package com.plantssoil.webhook.core.impl;
 
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
+import com.plantssoil.webhook.core.IEngine;
 import com.plantssoil.webhook.core.IEngineFactory;
 import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.Message;
@@ -22,7 +23,7 @@ import com.plantssoil.webhook.core.Message;
  * @author danialdy
  * @Date 5 Dec 2024 3:40:29 pm
  */
-public class MessageQueueEngine extends AbstractEngine {
+class MessageQueueEngine extends AbstractEngine implements IEngine {
 
     public MessageQueueEngine() {
         super();

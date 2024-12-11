@@ -1,9 +1,13 @@
 package com.plantssoil.webhook.beans;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "LETTUCE_WEBHOOKEVENTLOGLINE", indexes = { @Index(name = "idx_wheventlogline_requestid", columnList = "requestId"),
@@ -17,6 +21,8 @@ public class WebhookEventLogLine implements java.io.Serializable {
     private long executeMillseconds;
     private int responseCode;
     private String responseMessage;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date postTime;
 
     public String getLogLineId() {
         return logLineId;
@@ -64,6 +70,14 @@ public class WebhookEventLogLine implements java.io.Serializable {
 
     public void setResponseMessage(String responseMessage) {
         this.responseMessage = responseMessage;
+    }
+
+    public Date getPostTime() {
+        return postTime;
+    }
+
+    public void setPostTime(Date postTime) {
+        this.postTime = postTime;
     }
 
 }

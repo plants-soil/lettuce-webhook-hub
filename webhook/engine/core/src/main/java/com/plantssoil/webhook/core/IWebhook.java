@@ -255,6 +255,13 @@ public interface IWebhook {
      * @param pageSize maximum events on current page
      * @return data groups on current page
      */
-    public List<String> findSubscribedDataGroups(int page, int pageSize);
+    public List<IDataGroup> findSubscribedDataGroups(int page, int pageSize);
 
+    /**
+     * Query the subscribed data group with the specified data group name
+     * 
+     * @param dataGroup the data group name to query
+     * @return the data group found
+     */
+    public IDataGroup findSubscribedDataGroup(String dataGroup);
 }

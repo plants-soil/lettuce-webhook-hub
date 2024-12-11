@@ -3,15 +3,17 @@ package com.plantssoil.common.httpclient.impl;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 
+import com.plantssoil.common.httpclient.IHttpResponse;
+
 public class FixedKeyHttpPosterTest {
+    public static void main(String[] args) {
+        new FixedKeyHttpPosterTest().testPostNotification();
+    }
 
     @Test
     public void testPostNotification() {
@@ -25,25 +27,17 @@ public class FixedKeyHttpPosterTest {
 
         FixedKeyHttpPoster notifier = new FixedKeyHttpPoster();
         notifier.setAccessToken("whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw");
+        notifier.setCharset("UTF-8");
+        notifier.setMediaType("application/json");
 
-        CompletableFuture<HttpResponse<String>> future = notifier.post(url, headers, messageId, payload);
-        future.thenAccept(response -> {
-            System.out.println(response.statusCode());
-            System.out.println(response.body());
-        });
-        try {
-            while (!future.isDone()) {
-                Thread.sleep(0);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
+        IHttpResponse response = notifier.post(url, headers, messageId, payload);
+        System.out.println(response.getStatusCode());
+        System.out.println(response.getBody());
         try {
             // should uncomment this line after setup the correct url
 //            assertTrue(future.get().statusCode() == 200);
-            assertTrue(future.get().statusCode() == 404);
-        } catch (InterruptedException | ExecutionException e) {
+            assertTrue(response.getStatusCode() == 404);
+        } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         }

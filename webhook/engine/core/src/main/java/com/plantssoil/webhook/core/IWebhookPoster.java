@@ -1,8 +1,5 @@
 package com.plantssoil.webhook.core;
 
-import java.net.http.HttpResponse;
-import java.util.concurrent.CompletableFuture;
-
 /**
  * Webhook Poster
  * 
@@ -17,13 +14,4 @@ public interface IWebhookPoster {
      * @param webhook the destination to post the message
      */
     public void postWebhook(final Message message, final IWebhook webhook);
-
-    /**
-     * Post message to webhook (this method mostly used for logging & internal
-     * retry)
-     * 
-     * @param message webhook message
-     * @param webhook the destination to post the message
-     */
-    public CompletableFuture<HttpResponse<String>> post(Message message, IWebhook webhook);
 }

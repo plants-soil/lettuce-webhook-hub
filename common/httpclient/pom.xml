@@ -17,7 +17,13 @@
 			<artifactId>lettuce-common-security</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		
+
+		<!-- External dependencies -->
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+		</dependency>
+
 		<!-- Test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>

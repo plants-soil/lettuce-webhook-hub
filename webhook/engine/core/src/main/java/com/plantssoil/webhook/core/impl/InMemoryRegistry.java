@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.SubmissionPublisher;
 
+import com.plantssoil.webhook.core.IDataGroup;
 import com.plantssoil.webhook.core.IPublisher;
 import com.plantssoil.webhook.core.ISubscriber;
 import com.plantssoil.webhook.core.IWebhook;
@@ -144,16 +145,23 @@ class InMemoryRegistry extends AbstractRegistry {
 
     private void loadSubmissionSubscriber(List<InMemorySubscriber> ssubscribers, IWebhook webhook) {
         int page = 0;
-        List<String> dataGroups = webhook.findSubscribedDataGroups(page, PAGE_SIZE);
+        boolean hasDataGroup = false;
+        List<IDataGroup> dataGroups = webhook.findSubscribedDataGroups(page, PAGE_SIZE);
         while (dataGroups != null && dataGroups.size() > 0) {
-            for (String dataGroup : dataGroups) {
-                loadSubmissionSubscriber(ssubscribers, webhook, dataGroup);
+            if (!hasDataGroup) {
+                hasDataGroup = true;
+            }
+            for (IDataGroup dataGroup : dataGroups) {
+                loadSubmissionSubscriber(ssubscribers, webhook, dataGroup.getDataGroup());
             }
             if (dataGroups.size() < PAGE_SIZE) {
                 break;
             }
             page++;
             dataGroups = webhook.findSubscribedDataGroups(page, PAGE_SIZE);
+        }
+        if (!hasDataGroup) {
+            loadSubmissionSubscriber(ssubscribers, webhook, null);
         }
     }
 

@@ -22,7 +22,7 @@ public class WebhookLoggingHandler implements InvocationHandler {
     private final static Logger LOGGER = LoggerFactory.getLogger(WebhookLoggingHandler.class.getName());
     private final Object target;
     private final static String TRIGGER_METHOD_NAME = "trigger";
-    private final static String POST_METHOD_NAME = "post";
+    private final static String POST_METHOD_NAME = "postWebhook";
 
     /**
      * Constructor of the logging handler

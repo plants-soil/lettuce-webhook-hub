@@ -1,8 +1,6 @@
 package com.plantssoil.common.httpclient;
 
-import java.net.http.HttpResponse;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import com.plantssoil.common.httpclient.exception.HttpClientException;
 import com.plantssoil.common.httpclient.impl.BlankHttpPoster;
@@ -46,9 +44,9 @@ public interface IHttpPoster {
      *                  message
      * @param payload   request payload string (xml, json, etc)
      * 
-     * @return HttpResponse client response completableFuture
+     * @return HttpResponse http response
      */
-    public CompletableFuture<HttpResponse<String>> post(String url, Map<String, String> headers, String requestId, String payload);
+    public IHttpResponse post(String url, Map<String, String> headers, String requestId, String payload);
 
     /**
      * set the access token which is used to create signature
@@ -56,6 +54,20 @@ public interface IHttpPoster {
      * @param accessToken
      */
     public void setAccessToken(String accessToken);
+
+    /**
+     * set the media type of the http poster (application/json, application/xml)
+     * 
+     * @param mediaType the media type (application/json, application/xml)
+     */
+    public void setMediaType(String mediaType);
+
+    /**
+     * set the charset of the http poster body, used to encode/decode http body
+     * 
+     * @param charset charset of the http poster body
+     */
+    public void setCharset(String charset);
 
     /**
      * create IHttpPoster instance base security strategy
@@ -71,7 +83,7 @@ public interface IHttpPoster {
         } else if (SecurityStrategy.SIGNATURE.equals(securityStrategy)) {
             return new SignaturedHttpPoster();
         } else {
-            throw new HttpClientException(HttpClientException.BUSINESS_EXCEPTION_CODE_14012, "No security strategy specified!");
+            throw new HttpClientException(HttpClientException.BUSINESS_EXCEPTION_CODE_14003, "No security strategy specified!");
         }
     }
 }

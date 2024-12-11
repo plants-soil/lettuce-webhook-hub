@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
-import com.plantssoil.webhook.core.IEngine;
 import com.plantssoil.webhook.core.IPublisher;
 import com.plantssoil.webhook.core.IRegistry;
 
@@ -18,7 +17,7 @@ import com.plantssoil.webhook.core.IRegistry;
  * @author danialdy
  * @Date 4 Dec 2024 3:25:58 pm
  */
-abstract class AbstractEngine implements IEngine {
+abstract class AbstractEngine {
     private final static Logger LOGGER = LoggerFactory.getLogger(AbstractEngine.class.getName());
     private IRegistry registry;
     final static int PAGE_SIZE = 50;
@@ -53,7 +52,6 @@ abstract class AbstractEngine implements IEngine {
         }
     }
 
-    @Override
     public String getVersion() {
         IConfiguration configuraiton = ConfigFactory.getInstance().getConfiguration();
         if (configuraiton.containsKey(LettuceConfiguration.WEBHOOK_ENGINE_VERSION)) {
@@ -62,7 +60,6 @@ abstract class AbstractEngine implements IEngine {
         return "";
     }
 
-    @Override
     public IRegistry getRegistry() {
         if (this.registry == null) {
             synchronized (this) {

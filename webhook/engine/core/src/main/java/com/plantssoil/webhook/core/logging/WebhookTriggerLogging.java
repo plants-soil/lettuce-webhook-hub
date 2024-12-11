@@ -1,6 +1,7 @@
 package com.plantssoil.webhook.core.logging;
 
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 
 import com.plantssoil.common.persistence.IEntityQuery;
@@ -42,6 +43,7 @@ public class WebhookTriggerLogging implements IWebhookLogging {
                     log.setRequestId(event.getRequestId());
                     log.setPayload(event.getPayload());
                     log.setWebhookStatus("publish");
+                    log.setTriggerTime(new Date());
                     persists.create(log);
                 }
             } catch (Exception e) {

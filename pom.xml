@@ -56,8 +56,11 @@
 		<version.liquibase>4.16.1</version.liquibase>
 		<!-- Dependencies -->
 		<version.slf4j-api>2.0.13</version.slf4j-api>
+		<!--
 		<version.reactive-streams>1.0.4</version.reactive-streams>
 		<version.reactor-core>3.6.6</version.reactor-core>
+		-->
+		<version.okhttp3>4.12.0</version.okhttp3>
 		<version.hibernate>5.3.36.Final</version.hibernate>
 		<version.resteasy>4.7.9.Final</version.resteasy>
 		<version.commons-configuration>1.10</version.commons-configuration>
@@ -150,6 +153,7 @@
 			</dependency>
 
 			<!-- Reactor -->
+			<!--
 			<dependency>
 				<groupId>org.reactivestreams</groupId>
 				<artifactId>reactive-streams</artifactId>
@@ -160,6 +164,7 @@
 				<artifactId>reactor-core</artifactId>
 				<version>${version.reactor-core}</version>
 			</dependency>
+			-->
 
 			<!-- DB drivers -->
 			<dependency>
@@ -232,6 +237,13 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-pool2</artifactId>
 				<version>${version.commons-pool2}</version>
+			</dependency>
+
+			<!-- OkHttpClient -->
+			<dependency>
+				<groupId>com.squareup.okhttp3</groupId>
+				<artifactId>okhttp</artifactId>
+				<version>${version.okhttp3}</version>
 			</dependency>
 
 			<!-- Hibernate -->

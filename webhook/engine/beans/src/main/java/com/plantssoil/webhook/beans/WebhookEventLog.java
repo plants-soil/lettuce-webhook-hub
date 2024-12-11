@@ -1,8 +1,12 @@
 package com.plantssoil.webhook.beans;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "LETTUCE_WEBHOOKEVENTLOG")
@@ -19,6 +23,8 @@ public class WebhookEventLog implements java.io.Serializable {
     private String requestId;
     private String payload;
     private String webhookStatus;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date triggerTime;
 
     public String getPublisherId() {
         return publisherId;
@@ -98,6 +104,14 @@ public class WebhookEventLog implements java.io.Serializable {
 
     public void setWebhookStatus(String webhookStatus) {
         this.webhookStatus = webhookStatus;
+    }
+
+    public Date getTriggerTime() {
+        return triggerTime;
+    }
+
+    public void setTriggerTime(Date triggerTime) {
+        this.triggerTime = triggerTime;
     }
 
 }

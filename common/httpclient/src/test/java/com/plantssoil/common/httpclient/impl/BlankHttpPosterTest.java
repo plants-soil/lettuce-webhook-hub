@@ -3,13 +3,12 @@ package com.plantssoil.common.httpclient.impl;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
+
+import com.plantssoil.common.httpclient.IHttpResponse;
 
 public class BlankHttpPosterTest {
 
@@ -23,24 +22,16 @@ public class BlankHttpPosterTest {
         String payload = "{\"test\": 2432232314}";
 
         BlankHttpPoster notifier = new BlankHttpPoster();
-        CompletableFuture<HttpResponse<String>> future = notifier.post(url, headers, messageId, payload);
-        future.thenAccept(response -> {
-            System.out.println(response.statusCode());
-            System.out.println(response.body());
-        });
-        try {
-            while (!future.isDone()) {
-                Thread.sleep(0);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
+        notifier.setCharset("UTF-8");
+        notifier.setMediaType("application/json");
+        IHttpResponse response = notifier.post(url, headers, messageId, payload);
+        System.out.println(response.getStatusCode());
+        System.out.println(response.getBody());
         try {
             // should uncomment this line after setup the correct url
 //          assertTrue(future.get().statusCode() == 200);
-            assertTrue(future.get().statusCode() == 404);
-        } catch (InterruptedException | ExecutionException e) {
+            assertTrue(response.getStatusCode() == 404);
+        } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         }

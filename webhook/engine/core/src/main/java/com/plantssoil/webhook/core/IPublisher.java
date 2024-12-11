@@ -45,14 +45,14 @@ public interface IPublisher {
     /**
      * Add data group, if the publisher has data group
      * 
-     * @param dataGroup data group name
+     * @param dataGroup data group to add
      */
     public void addDataGroup(String dataGroup);
 
     /**
      * Add multiple data group, if the publisher has data group
      * 
-     * @param dataGroups data group names
+     * @param dataGroups data groups to add
      */
     public void addDataGroup(List<String> dataGroups);
 
@@ -99,15 +99,6 @@ public interface IPublisher {
      * @return data groups in current page
      */
     public List<String> findDataGroups(int page, int pageSize);
-
-    /**
-     * Find events, by version + eventType
-     * 
-     * @param version   event version
-     * @param eventType event Type
-     * @return Event found, null otherwise
-     */
-    public IEvent findEvent(String version, String eventType);
 
     /**
      * Find all events, support pagination

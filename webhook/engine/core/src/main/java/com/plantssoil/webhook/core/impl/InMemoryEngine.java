@@ -2,6 +2,7 @@ package com.plantssoil.webhook.core.impl;
 
 import java.util.concurrent.SubmissionPublisher;
 
+import com.plantssoil.webhook.core.IEngine;
 import com.plantssoil.webhook.core.IEngineFactory;
 import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.Message;
@@ -23,7 +24,7 @@ import com.plantssoil.webhook.core.exception.EngineException;
  * @author danialdy
  * @Date 16 Nov 2024 9:06:04 pm
  */
-class InMemoryEngine extends AbstractEngine {
+class InMemoryEngine extends AbstractEngine implements IEngine {
     public InMemoryEngine() {
         super();
     }

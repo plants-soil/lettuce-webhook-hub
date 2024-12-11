@@ -10,7 +10,7 @@ import java.util.Objects;
  * @author danialdy
  * @Date 3 Dec 2024 3:46:17 pm
  */
-public class PublisherKey {
+class PublisherKey {
     private final static String NULL_STRING = "##NULL##";
     private String publisherId;
     private String version;
@@ -23,7 +23,7 @@ public class PublisherKey {
      * @param version     version, should not be null
      * @param dataGroup   data group, optional
      */
-    public PublisherKey(String publisherId, String version, String dataGroup) {
+    PublisherKey(String publisherId, String version, String dataGroup) {
         super();
         this.publisherId = publisherId;
         this.version = version;
@@ -34,7 +34,7 @@ public class PublisherKey {
 
     @Override
     public int hashCode() {
-        return Objects.hash(dataGroup, publisherId, version);
+        return Objects.hash(publisherId, version, dataGroup);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class PublisherKey {
             return false;
         }
         PublisherKey other = (PublisherKey) obj;
-        return Objects.equals(dataGroup, other.dataGroup) && Objects.equals(publisherId, other.publisherId) && Objects.equals(version, other.version);
+        return Objects.equals(publisherId, other.publisherId) && Objects.equals(version, other.version) && Objects.equals(dataGroup, other.dataGroup);
     }
 
     /**

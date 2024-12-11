@@ -8,11 +8,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessageListener;
 import com.plantssoil.common.mq.IMessageServiceFactory;
+import com.plantssoil.webhook.core.IDataGroup;
 import com.plantssoil.webhook.core.IPublisher;
 import com.plantssoil.webhook.core.ISubscriber;
 import com.plantssoil.webhook.core.IWebhook;
 import com.plantssoil.webhook.core.Message;
-import com.plantssoil.webhook.core.logging.WebhookLoggingHandler;
 
 /**
  * The implementation of webhook registry (for message queue)
@@ -61,10 +61,10 @@ class MessageQueueRegistry extends AbstractRegistry {
         IMessageServiceFactory<Message> f = IMessageServiceFactory.getFactoryInstance();
         // message consumer
         IMessageConsumer<Message> consumer = f.createMessageConsumer();
-        // message listener (use proxy to AOP logging)
-        MessageQueueEventListener listenerImpl = new MessageQueueEventListener();
-        @SuppressWarnings("unchecked")
-        IMessageListener<Message> listener = (IMessageListener<Message>) WebhookLoggingHandler.createProxy(listenerImpl);
+        // message listener
+        MessageQueueEventListener listener = new MessageQueueEventListener();
+//        @SuppressWarnings("unchecked")
+//        IMessageListener<Message> listener = (IMessageListener<Message>) WebhookLoggingHandler.createProxy(listenerImpl);
         // consume message from message service
         consumer.consumerId("WEBHOOK-CONSUMER-" + this.consumerId.incrementAndGet()).queueName(queueName).addMessageListener(listener).consume(Message.class);
         // add consumer into map
@@ -143,9 +143,13 @@ class MessageQueueRegistry extends AbstractRegistry {
 
     private void loadSubscriber(ISubscriber subscriber, IWebhook webhook) {
         int page = 0;
-        List<String> dataGroups = webhook.findSubscribedDataGroups(page, PAGE_SIZE);
+        boolean hasDataGroup = false;
+        List<IDataGroup> dataGroups = webhook.findSubscribedDataGroups(page, PAGE_SIZE);
         while (dataGroups != null && dataGroups.size() > 0) {
-            for (String dataGroup : dataGroups) {
+            if (!hasDataGroup) {
+                hasDataGroup = true;
+            }
+            for (IDataGroup dataGroup : dataGroups) {
                 loadSubscriber(subscriber, webhook, dataGroup);
             }
             if (dataGroups.size() < PAGE_SIZE) {
@@ -154,15 +158,19 @@ class MessageQueueRegistry extends AbstractRegistry {
             page++;
             dataGroups = webhook.findSubscribedDataGroups(page, PAGE_SIZE);
         }
+        if (!hasDataGroup) {
+            loadSubscriber(subscriber, webhook, null);
+        }
     }
 
-    private void loadSubscriber(ISubscriber subscriber, IWebhook webhook, String dataGroup) {
-        PublisherKey key = new PublisherKey(webhook.getPublisherId(), webhook.getPublisherVersion(), dataGroup);
+    private void loadSubscriber(ISubscriber subscriber, IWebhook webhook, IDataGroup dataGroup) {
+        PublisherKey key = new PublisherKey(webhook.getPublisherId(), webhook.getPublisherVersion(), dataGroup == null ? null : dataGroup.getDataGroup());
         IMessageConsumer<Message> consumer = this.consumers.get(key);
         if (consumer == null) {
             return;
         }
         for (IMessageListener<Message> l : consumer.getListeners()) {
+            l.getClass().isAssignableFrom(MessageQueueEventListener.class);
             if (!(l instanceof MessageQueueEventListener)) {
                 continue;
             }

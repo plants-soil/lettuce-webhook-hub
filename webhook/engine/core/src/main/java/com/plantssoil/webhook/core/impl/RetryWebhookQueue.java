@@ -51,7 +51,6 @@ class RetryWebhookQueue {
      * @return RetryWebhookTask list
      */
     List<RetryWebhookTask> webhookTasksTimeUp() {
-        List<RetryWebhookTask> list = new ArrayList<>();
         long current = System.currentTimeMillis();
         int qty = 0;
         for (RetryWebhookTask task : this.queue) {
@@ -61,6 +60,7 @@ class RetryWebhookQueue {
                 break;
             }
         }
+        List<RetryWebhookTask> list = new ArrayList<>();
         for (int i = 0; i < qty; i++) {
             RetryWebhookTask task = this.queue.poll();
             list.add(task);

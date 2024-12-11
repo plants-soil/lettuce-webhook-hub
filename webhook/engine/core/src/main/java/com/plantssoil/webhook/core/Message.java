@@ -20,6 +20,24 @@ public class Message {
     public Message() {
     }
 
+    /**
+     * The constructor of message
+     * 
+     * @param publisherId the publisher id, required
+     * @param version     the publisher version, required
+     * @param eventType   the event type, required
+     * @param eventTag    the event tag, optional (could be null)
+     * @param contentType the content type, http body media type (application/json,
+     *                    application/xml), optional (could be null)
+     * @param charset     the charset of http body encoding/decoding (UTF-8, etc.),
+     *                    optional (could be null)
+     * @param dataGroup   the data group if have multi-datagroups, optional (could
+     *                    be null)
+     * @param requestId   the request id, which used to avoid duplication for
+     *                    webhook, required
+     * @param payload     the request body, mostly in JSON format and represents
+     *                    business content, required
+     */
     public Message(String publisherId, String version, String eventType, String eventTag, String contentType, String charset, String dataGroup,
             String requestId, String payload) {
         super();
@@ -34,120 +52,192 @@ public class Message {
         this.payload = payload;
     }
 
+    /**
+     * set the publisher id, required
+     * 
+     * @param publisherId publisher id
+     * @return this message instance
+     */
     public Message publisherId(String publisherId) {
         this.publisherId = publisherId;
         return this;
     }
 
+    /**
+     * set the publisher version, required
+     * 
+     * @param version publisher version
+     * @return this message instance
+     */
     public Message version(String version) {
         this.version = version;
         return this;
     }
 
+    /**
+     * set the event type, required
+     * 
+     * @param eventType event type, usually defined in format with business meaning,
+     *                  like "order.created" / "order.paid" / "order.delivering" /
+     *                  "order.delivered"
+     * @return this message instance
+     */
     public Message eventType(String eventType) {
         this.eventType = eventType;
         return this;
     }
 
+    /**
+     * set the event tag, optional (could be null)
+     * 
+     * @param eventTag event tag
+     * @return this message instance
+     */
     public Message eventTag(String eventTag) {
         this.eventTag = eventTag;
         return this;
     }
 
+    /**
+     * set the content type, http body media type (application/json,
+     * application/xml), optional (could be null)
+     * 
+     * @param contentType content type, http body media type (application/json,
+     *                    application/xml)
+     * @return this message instance
+     */
     public Message contentType(String contentType) {
         this.contentType = contentType;
         return this;
     }
 
+    /**
+     * set the charset of http body encoding/decoding (UTF-8, etc.), optional (could
+     * be null)
+     * 
+     * @param charset charset of http body encoding/decoding (UTF-8, etc.)
+     * @return this message instance
+     */
     public Message charset(String charset) {
         this.charset = charset;
         return this;
     }
 
+    /**
+     * set the data group if have multi-datagroups, optional (could be null)
+     * 
+     * @param dataGroup data group if have multi-datagroups
+     * @return this message instance
+     */
     public Message dataGroup(String dataGroup) {
         this.dataGroup = dataGroup;
         return this;
     }
 
+    /**
+     * set the request id, which used to avoid duplication for webhook, required
+     * 
+     * @param requestId request id
+     * @return this message instance
+     */
     public Message requestId(String requestId) {
         this.requestId = requestId;
         return this;
     }
 
+    /**
+     * set the request body, mostly in JSON format and represents business content,
+     * required
+     * 
+     * @param payload request body, mostly in JSON format and represents business
+     *                content
+     * @return this message instance
+     */
     public Message payload(String payload) {
         this.payload = payload;
         return this;
     }
 
+    /**
+     * get the publisher id
+     * 
+     * @return the publisher id
+     */
     public String getPublisherId() {
         return publisherId;
     }
 
-    public void setPublisherId(String publisherId) {
-        this.publisherId = publisherId;
-    }
-
+    /**
+     * get the publisher version
+     * 
+     * @return the publisher version
+     */
     public String getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
+    /**
+     * get the event type, usually defined in format with business meaning, like
+     * "order.created" / "order.paid" / "order.delivering" / "order.delivered"
+     * 
+     * @return the event type
+     */
     public String getEventType() {
         return eventType;
     }
 
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
-    }
-
+    /**
+     * get the event tag
+     * 
+     * @return the event tag
+     */
     public String getEventTag() {
         return eventTag;
     }
 
-    public void setEventTag(String eventTag) {
-        this.eventTag = eventTag;
-    }
-
+    /**
+     * get the content type, http body media type (application/json,
+     * application/xml)
+     * 
+     * @return the content type, http body media type
+     */
     public String getContentType() {
         return contentType;
     }
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
+    /**
+     * get the charset of http body encoding/decoding (UTF-8, etc.)
+     * 
+     * @return the charset of http body encoding/decoding
+     */
     public String getCharset() {
         return charset;
     }
 
-    public void setCharset(String charset) {
-        this.charset = charset;
-    }
-
+    /**
+     * get the data group if have multi-datagroups
+     * 
+     * @return the data group
+     */
     public String getDataGroup() {
         return dataGroup;
     }
 
-    public void setDataGroup(String dataGroup) {
-        this.dataGroup = dataGroup;
-    }
-
+    /**
+     * get the request id, which used to avoid duplication for webhook
+     * 
+     * @return the request id
+     */
     public String getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
-
+    /**
+     * get the request body, mostly in JSON format and represents business content
+     * 
+     * @return the request body
+     */
     public String getPayload() {
         return payload;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
     }
 }
