@@ -1,6 +1,7 @@
 package com.plantssoil.common.httpclient.impl;
 
 import java.nio.charset.Charset;
+import java.time.Duration;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -37,7 +38,7 @@ public abstract class AbstractHttpPoster implements IHttpPoster {
         if (HTTP_CLIENT_INSTANCE == null) {
             synchronized (this) {
                 if (HTTP_CLIENT_INSTANCE == null) {
-                    HTTP_CLIENT_INSTANCE = new OkHttpClient();
+                    HTTP_CLIENT_INSTANCE = new OkHttpClient.Builder().connectTimeout(Duration.ofSeconds(10)).callTimeout(Duration.ofSeconds(10)).build();
                 }
             }
         }

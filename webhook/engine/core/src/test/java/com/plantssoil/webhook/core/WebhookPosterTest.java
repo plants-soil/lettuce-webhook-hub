@@ -4,7 +4,8 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -28,7 +29,9 @@ import com.plantssoil.webhook.core.impl.WebhookPoster;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebhookPosterTest {
     private static TempDirectoryUtility util = new TempDirectoryUtility();
-    private final static String WEBHOOK_URL_PREFIX = "https://webhook.site/";
+    private final static String WEBHOOK_URL_PREFIX = "http://dev.e-yunyi.com:8080/api/test";
+    private volatile AtomicInteger payloadId = new AtomicInteger(0);
+    private long testNumber = System.currentTimeMillis();
 
     public static void main(String[] args) throws Exception {
         WebhookPosterTest test = new WebhookPosterTest();
@@ -47,9 +50,9 @@ public class WebhookPosterTest {
                 "mongodb://lettuce:lettuce20241101@192.168.0.67:27017/?retryWrites=false&retryReads=false");
         p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_CORE_POOL_SIZE, String.valueOf(111));
         p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_MAXIMUM_POOL_SIZE, String.valueOf(222));
-        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_WORK_QUEUE_CAPACITY, String.valueOf(1001));
-        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY5, String.valueOf(1002));
-        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY30, String.valueOf(1003));
+        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_WORK_QUEUE_CAPACITY, String.valueOf(100000));
+        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY5, String.valueOf(100002));
+        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY30, String.valueOf(100003));
 
         try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/" + LettuceConfiguration.CONFIGURATION_FILE_NAME)) {
             p.store(out, "## No comments");
@@ -71,21 +74,23 @@ public class WebhookPosterTest {
     public void tearDown() throws Exception {
     }
 
-    private Message createMessageInstance(int i) {
+    private Message createMessageInstance() {
         Message message = new Message("publisher-id-0001", "1.0.0", "test.event.type.001", "test", "application/json", "UTF-8", null,
-                EntityIdUtility.getInstance().generateUniqueId(), "This is the test payload" + i);
+                EntityIdUtility.getInstance().generateUniqueId(),
+                "{\"data\": \"This is the test payload-" + this.testNumber + "-" + this.payloadId.getAndIncrement() + "\"}");
         return message;
     }
 
     private IWebhook createWebhookInstance() {
         Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Basic YXBpdXNlcjE6NjY2NjY2NjY2Ng==");
         headers.put("test-header-01", "test-value-01");
         headers.put("test-header-02", "test-value-02");
         IWebhook webhook = new SimpleWebhook();
         webhook.setWebhookId(EntityIdUtility.getInstance().generateUniqueId());
         webhook.setWebhookSecret(EntityIdUtility.getInstance().generateUniqueId());
         webhook.setWebhookStatus(WebhookStatus.TEST);
-        webhook.setWebhookUrl(WEBHOOK_URL_PREFIX + UUID.randomUUID());
+        webhook.setWebhookUrl(WEBHOOK_URL_PREFIX);
         webhook.setSecurityStrategy(SecurityStrategy.TOKEN);
         webhook.setAccessToken(EntityIdUtility.getInstance().generateUniqueId());
         webhook.setPublisherId("publisher-id-0001");
@@ -108,9 +113,11 @@ public class WebhookPosterTest {
     @Test
     public void test01PostWebhook() {
         IWebhook webhook = createWebhookInstance();
-        for (int i = 0; i < 5; i++) {
-            Message message = createMessageInstance(i);
-            WebhookPoster.getInstance().postWebhook(message, webhook);
+        for (int i = 0; i < 20; i++) {
+            CompletableFuture.runAsync(() -> {
+                Message message = createMessageInstance();
+                WebhookPoster.getInstance().postWebhook(message, webhook);
+            });
         }
     }
 

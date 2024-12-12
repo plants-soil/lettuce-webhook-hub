@@ -87,21 +87,21 @@ public class LettuceConfiguration {
     /**
      * Lettuce Webhook Engine processor work queue capacity: if no thread available
      * to process within CORE POOL, tasks will queue to wait for available thread,
-     * defaults to 1000
+     * defaults to Integer.MAX_VALUE
      */
     public final static String WEBHOOK_ENGINE_WORK_QUEUE_CAPACITY = "webhook.engine.work.queue.capacity";
 
     /**
      * Lettuce Webhook Engine processor retry queue capacity 5 seconds delay: task
      * will be push into RETRY_QUEUE_5 (which will be retry 5 seconds later) if the
-     * first process failed, defaults to 1000
+     * first process failed, defaults to Integer.MAX_VALUE
      */
     public final static String WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY5 = "webhook.engine.retry.queue.capacity5";
 
     /**
      * Lettuce Webhook Engine processor retry queue capacity 30 seconds delay: task
      * will be push into RETRY_QUEUE_30 (which will be retry 30 seconds later) if
-     * the first retry failed, defaults to 1000
+     * the first retry failed, defaults to Integer.MAX_VALUE
      */
     public final static String WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY30 = "webhook.engine.retry.queue.capacity30";
 

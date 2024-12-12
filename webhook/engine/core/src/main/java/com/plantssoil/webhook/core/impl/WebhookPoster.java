@@ -2,10 +2,13 @@ package com.plantssoil.webhook.core.impl;
 
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.IConfiguration;
@@ -39,12 +42,42 @@ import com.plantssoil.webhook.core.logging.WebhookLoggingHandler;
 public class WebhookPoster implements IWebhookPoster {
     private final static int PAGE_SIZE = 50;
     private static volatile IWebhookPoster instance;
-    private ThreadPoolExecutor executor;
+    private int corePoolSize, maximumPoolSize, workQueueCapacity, retryQueueCapacity5, retryQueueCapacity30;
+    private ExecutorService executor;
     private ScheduledExecutorService retryScheduler; // scheduler every 5 seconds
     private RetryWebhookQueue retryWebhooks5; // retry webhook queue 5 seconds delay
     private RetryWebhookQueue retryWebhooks30; // retry webhook queue 30 seconds delay
+    private ThreadFactory webhookExecutorThreadFactory = new NamedThreadFactory("Webhook-Poster"); // create the ThreadFactory to name threads for Main Executor
+    private ThreadFactory retrySchedulerThreadFactory = new NamedThreadFactory("Retry-Scheduler"); // create the ThreadFactory to name threads for Retry
+                                                                                                   // Scheduler
+
+    class NamedThreadFactory implements ThreadFactory {
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+
+        NamedThreadFactory(String factoryName) {
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            namePrefix = factoryName + "-";
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+            if (t.isDaemon()) {
+                t.setDaemon(false);
+            }
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
+                t.setPriority(Thread.NORM_PRIORITY);
+            }
+            return t;
+        }
+    }
 
     private WebhookPoster() {
+        // initial configuration
+        initialConfiguration();
         // initial thread pool for webhook poster
         initialExecutor();
         // initial retry queues (5 secs & 30 secs)
@@ -55,24 +88,27 @@ public class WebhookPoster implements IWebhookPoster {
         initialRetryScheduler();
     }
 
-    private void initialExecutor() {
+    private void initialConfiguration() {
         IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
-        int corePoolSize = configuration.getInt(LettuceConfiguration.WEBHOOK_ENGINE_CORE_POOL_SIZE, 100);
-        int maximumPoolSize = configuration.getInt(LettuceConfiguration.WEBHOOK_ENGINE_MAXIMUM_POOL_SIZE, 200);
-        int workQueueCapacity = configuration.getInt(LettuceConfiguration.WEBHOOK_ENGINE_WORK_QUEUE_CAPACITY, 1000);
-        this.executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(workQueueCapacity));
+        this.corePoolSize = configuration.getInt(LettuceConfiguration.WEBHOOK_ENGINE_CORE_POOL_SIZE, 100);
+        this.maximumPoolSize = configuration.getInt(LettuceConfiguration.WEBHOOK_ENGINE_MAXIMUM_POOL_SIZE, 200);
+        this.workQueueCapacity = configuration.getInt(LettuceConfiguration.WEBHOOK_ENGINE_WORK_QUEUE_CAPACITY, Integer.MAX_VALUE);
+        this.retryQueueCapacity5 = configuration.getInt(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY5, Integer.MAX_VALUE);
+        this.retryQueueCapacity30 = configuration.getInt(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY30, Integer.MAX_VALUE);
+    }
+
+    private void initialExecutor() {
+        this.executor = new ThreadPoolExecutor(this.corePoolSize, this.maximumPoolSize, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(this.workQueueCapacity),
+                this.webhookExecutorThreadFactory);
     }
 
     private void initialRetryQueues() {
-        IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
-        int retryQueueCapacity5 = configuration.getInt(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY5, 1000);
-        int retryQueueCapacity30 = configuration.getInt(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY30, 1000);
-        this.retryWebhooks5 = new RetryWebhookQueue(retryQueueCapacity5);
-        this.retryWebhooks30 = new RetryWebhookQueue(retryQueueCapacity30);
+        this.retryWebhooks5 = new RetryWebhookQueue(this.retryQueueCapacity5);
+        this.retryWebhooks30 = new RetryWebhookQueue(this.retryQueueCapacity30);
     }
 
     private void initialRetryScheduler() {
-        this.retryScheduler = Executors.newScheduledThreadPool(1);
+        this.retryScheduler = Executors.newSingleThreadScheduledExecutor(this.retrySchedulerThreadFactory);
         this.retryScheduler.scheduleAtFixedRate(() -> {
             retryWebhook5();
             retryWebhook30();
@@ -83,13 +119,20 @@ public class WebhookPoster implements IWebhookPoster {
         List<RetryWebhookTask> list = this.retryWebhooks5.webhookTasksTimeUp();
         for (RetryWebhookTask task : list) {
             try {
-                IHttpResponse response = post(task.getMessage(), task.getWebhook());
-                // the response code should be 20x, indicates call webhook url successfully
-                // otherwise, put the message into retry queue, which will retry 30 seconds
-                // later
-                if (!(response.getStatusCode() >= 200 && response.getStatusCode() < 210)) {
-                    this.retryWebhooks30.add(task.getMessage(), task.getWebhook(), System.currentTimeMillis() + 30 * 1000);
-                }
+                this.executor.submit(() -> {
+                    try {
+                        IHttpResponse response = post(task.getMessage(), task.getWebhook());
+                        // the response code should be 20x, indicates call webhook url successfully
+                        // otherwise, put the message into retry queue, which will retry 30 seconds
+                        // later
+                        if (!(response.getStatusCode() >= 200 && response.getStatusCode() < 210)) {
+                            this.retryWebhooks30.add(task.getMessage(), task.getWebhook(), System.currentTimeMillis() + 30 * 1000);
+                        }
+                    } catch (Exception e) {
+                        // retry after 30 seconds if exception happens
+                        this.retryWebhooks30.add(task.getMessage(), task.getWebhook(), System.currentTimeMillis() + 30 * 1000);
+                    }
+                });
             } catch (Exception e) {
                 // retry after 30 seconds if exception happens
                 this.retryWebhooks30.add(task.getMessage(), task.getWebhook(), System.currentTimeMillis() + 30 * 1000);
@@ -100,12 +143,18 @@ public class WebhookPoster implements IWebhookPoster {
     private void retryWebhook30() {
         List<RetryWebhookTask> list = this.retryWebhooks30.webhookTasksTimeUp();
         for (RetryWebhookTask task : list) {
-            // this is the last try, just post webhook url
-            // no more further process, no matter success or not
             try {
-                post(task.getMessage(), task.getWebhook());
+                this.executor.submit(() -> {
+                    // this is the last try, just post webhook url
+                    // no more further process, no matter success or not
+                    try {
+                        post(task.getMessage(), task.getWebhook());
+                    } catch (Exception e) {
+                        // discard the exception and the failed task, no need retry any more
+                    }
+                });
             } catch (Exception e) {
-                // nothing to do
+                // discard the exception and the failed task, no need retry any more
             }
         }
     }
@@ -136,13 +185,12 @@ public class WebhookPoster implements IWebhookPoster {
         }
 
         try {
-            executor.submit(() -> {
+            this.executor.submit(() -> {
                 postWebhook1(message, webhook);
             });
         } catch (Exception ex) {
             // return the message back to queue, if exception happens when thread pool full
             // and queue full
-            ex.printStackTrace();
             IEngineFactory.getFactoryInstance().getEngine().trigger(message);
         }
     }

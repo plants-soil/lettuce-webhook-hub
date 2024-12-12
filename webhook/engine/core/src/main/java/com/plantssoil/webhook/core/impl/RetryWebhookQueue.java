@@ -46,7 +46,7 @@ class RetryWebhookQueue {
     }
 
     /**
-     * Get RetryWebhookTask list which need to execute
+     * Get RetryWebhookTask list which need to execute, 50 tasks maximum
      * 
      * @return RetryWebhookTask list
      */
@@ -54,7 +54,7 @@ class RetryWebhookQueue {
         long current = System.currentTimeMillis();
         int qty = 0;
         for (RetryWebhookTask task : this.queue) {
-            if (task.getExecuteMilliseconds() <= current) {
+            if (task.getExecuteMilliseconds() <= current && qty < 50) {
                 qty++;
             } else {
                 break;
