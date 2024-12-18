@@ -61,47 +61,34 @@ public class LettuceConfiguration {
      * Lettuce Webhook Engine Factory implementation configuration
      */
     public final static String WEBHOOK_ENGINE_FACTORY_CONFIGURABLE = "webhook.engine.factory.configurable";
-//
-//    /**
-//     * Lettuce Webhook Engine Registry implementation configuration
-//     */
-//    public final static String WEBHOOK_ENGINE_REGISTRY_CONFIGURABLE = "webhook.engine.registry.configurable";
 
     /**
-     * Lettuce Webhook Engine HTTP Poster implementation configuration
+     * Lettuce Webhook Engine max idle http connection pool, defaults to 5
      */
-    public final static String WEBHOOK_ENGINE_POSTER_CONFIGURABLE = "webhook.engine.poster.configurable";
+    public final static String WEBHOOK_ENGINE_CONNECTION_POOL_SIZE = "webhook.engine.connection.pool.size";
 
     /**
-     * Lettuce Webhook Engine processor core thread pool size, defaults to 100
+     * Lettuce Webhook Engine max requests concurrently requesting, defaults to 64
      */
-    public final static String WEBHOOK_ENGINE_CORE_POOL_SIZE = "webhook.engine.core.pool.size";
+    public final static String WEBHOOK_ENGINE_MAX_REQUESTS = "webhook.engine.max.requests";
 
     /**
-     * Lettuce Webhook Engine processor maximum pool size: if tasks exceed capacity
-     * of Work Queue, will create new threads beyond CORE POOL within this maximum
-     * pool size limitation to speedup process, defaults to 200
+     * Lettuce Webhook Engine max requests concurrently requesting per host,
+     * defaults to 5
      */
-    public final static String WEBHOOK_ENGINE_MAXIMUM_POOL_SIZE = "webhook.engine.maximum.pool.size";
-
-    /**
-     * Lettuce Webhook Engine processor work queue capacity: if no thread available
-     * to process within CORE POOL, tasks will queue to wait for available thread,
-     * defaults to Integer.MAX_VALUE
-     */
-    public final static String WEBHOOK_ENGINE_WORK_QUEUE_CAPACITY = "webhook.engine.work.queue.capacity";
+    public final static String WEBHOOK_ENGINE_MAX_REQUESTS_PER_HOST = "webhook.engine.max.requests.per.host";
 
     /**
      * Lettuce Webhook Engine processor retry queue capacity 5 seconds delay: task
      * will be push into RETRY_QUEUE_5 (which will be retry 5 seconds later) if the
-     * first process failed, defaults to Integer.MAX_VALUE
+     * first process failed, defaults to 10,000
      */
     public final static String WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY5 = "webhook.engine.retry.queue.capacity5";
 
     /**
      * Lettuce Webhook Engine processor retry queue capacity 30 seconds delay: task
      * will be push into RETRY_QUEUE_30 (which will be retry 30 seconds later) if
-     * the first retry failed, defaults to Integer.MAX_VALUE
+     * the first retry failed, defaults to 10,000
      */
     public final static String WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY30 = "webhook.engine.retry.queue.capacity30";
 

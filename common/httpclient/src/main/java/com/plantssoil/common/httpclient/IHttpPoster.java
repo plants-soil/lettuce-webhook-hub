@@ -33,7 +33,7 @@ public interface IHttpPoster {
     }
 
     /**
-     * post request to url with the headers and payload string
+     * Synchronized post request to url with the headers and payload string
      * 
      * @param url       HTTP(S) URL to receive payload (only need receive POST
      *                  method)
@@ -47,6 +47,22 @@ public interface IHttpPoster {
      * @return HttpResponse http response
      */
     public IHttpResponse post(String url, Map<String, String> headers, String requestId, String payload);
+
+    /**
+     * Asynchronized post request to url with the headers and payload string
+     * 
+     * @param url       HTTP(S) URL to receive payload (only need receive POST
+     *                  method)
+     * @param headers   headerName and value, additional headers for special
+     *                  customer needs (not mandatory)
+     * @param requestId Request ID (post as Webhook ID in header), this is the
+     *                  unique id for client side to avoid duplicated consume the
+     *                  message
+     * @param payload   request payload string (xml, json, etc)
+     * 
+     * @param callback  the call back object which will receive failure or success
+     */
+    public void post(String url, Map<String, String> headers, String requestId, String payload, IHttpCallback callback);
 
     /**
      * set the access token which is used to create signature
@@ -68,6 +84,28 @@ public interface IHttpPoster {
      * @param charset charset of the http poster body
      */
     public void setCharset(String charset);
+
+    /**
+     * set max requests concurrently requesting, defaults to 64
+     * 
+     * @param maxRequests the max requests
+     */
+    public void setMaxRequests(int maxRequests);
+
+    /**
+     * set max requests concurrently requesting per host, defaults to 5
+     * 
+     * @param maxRequestsPerHost the max requests per host
+     */
+    public void setMaxRequestsPerHost(int maxRequestsPerHost);
+
+    /**
+     * set max idle connections in the connection pool (which will be released 5
+     * minutes later if inactive), defaults to 5
+     * 
+     * @param maxIdleConnections the max idle connections
+     */
+    public void setMaxIdleConnections(int maxIdleConnections);
 
     /**
      * create IHttpPoster instance base security strategy

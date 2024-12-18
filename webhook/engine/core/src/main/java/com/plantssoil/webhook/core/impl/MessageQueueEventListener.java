@@ -3,6 +3,7 @@ package com.plantssoil.webhook.core.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.plantssoil.common.mq.IMessageListener;
 import com.plantssoil.webhook.core.ISubscriber;
@@ -16,7 +17,7 @@ import com.plantssoil.webhook.core.Message;
  * @Date 5 Dec 2024 3:32:14 pm
  */
 class MessageQueueEventListener implements IMessageListener<Message> {
-    private Map<String, List<IWebhook>> webhooks = new java.util.concurrent.ConcurrentHashMap<>();
+    private Map<String, List<IWebhook>> webhooks = new ConcurrentHashMap<>();
 
     /**
      * Add subscriber on this listener

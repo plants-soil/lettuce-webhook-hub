@@ -7,8 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -25,7 +26,6 @@ import com.plantssoil.common.persistence.mongodb.MongodbPersistenceFactory;
 import com.plantssoil.common.test.TempDirectoryUtility;
 import com.plantssoil.webhook.core.IWebhook.SecurityStrategy;
 import com.plantssoil.webhook.core.IWebhook.WebhookStatus;
-import com.plantssoil.webhook.core.impl.MessageQueueEngineFactory;
 import com.plantssoil.webhook.core.impl.SimpleDataGroup;
 import com.plantssoil.webhook.core.impl.SimpleEvent;
 import com.plantssoil.webhook.core.impl.SimplePublisher;
@@ -39,7 +39,9 @@ public class IEngineTest {
     private static TempDirectoryUtility util = new TempDirectoryUtility();
     private final static String EVENT_PREFIX = "test.event.type.";
     private final static String DATAGROUP_PREFIX = "test.data.group.";
-    private final static String WEBHOOK_URL_PREFIX = "https://webhook.site/";
+    private final static String WEBHOOK_URL_PREFIX = "http://dev.e-yunyi.com:8080/webhook/test";
+    private AtomicInteger messageSequence = new AtomicInteger(0);
+    private long startTimeMilliseconds = System.currentTimeMillis();
 
     public static void main(String[] args) throws Exception {
         IEngineTest.setUpBeforeClass();
@@ -58,16 +60,15 @@ public class IEngineTest {
         p.setProperty(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE, MongodbPersistenceFactory.class.getName());
         p.setProperty(LettuceConfiguration.PERSISTENCE_DATABASE_URL,
                 "mongodb://lettuce:lettuce20241101@192.168.0.67:27017/?retryWrites=false&retryReads=false");
-//        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE, MessageServiceFactory.class.getName());
+        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE, com.plantssoil.common.mq.simple.MessageServiceFactory.class.getName());
         p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE, com.plantssoil.common.mq.rabbit.MessageServiceFactory.class.getName());
         p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_URI, "amqp://lettuce:lettuce20241101@192.168.0.67:5672/lettuce");
         p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_VERSION, "1.0.0");
-        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_FACTORY_CONFIGURABLE, MessageQueueEngineFactory.class.getName());
-        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_CORE_POOL_SIZE, String.valueOf(111));
-        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_MAXIMUM_POOL_SIZE, String.valueOf(222));
-        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_WORK_QUEUE_CAPACITY, String.valueOf(1001));
-        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY5, String.valueOf(1002));
-        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY30, String.valueOf(1003));
+        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_FACTORY_CONFIGURABLE, com.plantssoil.webhook.core.impl.MessageQueueEngineFactory.class.getName());
+//        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_FACTORY_CONFIGURABLE, com.plantssoil.webhook.core.impl.InMemoryEngineFactory.class.getName());
+        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_MAX_REQUESTS_PER_HOST, String.valueOf(15));
+//        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY5, String.valueOf(10002));
+//        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY30, String.valueOf(10003));
 
         try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/" + LettuceConfiguration.CONFIGURATION_FILE_NAME)) {
             p.store(out, "## No comments");
@@ -103,7 +104,7 @@ public class IEngineTest {
     }
 
     private void addPublishersAndSubscribers(IRegistry registry) {
-        for (int i = 0; i < 1011; i++) {
+        for (int i = 0; i < 100; i++) {
             IPublisher publisher = createPublisherInstance();
             registry.addPublisher(publisher);
             // randomly don't have subscriber for some publisher
@@ -168,7 +169,7 @@ public class IEngineTest {
         webhook.setWebhookId(EntityIdUtility.getInstance().generateUniqueId());
         webhook.setWebhookSecret(EntityIdUtility.getInstance().generateUniqueId());
         webhook.setWebhookStatus(WebhookStatus.TEST);
-        webhook.setWebhookUrl(WEBHOOK_URL_PREFIX + UUID.randomUUID());
+        webhook.setWebhookUrl(WEBHOOK_URL_PREFIX);
         webhook.setSecurityStrategy(SecurityStrategy.TOKEN);
         webhook.setAccessToken(EntityIdUtility.getInstance().generateUniqueId());
         webhook.setPublisherId(publisher.getPublisherId());
@@ -198,13 +199,23 @@ public class IEngineTest {
     public void test03Trigger() {
         final IEngine engine = IEngineFactory.getFactoryInstance().getEngine();
         final IRegistry registry = engine.getRegistry();
-        for (int i = 0; i < 5; i++) {
-            CompletableFuture.runAsync(() -> {
-                List<IPublisher> publishers = registry.findAllPublishers(ThreadLocalRandom.current().nextInt(1011), 1);
-                Message message = new Message(publishers.get(0).getPublisherId(), "1.0.0", EVENT_PREFIX + 3, "test", "application/json", "UTF-8", null,
-                        EntityIdUtility.getInstance().generateUniqueId(), "This is the test payload");
-                engine.trigger(message);
+        final int publisherQty = 10;
+        ExecutorService es = Executors.newFixedThreadPool(1);
+        for (int i = 0; i < publisherQty; i++) {
+            es.submit(() -> {
+                List<IPublisher> publishers = registry.findAllPublishers(ThreadLocalRandom.current().nextInt(publisherQty), 1);
+                for (int j = 0; j < 10; j++) {
+                    Message message = new Message(publishers.get(0).getPublisherId(), "1.0.0", EVENT_PREFIX + 3, "test", "application/json", "UTF-8", null,
+                            EntityIdUtility.getInstance().generateUniqueId(),
+                            "{\"data\": \"This is the test payload-" + startTimeMilliseconds + "-" + messageSequence.getAndIncrement() + "\"}");
+                    engine.trigger(message);
+                }
             });
+            try {
+                Thread.sleep(1 * 100);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 

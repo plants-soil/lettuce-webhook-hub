@@ -41,7 +41,9 @@ class InMemoryMessageQueue<T> {
                     this.messageQueues.put(queueName, mq);
                     MessageRunnable<T> messageConsumer = new MessageRunnable<>(mq);
                     this.messageConsumers.put(queueName, messageConsumer);
-                    new Thread(messageConsumer).start();
+                    Thread t = new Thread(messageConsumer);
+                    t.setName("InMemoryQueue-Consumer-" + queueName);
+                    t.start();
                 }
             }
         }

@@ -16,7 +16,6 @@ import com.rabbitmq.client.Channel;
  */
 class MessagePublisher<T> extends AbstractMessagePublisher<T> {
     private final static String EXCHANGE_NAME = "com.plantssoil.message.exchange";
-//    private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
     private ConnectionPool pool;
     private PooledConnection connection;
 
@@ -30,11 +29,6 @@ class MessagePublisher<T> extends AbstractMessagePublisher<T> {
         this.connection = this.pool.getConnection();
         this.pool.returnConnection(this.connection);
     }
-
-//    private String createRoutingKey() {
-//        return String.format("%s%s%s%s%s", this.getPublisherId(), ROUTING_KEY_SEPARATOR, this.getVersion(), ROUTING_KEY_SEPARATOR,
-//                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
-//    }
 
     /**
      * Get MQ channel from connection<br/>

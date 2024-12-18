@@ -4,7 +4,9 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.After;
@@ -29,7 +31,7 @@ import com.plantssoil.webhook.core.impl.WebhookPoster;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebhookPosterTest {
     private static TempDirectoryUtility util = new TempDirectoryUtility();
-    private final static String WEBHOOK_URL_PREFIX = "http://dev.e-yunyi.com:8080/api/test";
+    private final static String WEBHOOK_URL_PREFIX = "http://dev.e-yunyi.com:8080/webhook/test";
     private volatile AtomicInteger payloadId = new AtomicInteger(0);
     private long testNumber = System.currentTimeMillis();
 
@@ -48,9 +50,7 @@ public class WebhookPosterTest {
         p.setProperty(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE, MongodbPersistenceFactory.class.getName());
         p.setProperty(LettuceConfiguration.PERSISTENCE_DATABASE_URL,
                 "mongodb://lettuce:lettuce20241101@192.168.0.67:27017/?retryWrites=false&retryReads=false");
-        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_CORE_POOL_SIZE, String.valueOf(111));
-        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_MAXIMUM_POOL_SIZE, String.valueOf(222));
-        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_WORK_QUEUE_CAPACITY, String.valueOf(100000));
+        p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_MAX_REQUESTS_PER_HOST, String.valueOf(15));
         p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY5, String.valueOf(100002));
         p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY30, String.valueOf(100003));
 
@@ -83,7 +83,7 @@ public class WebhookPosterTest {
 
     private IWebhook createWebhookInstance() {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "Basic YXBpdXNlcjE6NjY2NjY2NjY2Ng==");
+//        headers.put("Authorization", "Basic YXBpdXNlcjE6NjY2NjY2NjY2Ng==");
         headers.put("test-header-01", "test-value-01");
         headers.put("test-header-02", "test-value-02");
         IWebhook webhook = new SimpleWebhook();
@@ -110,15 +110,34 @@ public class WebhookPosterTest {
         return event;
     }
 
+    private int randomPostWebhook(ExecutorService e, IWebhook webhook) {
+        final int count = ThreadLocalRandom.current().nextInt(5);
+        e.submit(() -> {
+            for (int i = 0; i < count; i++) {
+                Message message = createMessageInstance();
+                WebhookPoster.getInstance().postWebhook(message, webhook);
+            }
+        });
+        try {
+            Thread.sleep(1 * 100);
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
+        return count;
+    }
+
     @Test
     public void test01PostWebhook() {
         IWebhook webhook = createWebhookInstance();
-        for (int i = 0; i < 20; i++) {
-            CompletableFuture.runAsync(() -> {
-                Message message = createMessageInstance();
-                WebhookPoster.getInstance().postWebhook(message, webhook);
-            });
+        ExecutorService e = Executors.newFixedThreadPool(1);
+        int totally = 0;
+        for (int i = 0; i < 5; i++) {
+            int count = randomPostWebhook(e, webhook);
+            totally += count;
+            System.out.println(String.format("Looped %d, Randomly sent %d messages, totally %d.", i, count, totally));
         }
+        System.out.println(String.format("Sent %d messages completed", totally));
+        e.shutdown();
     }
 
 }

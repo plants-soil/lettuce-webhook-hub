@@ -60,7 +60,7 @@
 		<version.reactive-streams>1.0.4</version.reactive-streams>
 		<version.reactor-core>3.6.6</version.reactor-core>
 		-->
-		<version.okhttp3>4.12.0</version.okhttp3>
+		<version.okhttp3>3.14.9</version.okhttp3>
 		<version.hibernate>5.3.36.Final</version.hibernate>
 		<version.resteasy>4.7.9.Final</version.resteasy>
 		<version.commons-configuration>1.10</version.commons-configuration>
