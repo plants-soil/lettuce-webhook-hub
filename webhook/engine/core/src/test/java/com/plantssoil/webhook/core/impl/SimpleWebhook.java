@@ -10,6 +10,7 @@ import com.plantssoil.webhook.core.IWebhook;
 
 public class SimpleWebhook implements IWebhook {
     private String webhookId;
+    private String subscriberId;
     private String webhookSecret;
     private SecurityStrategy securityStrategy;
     private String webhookUrl;
@@ -26,6 +27,11 @@ public class SimpleWebhook implements IWebhook {
     @Override
     public void setWebhookId(String webhookId) {
         this.webhookId = webhookId;
+    }
+
+    @Override
+    public void setSubscriberId(String subscriberId) {
+        this.subscriberId = subscriberId;
     }
 
     @Override
@@ -101,6 +107,11 @@ public class SimpleWebhook implements IWebhook {
     @Override
     public String getWebhookId() {
         return this.webhookId;
+    }
+
+    @Override
+    public String getSubscriberId() {
+        return this.subscriberId;
     }
 
     @Override

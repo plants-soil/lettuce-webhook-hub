@@ -16,7 +16,7 @@ import com.plantssoil.webhook.core.Message;
  * @author danialdy
  * @Date 5 Dec 2024 3:32:14 pm
  */
-class MessageQueueEventListener implements IMessageListener<Message> {
+class MultiMessageQueueEventListener implements IMessageListener<Message> {
     private Map<String, List<IWebhook>> webhooks = new ConcurrentHashMap<>();
 
     /**

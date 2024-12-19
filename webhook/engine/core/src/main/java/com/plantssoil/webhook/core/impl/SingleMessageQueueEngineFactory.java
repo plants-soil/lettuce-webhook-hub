@@ -13,11 +13,11 @@ import com.plantssoil.webhook.core.IEngineFactory;
  * @author danialdy
  * @Date 4 Dec 2024 3:36:34 pm
  */
-public class MessageQueueEngineFactory extends AbstractEngineFactory {
+public class SingleMessageQueueEngineFactory extends AbstractEngineFactory {
 
     @Override
     IEngine createEngineInstance() {
-        return new MessageQueueEngine();
+        return new SingleMessageQueueEngine();
     }
 
 }

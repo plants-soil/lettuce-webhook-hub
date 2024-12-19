@@ -36,7 +36,7 @@ class InMemoryRegistry extends AbstractRegistry {
     @Override
     public void addPublisher(IPublisher publisher) {
         // don't need add again if already added
-        if (findSubscriber(publisher.getPublisherId()) != null) {
+        if (findPublisher(publisher.getPublisherId()) != null) {
             return;
         }
         super.addPublisher(publisher);

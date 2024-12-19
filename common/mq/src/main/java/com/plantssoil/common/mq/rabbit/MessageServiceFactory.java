@@ -18,7 +18,8 @@ public class MessageServiceFactory<T> implements IMessageServiceFactory<T> {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageServiceFactory.class.getName());
     private ConnectionPool publisherPool;
     private ConnectionPool consumerPool;
-    private PooledConnection consumerConnection;
+    private PooledConnection currentConsumerConnection;
+    private PooledConnection currentPublisherConnection;
 
     /**
      * Constructor<br/>
@@ -26,26 +27,23 @@ public class MessageServiceFactory<T> implements IMessageServiceFactory<T> {
      */
     public MessageServiceFactory() {
         LOGGER.info("Loading RabbitMQ as the message service...");
-        this.publisherPool = new ConnectionPool();
-        this.consumerPool = new ConnectionPool();
         // create initial consumer connection
-        this.consumerConnection = this.consumerPool.getConnection();
+        this.consumerPool = new ConnectionPool();
+        this.currentConsumerConnection = this.consumerPool.getConnection();
+        // create initial publisher connection
+        this.publisherPool = new ConnectionPool();
+        this.currentPublisherConnection = this.publisherPool.getConnection();
         LOGGER.info("RabbitMQ connected and loaded.");
     }
 
     @Override
     public void close() throws Exception {
-        if (publisherPool != null) {
-            publisherPool.close();
+        if (this.publisherPool != null) {
+            this.publisherPool.close();
         }
-        if (consumerPool != null) {
-            consumerPool.close();
+        if (this.consumerPool != null) {
+            this.consumerPool.close();
         }
-    }
-
-    @Override
-    public IMessagePublisher<T> createMessagePublisher() {
-        return new MessagePublisher<T>(publisherPool);
     }
 
     /**
@@ -54,41 +52,46 @@ public class MessageServiceFactory<T> implements IMessageServiceFactory<T> {
      * listening for incoming message.<br/>
      * Consumer will not receive message if Connection/Channel closed.<br/>
      * <br/>
-     * The new consumer will re-use current connection to create channel.<br/>
-     * Will create new connection from consumer connection pool if active channels
-     * exceed maximum number configured, and the previous connection will be
-     * returned back into consumer connection pool.<br/>
+     * The new publisher/consumer will re-use current connection to create
+     * channel.<br/>
+     * Will create new connection from connection pool if active channels exceed
+     * maximum number configured, and the previous connection will be returned back
+     * into connection pool.<br/>
      * <br/>
-     * The whole consumer capacity in one JVM should be: max connections * max
-     * sessions per connection. e.g:<br/>
+     * The whole publisher/consumer capacity in one JVM should be: max connections *
+     * max sessions per connection. e.g:<br/>
      * Default configuration: Max Connection: 18, Max Session / Connection: 500<br/>
      * Capacity = 18 * 500 = 9,000<br/>
      * 
-     * @return Channel used to consume messages from MQ
+     * @return Channel used to publish/consume messages from MQ
      */
-    private Channel getConsumerChannel() {
-        if (this.consumerConnection.getActiveChannels() >= this.consumerPool.getMaxSessionsPerConnection()) {
+    private Channel getChannel(ConnectionPool pool, PooledConnection currentConnection) {
+        if (currentConnection.getActiveChannels() >= pool.getMaxSessionsPerConnection()) {
             synchronized (this) {
-                if (this.consumerConnection.getActiveChannels() >= this.consumerPool.getMaxSessionsPerConnection()) {
-                    LOGGER.info("Current Rabbit MQ connection fulled with channels(%d), creating new connection...",
-                            this.consumerPool.getMaxSessionsPerConnection());
-                    this.consumerPool.returnConnection(this.consumerConnection);
-                    this.consumerConnection = this.consumerPool.getConnection();
-                    Channel channel = this.consumerConnection.createChannel();
+                if (currentConnection.getActiveChannels() >= pool.getMaxSessionsPerConnection()) {
+                    LOGGER.info("Current Rabbit MQ connection fulled with channels(%d), creating new connection...", pool.getMaxSessionsPerConnection());
+                    pool.returnConnection(currentConnection);
+                    currentConnection = pool.getConnection();
+                    Channel channel = currentConnection.createChannel();
                     LOGGER.info("Created session on the new connection.");
                     return channel;
                 }
             }
         }
 
-        return this.consumerConnection.createChannel();
+        return currentConnection.createChannel();
     }
 
     @Override
     public IMessageConsumer<T> createMessageConsumer() {
         // don't close connection and channel, in order to receive message from server
         // continuously
-        return new MessageConsumer<T>(getConsumerChannel());
+        return new MessageConsumer<T>(getChannel(this.consumerPool, this.currentConsumerConnection));
+    }
+
+    @Override
+    public IMessagePublisher<T> createMessagePublisher() {
+        return new MessagePublisher<T>(getChannel(this.publisherPool, this.currentPublisherConnection));
     }
 
 }

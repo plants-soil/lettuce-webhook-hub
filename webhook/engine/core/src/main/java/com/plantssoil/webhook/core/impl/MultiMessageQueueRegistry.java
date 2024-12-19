@@ -20,14 +20,14 @@ import com.plantssoil.webhook.core.Message;
  * @author danialdy
  * @Date 21 Nov 2024 3:21:43 pm
  */
-class MessageQueueRegistry extends AbstractRegistry {
+class MultiMessageQueueRegistry extends AbstractRegistry {
     private Map<PublisherKey, IMessageConsumer<Message>> consumers = new ConcurrentHashMap<>();
     private volatile AtomicInteger consumerId = new AtomicInteger(0);
 
     @Override
     public void addPublisher(IPublisher publisher) {
         // don't need add again if already added
-        if (findSubscriber(publisher.getPublisherId()) != null) {
+        if (findPublisher(publisher.getPublisherId()) != null) {
             return;
         }
         super.addPublisher(publisher);
@@ -62,9 +62,7 @@ class MessageQueueRegistry extends AbstractRegistry {
         // message consumer
         IMessageConsumer<Message> consumer = f.createMessageConsumer();
         // message listener
-        MessageQueueEventListener listener = new MessageQueueEventListener();
-//        @SuppressWarnings("unchecked")
-//        IMessageListener<Message> listener = (IMessageListener<Message>) WebhookLoggingHandler.createProxy(listenerImpl);
+        MultiMessageQueueEventListener listener = new MultiMessageQueueEventListener();
         // consume message from message service
         consumer.consumerId("WEBHOOK-CONSUMER-" + this.consumerId.incrementAndGet()).queueName(queueName).addMessageListener(listener).consume(Message.class);
         // add consumer into map
@@ -170,11 +168,11 @@ class MessageQueueRegistry extends AbstractRegistry {
             return;
         }
         for (IMessageListener<Message> l : consumer.getListeners()) {
-            l.getClass().isAssignableFrom(MessageQueueEventListener.class);
-            if (!(l instanceof MessageQueueEventListener)) {
+            l.getClass().isAssignableFrom(MultiMessageQueueEventListener.class);
+            if (!(l instanceof MultiMessageQueueEventListener)) {
                 continue;
             }
-            MessageQueueEventListener mql = (MessageQueueEventListener) l;
+            MultiMessageQueueEventListener mql = (MultiMessageQueueEventListener) l;
             mql.addSubscriber(subscriber, webhook);
         }
     }
@@ -183,10 +181,10 @@ class MessageQueueRegistry extends AbstractRegistry {
     public void removeSubscriber(String subscriberId) {
         for (IMessageConsumer<Message> consumer : this.consumers.values()) {
             for (IMessageListener<Message> l : consumer.getListeners()) {
-                if (!(l instanceof MessageQueueEventListener)) {
+                if (!(l instanceof MultiMessageQueueEventListener)) {
                     continue;
                 }
-                MessageQueueEventListener mql = (MessageQueueEventListener) l;
+                MultiMessageQueueEventListener mql = (MultiMessageQueueEventListener) l;
                 mql.removeSubscriber(subscriberId);
             }
         }

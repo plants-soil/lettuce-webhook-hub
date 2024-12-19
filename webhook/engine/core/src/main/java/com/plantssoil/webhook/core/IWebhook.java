@@ -59,6 +59,13 @@ public interface IWebhook {
     public void setWebhookId(String webhookId);
 
     /**
+     * set subscriber id
+     * 
+     * @param subscriberId subscriber id
+     */
+    public void setSubscriberId(String subscriberId);
+
+    /**
      * Set webhook secret
      * 
      * @param webhookSecret webhook secret
@@ -165,6 +172,13 @@ public interface IWebhook {
      * @return webhook id
      */
     public String getWebhookId();
+
+    /**
+     * Get subscriber id
+     * 
+     * @return subscriber id
+     */
+    public String getSubscriberId();
 
     /**
      * Get webhook secret

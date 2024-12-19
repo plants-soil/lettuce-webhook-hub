@@ -46,7 +46,7 @@ class MessageReceiver<T> implements Runnable {
                             Thread.sleep(3000);
                             msg = consumer.receive();
                         } catch (InterruptedException | javax.jms.IllegalStateException e2) {
-                            break;
+                            continue;
                         }
                     }
                 }

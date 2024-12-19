@@ -22,16 +22,16 @@ public class EngineException extends BusinessException {
     public final static int BUSINESS_EXCEPTION_CODE_20003 = 20003;
     public final static int BUSINESS_EXCEPTION_CODE_20004 = 20004;
     public final static int BUSINESS_EXCEPTION_CODE_20005 = 20005;
-    public final static int BUSINESS_EXCEPTION_CODE_20006 = 20006;
-    public final static int BUSINESS_EXCEPTION_CODE_20007 = 20007;
-    public final static int BUSINESS_EXCEPTION_CODE_20008 = 20008;
-    public final static int BUSINESS_EXCEPTION_CODE_20009 = 20009;
-    public final static int BUSINESS_EXCEPTION_CODE_20010 = 20010;
-    public final static int BUSINESS_EXCEPTION_CODE_20011 = 20011;
-    public final static int BUSINESS_EXCEPTION_CODE_20012 = 20012;
-    public final static int BUSINESS_EXCEPTION_CODE_20013 = 20013;
-    public final static int BUSINESS_EXCEPTION_CODE_20014 = 20014;
-    public final static int BUSINESS_EXCEPTION_CODE_20015 = 20015;
+//    public final static int BUSINESS_EXCEPTION_CODE_20006 = 20006;
+//    public final static int BUSINESS_EXCEPTION_CODE_20007 = 20007;
+//    public final static int BUSINESS_EXCEPTION_CODE_20008 = 20008;
+//    public final static int BUSINESS_EXCEPTION_CODE_20009 = 20009;
+//    public final static int BUSINESS_EXCEPTION_CODE_20010 = 20010;
+//    public final static int BUSINESS_EXCEPTION_CODE_20011 = 20011;
+//    public final static int BUSINESS_EXCEPTION_CODE_20012 = 20012;
+//    public final static int BUSINESS_EXCEPTION_CODE_20013 = 20013;
+//    public final static int BUSINESS_EXCEPTION_CODE_20014 = 20014;
+//    public final static int BUSINESS_EXCEPTION_CODE_20015 = 20015;
 
     public EngineException(String message, Throwable cause) {
         super(message, cause);
