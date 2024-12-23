@@ -70,11 +70,14 @@ public class InMemoryMQConsumerTest {
         }
         // publish message
         IMessageServiceFactory<TestEventMessage> f = IMessageServiceFactory.getFactoryInstance();
-        IMessagePublisher<TestEventMessage> publisher = f.createMessagePublisher().queueName("PUBLISHER-ID-01-V1.0");
-
-        for (int i = 0; i < 20; i++) {
-            TestEventMessage om = new TestEventMessage("order.created", String.valueOf(i), "This is the " + i + " message comes from PUBLISHER-ID-01 (V1.0)");
-            publisher.publish(om);
+        try (IMessagePublisher<TestEventMessage> publisher = f.createMessagePublisher().queueName("PUBLISHER-ID-01-V1.0")) {
+            for (int i = 0; i < 20; i++) {
+                TestEventMessage om = new TestEventMessage("order.created", String.valueOf(i),
+                        "This is the " + i + " message comes from PUBLISHER-ID-01 (V1.0)");
+                publisher.publish(om);
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
         }
         try {
             Thread.sleep(1000);
@@ -101,10 +104,14 @@ public class InMemoryMQConsumerTest {
         }
         // publish message
         IMessageServiceFactory<TestEventMessage> f = IMessageServiceFactory.getFactoryInstance();
-        IMessagePublisher<TestEventMessage> publisher = f.createMessagePublisher().queueName("PUBLISHER-ID-02-V2.0");
-        for (int i = 0; i < 30; i++) {
-            TestEventMessage om = new TestEventMessage("order.updated", String.valueOf(i), "This is the " + i + " message comes from PUBLISHER-ID-02 (V2.0)");
-            publisher.publish(om);
+        try (IMessagePublisher<TestEventMessage> publisher = f.createMessagePublisher().queueName("PUBLISHER-ID-02-V2.0")) {
+            for (int i = 0; i < 30; i++) {
+                TestEventMessage om = new TestEventMessage("order.updated", String.valueOf(i),
+                        "This is the " + i + " message comes from PUBLISHER-ID-02 (V2.0)");
+                publisher.publish(om);
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
         }
         try {
             Thread.sleep(1000);

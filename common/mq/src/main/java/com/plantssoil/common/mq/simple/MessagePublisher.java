@@ -26,4 +26,9 @@ class MessagePublisher<T> extends AbstractMessagePublisher<T> {
         }
     }
 
+    @Override
+    public void close() throws Exception {
+        // nothing need to be clean for InMemoryMessageQueue
+    }
+
 }

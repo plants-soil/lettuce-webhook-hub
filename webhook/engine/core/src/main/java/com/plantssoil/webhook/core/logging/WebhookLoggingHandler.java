@@ -7,6 +7,9 @@ import java.lang.reflect.Proxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.plantssoil.common.config.ConfigFactory;
+import com.plantssoil.common.config.LettuceConfiguration;
+
 /**
  * The logging handler (within standalone thread) to log every webhook event
  * operate
@@ -20,9 +23,15 @@ import org.slf4j.LoggerFactory;
  */
 public class WebhookLoggingHandler implements InvocationHandler {
     private final static Logger LOGGER = LoggerFactory.getLogger(WebhookLoggingHandler.class.getName());
-    private final Object target;
     private final static String TRIGGER_METHOD_NAME = "trigger";
     private final static String POST_METHOD_NAME = "postWebhook";
+    private static String PERSISTENCE_FACTORY_CONFIGURABLE;
+
+    private final Object target;
+
+    static {
+        PERSISTENCE_FACTORY_CONFIGURABLE = ConfigFactory.getInstance().getConfiguration().getString(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE);
+    }
 
     /**
      * Constructor of the logging handler
@@ -44,12 +53,12 @@ public class WebhookLoggingHandler implements InvocationHandler {
         IWebhookLogging logging = IWebhookLogging.createInstance(proxy);
         boolean blogging = logging != null
                 && (TRIGGER_METHOD_NAME.equals(method.getName()) || POST_METHOD_NAME.equals(method.getName())) /* && args.length == 4 */;
-        if (blogging) {
+        if (blogging && PERSISTENCE_FACTORY_CONFIGURABLE != null) {
             logging.logBefore(proxy, method, args);
         }
         // Proceed to the original method
         Object result = method.invoke(target, args);
-        if (blogging) {
+        if (blogging && PERSISTENCE_FACTORY_CONFIGURABLE != null) {
             logging.logAfter(proxy, method, args);
         }
 

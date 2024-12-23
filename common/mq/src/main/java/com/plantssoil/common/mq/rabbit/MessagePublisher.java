@@ -1,7 +1,6 @@
 package com.plantssoil.common.mq.rabbit;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 import com.plantssoil.common.io.ObjectJsonSerializer;
 import com.plantssoil.common.mq.AbstractMessagePublisher;
@@ -32,15 +31,20 @@ class MessagePublisher<T> extends AbstractMessagePublisher<T> {
         if (getQueueName() == null) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15008, "The [queueName] should not be null!");
         }
-        try (Channel c = this.channel) {
+        try {
             // create exchange for every publiserId + version
             String routingKey = getQueueName();
-            c.exchangeDeclare(EXCHANGE_NAME, "direct");
-            c.basicPublish(EXCHANGE_NAME, routingKey, null, ObjectJsonSerializer.getInstance().serialize(message).getBytes("UTF-8"));
+            this.channel.exchangeDeclare(EXCHANGE_NAME, "direct");
+            this.channel.basicPublish(EXCHANGE_NAME, routingKey, null, ObjectJsonSerializer.getInstance().serialize(message).getBytes("UTF-8"));
         } catch (IOException e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15009, e);
-        } catch (TimeoutException e) {
-            throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15010, e);
+        }
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (this.channel.isOpen()) {
+            this.channel.close();
         }
     }
 }

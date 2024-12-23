@@ -91,10 +91,13 @@ public class InMemoryMQConcurrentTest {
         @Override
         public void run() {
             IMessageServiceFactory<TestEventMessage> f = IMessageServiceFactory.getFactoryInstance();
-            IMessagePublisher<TestEventMessage> publisher = f.createMessagePublisher().queueName(this.publisherId + "-" + this.version);
-            TestEventMessage om = new TestEventMessage("order.approved", String.valueOf(this.sequence),
-                    String.format("This is the %d message comes from %s (%s)", this.sequence, this.publisherId, this.version));
-            publisher.publish(om);
+            try (IMessagePublisher<TestEventMessage> publisher = f.createMessagePublisher().queueName(this.publisherId + "-" + this.version)) {
+                TestEventMessage om = new TestEventMessage("order.approved", String.valueOf(this.sequence),
+                        String.format("This is the %d message comes from %s (%s)", this.sequence, this.publisherId, this.version));
+                publisher.publish(om);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -48,9 +48,12 @@ class SingleMessageQueueEngine extends AbstractEngine implements IEngine {
         // message service factory
         IMessageServiceFactory<Message> f = IMessageServiceFactory.getFactoryInstance();
         // message publisher
-        IMessagePublisher<Message> messagePublisher = f.createMessagePublisher();
-        // publish to message service
-        messagePublisher.queueName(SingleMessageQueueRegistry.MESSAGE_QUEUE_NAME).publish(message);
+        try (IMessagePublisher<Message> messagePublisher = f.createMessagePublisher()) {
+            // publish to message service
+            messagePublisher.queueName(SingleMessageQueueRegistry.MESSAGE_QUEUE_NAME).publish(message);
+        } catch (Exception e) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20006, e);
+        }
     }
 
 }

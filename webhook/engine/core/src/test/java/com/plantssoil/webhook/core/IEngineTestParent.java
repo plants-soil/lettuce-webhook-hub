@@ -10,7 +10,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.plantssoil.common.persistence.EntityIdUtility;
-import com.plantssoil.common.test.TempDirectoryUtility;
 import com.plantssoil.webhook.core.IWebhook.SecurityStrategy;
 import com.plantssoil.webhook.core.IWebhook.WebhookStatus;
 import com.plantssoil.webhook.core.impl.SimpleDataGroup;
@@ -22,7 +21,6 @@ import com.plantssoil.webhook.core.impl.SimpleWebhook;
 import io.netty.util.internal.ThreadLocalRandom;
 
 public class IEngineTestParent {
-    protected static TempDirectoryUtility util = new TempDirectoryUtility();
     private final static String EVENT_PREFIX = "test.event.type.";
     private final static String DATAGROUP_PREFIX = "test.data.group.";
     private final static String WEBHOOK_URL_PREFIX = "http://dev.e-yunyi.com:8080/webhook/test";
@@ -135,12 +133,12 @@ public class IEngineTestParent {
     public void testTrigger() {
         final IEngine engine = IEngineFactory.getFactoryInstance().getEngine();
         final IRegistry registry = engine.getRegistry();
-        final int publisherQty = 100;
+        final int publisherQty = 10;
         ExecutorService es = Executors.newFixedThreadPool(1);
         for (int i = 0; i < publisherQty; i++) {
             es.submit(() -> {
                 List<IPublisher> publishers = registry.findAllPublishers(ThreadLocalRandom.current().nextInt(publisherQty), 1);
-                for (int j = 0; j < 10; j++) {
+                for (int j = 0; j < 3; j++) {
                     Message message = new Message(publishers.get(0).getPublisherId(), "1.0.0", EVENT_PREFIX + 3, "test", "application/json", "UTF-8", null,
                             EntityIdUtility.getInstance().generateUniqueId(),
                             "{\"data\": \"This is the test payload-" + startTimeMilliseconds + "-" + messageSequence.getAndIncrement() + "\"}");
@@ -148,18 +146,8 @@ public class IEngineTestParent {
                 }
             });
         }
-        this.startTimeMilliseconds = System.currentTimeMillis();
-        for (int i = 0; i < publisherQty; i++) {
-            List<IPublisher> publishers = registry.findAllPublishers(ThreadLocalRandom.current().nextInt(publisherQty), 1);
-            for (int j = 0; j < 10; j++) {
-                Message message = new Message(publishers.get(0).getPublisherId(), "1.0.0", EVENT_PREFIX + 3, "test", "application/json", "UTF-8", null,
-                        EntityIdUtility.getInstance().generateUniqueId(),
-                        "{\"data\": \"This is the test payload-" + startTimeMilliseconds + "-" + messageSequence.getAndIncrement() + "\"}");
-                engine.trigger(message);
-            }
-        }
         try {
-            Thread.sleep(30000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -48,9 +48,12 @@ class MultiMessageQueueEngine extends AbstractEngine implements IEngine {
         // message service factory
         IMessageServiceFactory<Message> f = IMessageServiceFactory.getFactoryInstance();
         // message publisher
-        IMessagePublisher<Message> messagePublisher = f.createMessagePublisher();
-        // publish to message service
-        messagePublisher.queueName(getQueueName(message.getPublisherId(), message.getVersion(), message.getDataGroup())).publish(message);
+        try (IMessagePublisher<Message> messagePublisher = f.createMessagePublisher()) {
+            // publish to message service
+            messagePublisher.queueName(getQueueName(message.getPublisherId(), message.getVersion(), message.getDataGroup())).publish(message);
+        } catch (Exception e) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20006, e);
+        }
     }
 
     private String getQueueName(String publisherId, String version, String dataGroup) {

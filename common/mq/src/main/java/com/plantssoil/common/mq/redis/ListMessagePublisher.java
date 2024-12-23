@@ -14,7 +14,6 @@ import io.lettuce.core.api.async.RedisAsyncCommands;
  */
 class ListMessagePublisher<T> extends AbstractMessagePublisher<T> {
     private RedisAsyncCommands<String, String> command;
-//    private final static String ROUTING_KEY_SEPARATOR = "#R#K#";
 
     /**
      * Constructor mandatory
@@ -25,11 +24,6 @@ class ListMessagePublisher<T> extends AbstractMessagePublisher<T> {
         this.command = command;
     }
 
-//    private String createRoutingKey() {
-//        return String.format("%s%s%s%s%s", this.getPublisherId(), ROUTING_KEY_SEPARATOR, this.getVersion(), ROUTING_KEY_SEPARATOR,
-//                this.getDataGroup() == null ? "NULL" : this.getDataGroup());
-//    }
-
     @Override
     public void publish(T message) {
         if (this.getQueueName() == null) {
@@ -37,5 +31,10 @@ class ListMessagePublisher<T> extends AbstractMessagePublisher<T> {
         }
         String channel = getQueueName();
         this.command.lpush(channel, ObjectJsonSerializer.getInstance().serialize(message));
+    }
+
+    @Override
+    public void close() throws Exception {
+        // nothing need to be clean for redis
     }
 }

@@ -22,7 +22,7 @@ public class EngineException extends BusinessException {
     public final static int BUSINESS_EXCEPTION_CODE_20003 = 20003;
     public final static int BUSINESS_EXCEPTION_CODE_20004 = 20004;
     public final static int BUSINESS_EXCEPTION_CODE_20005 = 20005;
-//    public final static int BUSINESS_EXCEPTION_CODE_20006 = 20006;
+    public final static int BUSINESS_EXCEPTION_CODE_20006 = 20006;
 //    public final static int BUSINESS_EXCEPTION_CODE_20007 = 20007;
 //    public final static int BUSINESS_EXCEPTION_CODE_20008 = 20008;
 //    public final static int BUSINESS_EXCEPTION_CODE_20009 = 20009;
