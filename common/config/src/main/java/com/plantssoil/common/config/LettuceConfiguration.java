@@ -53,31 +53,163 @@ public class LettuceConfiguration {
     public final static String CONFIGURATION_FILE_NAME = "lettuce.properties";
 
     /**
-     * Persistence Factory Configuration
+     * Lettuce Webhook engine version
+     */
+    public final static String WEBHOOK_ENGINE_VERSION = "webhook.engine.version";
+
+    /**
+     * Lettuce Webhook Engine Factory implementation configuration
+     */
+    public final static String WEBHOOK_ENGINE_FACTORY_CONFIGURABLE = "webhook.engine.factory.configurable";
+
+    /**
+     * Lettuce Webhook Engine max idle http connection pool, defaults to 5
+     */
+    public final static String WEBHOOK_ENGINE_CONNECTION_POOL_SIZE = "webhook.engine.connection.pool.size";
+
+    /**
+     * Lettuce Webhook Engine max requests concurrently requesting, defaults to 64
+     */
+    public final static String WEBHOOK_ENGINE_MAX_REQUESTS = "webhook.engine.max.requests";
+
+    /**
+     * Lettuce Webhook Engine max requests concurrently requesting per host,
+     * defaults to 5
+     */
+    public final static String WEBHOOK_ENGINE_MAX_REQUESTS_PER_HOST = "webhook.engine.max.requests.per.host";
+
+    /**
+     * Lettuce Webhook Engine processor retry queue capacity 5 seconds delay: task
+     * will be push into RETRY_QUEUE_5 (which will be retry 5 seconds later) if the
+     * first process failed, defaults to 10,000
+     */
+    public final static String WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY5 = "webhook.engine.retry.queue.capacity5";
+
+    /**
+     * Lettuce Webhook Engine processor retry queue capacity 30 seconds delay: task
+     * will be push into RETRY_QUEUE_30 (which will be retry 30 seconds later) if
+     * the first retry failed, defaults to 10,000
+     */
+    public final static String WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY30 = "webhook.engine.retry.queue.capacity30";
+
+    /**
+     * Persistence Factory implementation configuration
      */
     public final static String PERSISTENCE_FACTORY_CONFIGURABLE = "persistence.fatory.configurable"; // Persistence Factory Configuration
 
     /**
-     * RDBMS DDL Configurations to initialize database
+     * HttpClient implementation configuration, default as
+     * com.plantssoil.common.httpclient.impl.JdkHttpClientImpl
      */
-    public final static String RDBMS_INIT_DDL_CONFIGURABLE = "rdbms.init.ddl.configurable"; // DDL Initialization Configuration
+    public final static String HTTPCLIENT_CONFIGURABLE = "httpclient.configurable";
 
     /**
-     * Engine (CORE, API, platforms, etc.) Configurations
+     * Persistence database configuration in non-webserver: connection URL (RDBMS
+     * and NOSQL both use this URL)<br/>
+     * This configure is no need if the following configured:<br/>
+     * <ul>
+     * <li><code>{@link PERSISTENCE_FACTORY_CONFIGURABLE} = {@link com.plantssoil.common.persistence.rdbms.JPAPersistenceFactory}</code></li>
+     * <li><code>{@link RDBMS_DATASOURCE}</li>
+     * </ul>
      */
-    public final static String RDBMS_DATASOURCE = "rdbms.datasource"; // The datasource JNDI naming which used in webserver
-    public final static String RDBMS_DATASOURCE_DIALECT = "rdbms.datasource.dialect"; // The datasource dialect, @see org.hibernate.dialect.Dialect
-    public final static String RDBMS_DATABASE_DRIVER = "rdbms.database.driver"; // database configuration in not webserver(1): driver class,
-    public final static String RDBMS_DATABASE_URL = "rdbms.database.url"; // database configuration in not webserver(2): connection URL
-    public final static String RDBMS_DATABASE_USERNAME = "rdbms.database.username"; // database configuration in not webserver(3): user name
-    public final static String RDBMS_DATABASE_PASSWORD = "rdbms.database.password"; // database configuration in not webserver(4): password
-    public final static String RDBMS_DATABASE_POOLSIZE = "rdbms.database.poolsize"; // database configuration in not webserver(5): connection pool size
-    public final static String RDBMS_DATABASE_SHOWSQL = "rdbms.database.showsql"; // database configuration in not webserver(6): show sql for debug
+    public final static String PERSISTENCE_DATABASE_URL = "persistence.database.url";
 
     /**
-     * Message service factory configuration
+     * Database configuration in non-webserver: user name (RDBMS and NOSQL both use
+     * this URL)<br/>
+     * <p>
+     * Could ignore this configure, and include the username & password
+     * ({@link PERSISTENCE_DATABASE_PASSWORD}) in database connection url:
+     * <code>{@link PERSISTENCE_DATABASE_URL}</code>
+     * </p>
+     * 
+     * This configure is no need if the following configured:<br/>
+     * <ul>
+     * <li><code>{@link PERSISTENCE_FACTORY_CONFIGURABLE} = {@link com.plantssoil.common.persistence.rdbms.JPAPersistenceFactory}</code></li>
+     * <li><code>{@link RDBMS_DATASOURCE}</li>
+     * </ul>
      */
-    public final static String MESSAGE_SERVICE_FACTORY_CONFIGURABLE = "message.service.factory.configurable"; // Message Service factory configurable
+    public final static String PERSISTENCE_DATABASE_USERNAME = "persistence.database.username";
+
+    /**
+     * Database configuration in non-webserver: password (RDBMS and NOSQL both use
+     * this URL)<br/>
+     * <p>
+     * Could ignore this configure, and include username
+     * ({@link PERSISTENCE_DATABASE_USERNAME}) & password in database connection
+     * url: <code>{@link PERSISTENCE_DATABASE_URL}</code>
+     * </p>
+     * 
+     * This configure is no need if the following configured:<br/>
+     * <ul>
+     * <li><code>{@link PERSISTENCE_FACTORY_CONFIGURABLE} = {@link com.plantssoil.common.persistence.rdbms.JPAPersistenceFactory}</code></li>
+     * <li><code>{@link RDBMS_DATASOURCE}</li>
+     * </ul>
+     */
+    public final static String PERSISTENCE_DATABASE_PASSWORD = "persistence.database.password";
+
+    /**
+     * Database configuration in non-webserver: connection pool (RDBMS and NOSQL
+     * both use this URL)<br/>
+     * This configure is no need if the following configured:<br/>
+     * <ul>
+     * <li><code>{@link PERSISTENCE_FACTORY_CONFIGURABLE} = {@link com.plantssoil.common.persistence.rdbms.JPAPersistenceFactory}</code></li>
+     * <li><code>{@link RDBMS_DATASOURCE}</li>
+     * </ul>
+     */
+    public final static String PERSISTENCE_DATABASE_POOLSIZE = "persistence.database.poolsize";
+
+    /**
+     * Persistence Initializer implementation configuration which is used to
+     * initialize database
+     */
+    public final static String PERSISTENCE_INITIALIZER_CONFIGURABLE = "persistence.initializer.configurable";
+
+    // RDBMS connection related configurations
+    /**
+     * The RDBMS datasource JNDI naming which used in webserver.<br/>
+     * <p>
+     * This configure is effective when
+     * <code>{@link PERSISTENCE_FACTORY_CONFIGURABLE} =
+     * {@link com.plantssoil.common.persistence.rdbms.JPAPersistenceFactory}</code>
+     * </p>
+     * And the following configures are no need when this one configured:
+     * <ul>
+     * <li><code>{@link PERSISTENCE_DATABASE_URL}</code></li>
+     * <li><code>{@link PERSISTENCE_DATABASE_USERNAME}</code></li>
+     * <li><code>{@link PERSISTENCE_DATABASE_PASSWORD}</code></li>
+     * <li><code>{@link PERSISTENCE_DATABASE_POOLSIZE}</code></li>
+     * <li><code>{@link RDBMS_DATABASE_DRIVER}</code></li>
+     * <li><code>{@link RDBMS_DATABASE_SHOWSQL}</code></li>
+     * </ul>
+     */
+    public final static String RDBMS_DATASOURCE = "rdbms.datasource";
+
+    /**
+     * The datasource dialect, @see org.hibernate.dialect.Dialect This configure is
+     * effective when <code>{@link PERSISTENCE_FACTORY_CONFIGURABLE} =
+     * {@link com.plantssoil.common.persistence.rdbms.JPAPersistenceFactory}</code>
+     */
+    public final static String RDBMS_DATASOURCE_DIALECT = "rdbms.datasource.dialect";
+
+    /**
+     * Database configuration in non-webserver, driver class This configure is
+     * effective when <code>{@link PERSISTENCE_FACTORY_CONFIGURABLE} =
+     * {@link com.plantssoil.common.persistence.rdbms.JPAPersistenceFactory}</code>
+     */
+    public final static String RDBMS_DATABASE_DRIVER = "rdbms.database.driver";
+
+    /**
+     * Database configuration in non-webserver, show SQL for debug purpose This
+     * configure is effective when <code>{@link PERSISTENCE_FACTORY_CONFIGURABLE} =
+     * {@link com.plantssoil.common.persistence.rdbms.JPAPersistenceFactory}</code>
+     */
+    public final static String RDBMS_DATABASE_SHOWSQL = "rdbms.database.showsql";
+
+    /**
+     * Message service factory implementation configuration
+     */
+    public final static String MESSAGE_SERVICE_FACTORY_CONFIGURABLE = "message.service.factory.configurable";
 
     /**
      * Message service MQ Server URI. e.g:<br/>
@@ -85,6 +217,7 @@ public class LettuceConfiguration {
      * <li>RabbitMQ:
      * <code>amqp://username:password@domain.com:5672/vhost</code></li>
      * <li>ActiveMQ: <code>tcp://username:password@domain.com:61616</code></li></li>
+     * <li>Redis: <code>redis://username:password@domain.com:6379</code></li>
      * </ul>
      * 
      */

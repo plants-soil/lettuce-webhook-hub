@@ -7,11 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.MapConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.interpol.ConfigurationInterpolator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.plantssoil.common.config.configuration.SystemEnvConfiguration;
 import com.plantssoil.common.config.configuration.SystemPropertiesConfiguration;
@@ -30,34 +31,36 @@ import com.plantssoil.common.security.KeyStoreEncrypter;
  *
  */
 public class ConfigFactory {
-    private CompositeConfiguration configuration;
+    private final static Logger LOGGER = LoggerFactory.getLogger(ConfigFactory.class.getName());
+    private ConfigurationDelegate configuration;
     private static volatile ConfigFactory instance;
 
     private ConfigFactory() {
+        LOGGER.info("Loading configuration...");
         ConfigurationInterpolator.registerGlobalLookup("env", new EnvLookup()); //$NON-NLS-1$
         ConfigurationInterpolator.registerGlobalLookup("crypt", new CryptLookup()); //$NON-NLS-1$
 
-        configuration = new CompositeConfiguration();
+        CompositeConfiguration conf = new CompositeConfiguration();
         // add OS env variables
-        configuration.addConfiguration(new SystemEnvConfiguration());
+        conf.addConfiguration(new SystemEnvConfiguration());
         // add system property
-        configuration.addConfiguration(new SystemPropertiesConfiguration());
+        conf.addConfiguration(new SystemPropertiesConfiguration());
         // add keystore configuration
         Map<String, String> keystoreMap = getConfigurationFromKeystore();
         if (keystoreMap.size() > 0) {
-            configuration.addConfiguration(new MapConfiguration(keystoreMap));
+            conf.addConfiguration(new MapConfiguration(keystoreMap));
         }
         // add lettuce configuration property file
         URL url = getConfigurationPropertyFile();
-        if (url == null) {
-            throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12010, "Can't find lettuce configuration property file!");
-        } else {
+        if (url != null) {
             try {
-                configuration.addConfiguration(new PropertiesConfiguration(url));
+                conf.addConfiguration(new PropertiesConfiguration(url));
             } catch (ConfigurationException e) {
                 throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12011, e);
             }
         }
+        configuration = new ConfigurationDelegate(conf);
+        LOGGER.info("Configuration loaded.");
     }
 
     private URL getConfigurationPropertyFile() {
@@ -114,6 +117,7 @@ public class ConfigFactory {
     public static ConfigFactory reload() {
         synchronized (ConfigFactory.class) {
             instance = new ConfigFactory();
+            LOGGER.info("Configuration reloaded.");
         }
         return instance;
     }
@@ -123,7 +127,7 @@ public class ConfigFactory {
      * 
      * @return Configuration Object
      */
-    public Configuration getConfiguration() {
+    public IConfiguration getConfiguration() {
         return configuration;
     }
 }

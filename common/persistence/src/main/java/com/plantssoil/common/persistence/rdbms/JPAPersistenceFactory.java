@@ -7,9 +7,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import org.apache.commons.configuration.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.plantssoil.common.config.ConfigFactory;
+import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
@@ -18,12 +20,13 @@ import com.plantssoil.common.persistence.IPersistenceFactory;
  * 
  * Manage connection pool (via entity manager factory)<br/>
  * Create persistence instance, the implementation is defined via configuration
- * {@link LettuceConfiguration.RDBMS_JPA_PERSISTENCE_CONFIGURABLE}
+ * {@link LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE}
  * 
  * @author danialdy
  *
  */
 public class JPAPersistenceFactory implements IPersistenceFactory {
+    private final static Logger LOGGER = LoggerFactory.getLogger(JPAPersistenceFactory.class.getName());
     private String persistenceUnitName;
     private String datasourceName;
     private DatabaseConnectionConfig databaseConnectionConfig;
@@ -97,8 +100,10 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
         if (this.entityManagerFactory == null) {
             synchronized (this) {
                 if (this.entityManagerFactory == null) {
+                    LOGGER.info("Loading and connectiong RDBMS JPA as the persistence service...");
                     Map<String, String> connectionProperties = getConnectionProperties();
                     this.entityManagerFactory = Persistence.createEntityManagerFactory(getPersistenceUnitName(), connectionProperties);
+                    LOGGER.info("RDBMS connected and loaded.");
                 }
             }
         }
@@ -122,7 +127,7 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
             return getDataConnectionProperties(this.databaseConnectionConfig);
         }
 
-        Configuration configuration = ConfigFactory.getInstance().getConfiguration();
+        IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
         if (configuration.containsKey(LettuceConfiguration.RDBMS_DATASOURCE)) {
             return getDataSourceProperties(configuration.getString(LettuceConfiguration.RDBMS_DATASOURCE));
         } else {
@@ -154,10 +159,10 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
             properties.put("javax.persistence.jdbc.url", databaseConfig.getConnectionUrl());
         }
         if (databaseConfig.getUserName() != null) {
-            properties.put("javax.persistence.jdbc.user", "sa");
+            properties.put("javax.persistence.jdbc.user", databaseConfig.getUserName());
         }
         if (databaseConfig.getPassword() != null) {
-            properties.put("javax.persistence.jdbc.password", "sa");
+            properties.put("javax.persistence.jdbc.password", databaseConfig.getPassword());
         }
         hibernateSettings(properties, databaseConfig.getConnectionPoolSize(), databaseConfig.isShowSql());
 
@@ -165,19 +170,19 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
     }
 
     private DatabaseConnectionConfig getEngineDatabaseConnectionConfig() {
-        Configuration conf = ConfigFactory.getInstance().getConfiguration();
+        IConfiguration conf = ConfigFactory.getInstance().getConfiguration();
         String driver = conf.getString(LettuceConfiguration.RDBMS_DATABASE_DRIVER);
-        String url = conf.getString(LettuceConfiguration.RDBMS_DATABASE_URL);
-        String username = conf.getString(LettuceConfiguration.RDBMS_DATABASE_USERNAME);
-        String password = conf.getString(LettuceConfiguration.RDBMS_DATABASE_PASSWORD);
-        int poolsize = 20;
-        boolean showsql = false;
-        if (conf.containsKey(LettuceConfiguration.RDBMS_DATABASE_POOLSIZE)) {
-            poolsize = conf.getInt(LettuceConfiguration.RDBMS_DATABASE_POOLSIZE);
+        String url = conf.getString(LettuceConfiguration.PERSISTENCE_DATABASE_URL);
+        String username = null;
+        if (conf.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_USERNAME)) {
+            username = conf.getString(LettuceConfiguration.PERSISTENCE_DATABASE_USERNAME);
         }
-        if (conf.containsKey(LettuceConfiguration.RDBMS_DATABASE_SHOWSQL)) {
-            showsql = conf.getBoolean(LettuceConfiguration.RDBMS_DATABASE_SHOWSQL);
+        String password = null;
+        if (conf.containsKey(LettuceConfiguration.PERSISTENCE_DATABASE_PASSWORD)) {
+            password = conf.getString(LettuceConfiguration.PERSISTENCE_DATABASE_PASSWORD);
         }
+        int poolsize = conf.getInt(LettuceConfiguration.PERSISTENCE_DATABASE_POOLSIZE, 20);
+        boolean showsql = conf.getBoolean(LettuceConfiguration.RDBMS_DATABASE_SHOWSQL, false);
         DatabaseConnectionConfig dbconfig = new DatabaseConnectionConfig(driver, url, username, password);
         dbconfig.setConnectionPoolSize(poolsize);
         dbconfig.setShowSql(showsql);

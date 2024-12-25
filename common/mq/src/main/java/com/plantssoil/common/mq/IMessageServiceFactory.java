@@ -7,28 +7,27 @@ import com.plantssoil.common.mq.exception.MessageQueueException;
 
 /**
  * Message service factory, could use this factory to create message publisher /
- * subscriber<br/>
+ * consumer<br/>
  * This factory implements AutoCloseable interface, could release all resources
  * attached in {@link AutoCloseable#close()}
  * 
  * @author danialdy
  * @Date 2 Nov 2024 3:36:00 pm
  */
-public interface IMessageServiceFactory extends IConfigurable, AutoCloseable {
+public interface IMessageServiceFactory<T> extends IConfigurable, AutoCloseable {
     /**
      * create message publisher (which is used to publish message)
      * 
      * @return Message Publisher instance
      */
-    public IMessagePublisher createMessagePublisher();
+    public IMessagePublisher<T> createMessagePublisher();
 
     /**
-     * create message subscriber (which is used to subscribe message from publisher
-     * + version)
+     * create message consumer (which is used to consume message from queue)
      * 
-     * @return Message Subscriber instance
+     * @return Message Consumer instance
      */
-    public IMessageSubscriber createMessageSubscriber();
+    public IMessageConsumer<T> createMessageConsumer();
 
     /**
      * Get the default implementation of this factory (which is singleton)<br/>
@@ -37,10 +36,11 @@ public interface IMessageServiceFactory extends IConfigurable, AutoCloseable {
      * 
      * @return Singleton instance of {@link IMessageServiceFactory}
      */
-    public static IMessageServiceFactory getDefaultFactory() {
+    @SuppressWarnings("unchecked")
+    public static <T> IMessageServiceFactory<T> getFactoryInstance() {
         IConfigurable configurable = ConfigurableLoader.getInstance().createSingleton(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE);
         if (configurable instanceof IMessageServiceFactory) {
-            return (IMessageServiceFactory) configurable;
+            return (IMessageServiceFactory<T>) configurable;
         } else {
             String err = String.format("The class %s don't implements %s!", configurable.getClass().getName(), IMessageServiceFactory.class.getName());
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15001, err);

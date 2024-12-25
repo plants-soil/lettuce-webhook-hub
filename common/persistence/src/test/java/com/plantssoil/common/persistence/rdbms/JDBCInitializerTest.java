@@ -20,7 +20,7 @@ import org.junit.runners.MethodSorters;
 
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.LettuceConfiguration;
-import com.plantssoil.common.persistence.IInitializer;
+import com.plantssoil.common.persistence.IPersistenceInitializer;
 import com.plantssoil.common.test.TempDirectoryUtility;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -34,17 +34,18 @@ public class JDBCInitializerTest {
         new File(util.getSubDirectory("data") + "/changelogs").mkdirs();
 
         Properties p = new Properties();
-        p.setProperty(LettuceConfiguration.RDBMS_INIT_DDL_CONFIGURABLE, JDBCInitializer.class.getName());
+        p.setProperty(LettuceConfiguration.PERSISTENCE_INITIALIZER_CONFIGURABLE, JDBCInitializer.class.getName());
         p.setProperty(LettuceConfiguration.RDBMS_DATABASE_DRIVER, org.h2.Driver.class.getName());
-        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_URL,
+        p.setProperty(LettuceConfiguration.PERSISTENCE_DATABASE_URL,
                 "jdbc:h2:mem:testJdbc" + ThreadLocalRandom.current().nextInt(100000) + ";DB_CLOSE_DELAY=-1");
-        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_USERNAME, "sa");
-        p.setProperty(LettuceConfiguration.RDBMS_DATABASE_PASSWORD, "sa");
-        try (FileOutputStream out = new FileOutputStream(util.getSubDirectory("conf") + "/lettuce.properties")) {
-            p.store(out, "## All configurations for lettuce");
+        p.setProperty(LettuceConfiguration.PERSISTENCE_DATABASE_USERNAME, "sa");
+        p.setProperty(LettuceConfiguration.PERSISTENCE_DATABASE_PASSWORD, "sa");
+        try (FileOutputStream out = new FileOutputStream(util.getSubDirectory("conf") + "/" + LettuceConfiguration.CONFIGURATION_FILE_NAME)) {
+            p.store(out, "## No comments");
         }
-        System.setProperty("lettuce.config.dir", util.getSubDirectory("conf"));
-        System.setProperty("lettuce.data.dir", util.getSubDirectory("data"));
+
+        System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getSubDirectory("conf"));
+        System.setProperty(LettuceConfiguration.DATA_DIRECTORY_PROPERTY_NAME, util.getSubDirectory("data"));
 
         ConfigFactory.reload();
     }
@@ -58,8 +59,8 @@ public class JDBCInitializerTest {
         StringBuilder sb = endDatabaseChangeLog(initTable(new StringBuilder()));
         createFile(util.getSubDirectory("data") + "/lettuce-master.xml", sb);
         createInitTableFile();
-        IInitializer.createDefaultInitializer().initialize();
-        try (Connection conn = ((JDBCInitializer) IInitializer.createDefaultInitializer()).getConnection()) {
+        IPersistenceInitializer.createInitializerInstance().initialize();
+        try (Connection conn = ((JDBCInitializer) IPersistenceInitializer.createInitializerInstance()).getConnection()) {
             java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT * FROM client_info");
             stmt.executeQuery();
             assertTrue(true);
@@ -75,9 +76,9 @@ public class JDBCInitializerTest {
         createFile(util.getSubDirectory("data") + "/lettuce-master.xml", sb);
         this.createInitTableFile();
         this.createAddTableFile();
-        IInitializer.createDefaultInitializer().initialize();
+        IPersistenceInitializer.createInitializerInstance().initialize();
 
-        try (Connection conn = ((JDBCInitializer) IInitializer.createDefaultInitializer()).getConnection()) {
+        try (Connection conn = ((JDBCInitializer) IPersistenceInitializer.createInitializerInstance()).getConnection()) {
             java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT * FROM client_address");
             stmt.executeQuery();
             assertTrue(true);
@@ -94,9 +95,9 @@ public class JDBCInitializerTest {
         this.createInitTableFile();
         this.createAddTableFile();
         this.createAddColumnFile();
-        IInitializer.createDefaultInitializer().initialize();
+        IPersistenceInitializer.createInitializerInstance().initialize();
 
-        try (Connection conn = ((JDBCInitializer) IInitializer.createDefaultInitializer()).getConnection()) {
+        try (Connection conn = ((JDBCInitializer) IPersistenceInitializer.createInitializerInstance()).getConnection()) {
             java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT street, line1, line2, line3 FROM client_address");
             stmt.executeQuery();
             assertTrue(true);

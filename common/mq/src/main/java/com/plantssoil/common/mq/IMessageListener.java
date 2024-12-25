@@ -1,37 +1,20 @@
 package com.plantssoil.common.mq;
 
 /**
- * Listen the message comes from subscribed MQ topic<br/>
+ * Listen the message comes from subscribed Message Queue<br/>
  * Will process the messages<br/>
  * 
+ * @param <T> the message type
  * @author danialdy
- * @Date 1 Nov 2024 5:09:28 pm
+ * @Date 23 Nov 2024 9:30:20 pm
  */
-public interface IMessageListener {
-    /**
-     * Get the consumer id<br/>
-     * This will be null if not set consumerId via
-     * {@link IMessageSubscriber#setConsumerId(String)} when subscribe messages
-     * 
-     * @return
-     */
-    public String getConsumerId();
-
-    /**
-     * Set the consumer id<br/>
-     * 
-     * @param consumerId This will be null if not set consumerId via
-     *                   {@link IMessageSubscriber#setConsumerId(String)} when
-     *                   subscribe messages
-     * @return
-     */
-    public void setConsumerId(String consumerId);
-
+public interface IMessageListener<T> {
     /**
      * MQ will call this method after message received<br/>
      * Could process the messages in this method<br/>
      * 
-     * @param message message comes from publisher
+     * @param message    message comes from publisher
+     * @param consumerId the consumer id
      */
-    public void onMessage(IMessage message);
+    public void onMessage(T message, String consumerId);
 }

@@ -4,29 +4,33 @@ import java.util.List;
 
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
-import javax.jms.ObjectMessage;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
+import com.plantssoil.common.io.ObjectJsonSerializer;
 import com.plantssoil.common.mq.IMessageListener;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 
-class MessageReceiver implements Runnable {
+class MessageReceiver<T> implements Runnable {
     private Session session;
-    private String consumerTag;
     private String queueName;
-    private List<IMessageListener> listeners;
+    private String consumerId;
+    private List<IMessageListener<T>> listeners;
+    private Class<T> clazz;
+    private boolean closed = false;
 
-    public MessageReceiver(Session session, String consumerTag, String queueName, List<IMessageListener> listeners) {
+    public MessageReceiver(Session session, String queueName, String consumerId, List<IMessageListener<T>> listeners, Class<T> clazz) {
         this.session = session;
-        this.consumerTag = consumerTag;
         this.queueName = queueName;
+        this.consumerId = consumerId;
         this.listeners = listeners;
+        this.clazz = clazz;
     }
 
     @Override
     public void run() {
-        try (MessageConsumer consumer = session.createConsumer(session.createQueue(queueName))) {
-            while (true) {
+        try (MessageConsumer consumer = this.session.createConsumer(this.session.createQueue(this.queueName))) {
+            while (!this.closed) {
                 javax.jms.Message msg = null;
                 // try to receive message from consumer
                 // will re-try 3 times if connection is broken and exit if still can't
@@ -42,26 +46,24 @@ class MessageReceiver implements Runnable {
                             Thread.sleep(3000);
                             msg = consumer.receive();
                         } catch (InterruptedException | javax.jms.IllegalStateException e2) {
-                            break;
+                            continue;
                         }
                     }
                 }
-                if (msg == null || !(msg instanceof ObjectMessage)) {
+                if (msg == null || !(msg instanceof TextMessage)) {
                     continue;
                 }
-                java.io.Serializable serializable = ((ObjectMessage) msg).getObject();
-                if (serializable == null || !(serializable instanceof Message)) {
-                    continue;
-                }
-
-                Message message = (Message) serializable;
-                for (IMessageListener listener : listeners) {
-                    listener.setConsumerId(consumerTag);
-                    listener.onMessage(message);
+                T message = ObjectJsonSerializer.getInstance().unserialize(((TextMessage) msg).getText(), clazz);
+                for (IMessageListener<T> listener : listeners) {
+                    listener.onMessage(message, consumerId);
                 }
             }
         } catch (JMSException e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15003, e);
         }
+    }
+
+    public void close() {
+        this.closed = true;
     }
 }

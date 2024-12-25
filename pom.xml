@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>io.plantssoil</groupId>
+	<groupId>com.plantssoil</groupId>
 	<artifactId>lettuce</artifactId>
 	<version>${version.parent}</version>
 	<packaging>pom</packaging>
@@ -46,6 +46,7 @@
 		<version.remote.resources.plugin>3.0.0</version.remote.resources.plugin>
 		<!-- DBs -->
 		<version.com.h2database>1.4.199</version.com.h2database>
+		<version.mongodb.driver>5.2.0</version.mongodb.driver>
 		<version.org.postgresql.jdbc.driver>42.6.0</version.org.postgresql.jdbc.driver>
 		<version.mysql.jdbc.driver>8.0.33</version.mysql.jdbc.driver>
 		<version.com.oracle.driver>21.7.0.0</version.com.oracle.driver>
@@ -54,6 +55,12 @@
 		<!-- DDL -->
 		<version.liquibase>4.16.1</version.liquibase>
 		<!-- Dependencies -->
+		<version.slf4j-api>2.0.13</version.slf4j-api>
+		<!--
+		<version.reactive-streams>1.0.4</version.reactive-streams>
+		<version.reactor-core>3.6.6</version.reactor-core>
+		-->
+		<version.okhttp3>3.14.9</version.okhttp3>
 		<version.hibernate>5.3.36.Final</version.hibernate>
 		<version.resteasy>4.7.9.Final</version.resteasy>
 		<version.commons-configuration>1.10</version.commons-configuration>
@@ -62,7 +69,7 @@
 		<version.commons-pool2>2.12.0</version.commons-pool2>
 		<version.rabbitmq-client>5.22.0</version.rabbitmq-client>
 		<version.activemq-client>5.18.6</version.activemq-client>
-		<version.redis-lettuce>6.5.0.RC2</version.redis-lettuce>
+		<version.redis-lettuce>6.5.0.RELEASE</version.redis-lettuce>
 		<!-- Testing -->
 		<version.junit>4.13.2</version.junit>
 		<version.commons-dbcp>1.4</version.commons-dbcp>
@@ -74,43 +81,59 @@
 		<dependencies>
 			<!-- Internal Projects -->
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
+				<artifactId>lettuce-common-io</artifactId>
+				<version>${version.parent}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-exception</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-test</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-filesystem</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-security</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-config</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-persistence</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-httpclient</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.plantssoil</groupId>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-common-mq</artifactId>
+				<version>${version.parent}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.plantssoil</groupId>
+				<artifactId>lettuce-webhook-engine-beans</artifactId>
+				<version>${version.parent}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.plantssoil</groupId>
+				<artifactId>lettuce-webhook-engine-persistence</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 
@@ -129,11 +152,30 @@
 				<version>${version.liquibase}</version>
 			</dependency>
 
+			<!-- Reactor -->
+			<!--
+			<dependency>
+				<groupId>org.reactivestreams</groupId>
+				<artifactId>reactive-streams</artifactId>
+				<version>${version.reactive-streams}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.projectreactor</groupId>
+				<artifactId>reactor-core</artifactId>
+				<version>${version.reactor-core}</version>
+			</dependency>
+			-->
+
 			<!-- DB drivers -->
 			<dependency>
 				<groupId>com.h2database</groupId>
 				<artifactId>h2</artifactId>
 				<version>${version.com.h2database}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mongodb</groupId>
+				<artifactId>mongodb-driver-sync</artifactId>
+				<version>${version.mongodb.driver}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.postgresql</groupId>
@@ -157,6 +199,11 @@
 			</dependency>
 
 			<!-- Apache commons configuration -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${version.slf4j-api}</version>
+			</dependency>
 			<dependency>
 				<groupId>commons-configuration</groupId>
 				<artifactId>commons-configuration</artifactId>
@@ -192,6 +239,13 @@
 				<version>${version.commons-pool2}</version>
 			</dependency>
 
+			<!-- OkHttpClient -->
+			<dependency>
+				<groupId>com.squareup.okhttp3</groupId>
+				<artifactId>okhttp</artifactId>
+				<version>${version.okhttp3}</version>
+			</dependency>
+
 			<!-- Hibernate -->
 			<dependency>
 				<groupId>org.hibernate</groupId>
@@ -224,6 +278,18 @@
 				<groupId>io.lettuce</groupId>
 				<artifactId>lettuce-core</artifactId>
 				<version>${version.redis-lettuce}</version>
+				<!--
+				<exclusions>
+					<exclusion>
+						<groupId>org.reactivestreams</groupId>
+						<artifactId>org.reactivestreams</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.projectreactor</groupId>
+						<artifactId>reactor-core</artifactId>
+					</exclusion>
+				</exclusions>
+				-->
 			</dependency>
 
 			<!-- Restful API -->
@@ -534,6 +600,7 @@
 	<modules>
 		<module>common</module>
 		<module>webhook</module>
+		<module>integration</module>
 	</modules>
 
 	<profiles>

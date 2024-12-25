@@ -7,9 +7,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.apache.commons.configuration.Configuration;
-
 import com.plantssoil.common.config.ConfigFactory;
+import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.persistence.exception.PersistenceException;
 
@@ -25,7 +24,7 @@ public class DatasourceInitializer extends AbstractLiquibaseInitializer {
     private String datasourceName;
 
     public DatasourceInitializer() {
-        Configuration config = ConfigFactory.getInstance().getConfiguration();
+        IConfiguration config = ConfigFactory.getInstance().getConfiguration();
         if (config.containsKey(LettuceConfiguration.RDBMS_DATASOURCE)) {
             this.datasourceName = config.getString(LettuceConfiguration.RDBMS_DATASOURCE);
         }

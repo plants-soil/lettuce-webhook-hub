@@ -1,10 +1,48 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>io.plantssoil</groupId>
-    <artifactId>lettuce-webhook-engine</artifactId>
-	<version>${version.parent}</version>
-  </parent>
-  <artifactId>lettuce-webhook-engine-core</artifactId>
-  <name>Webhook Engine Core</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.plantssoil</groupId>
+		<artifactId>lettuce-webhook-engine</artifactId>
+		<version>${version.parent}</version>
+	</parent>
+
+	<artifactId>lettuce-webhook-engine-core</artifactId>
+	<name>Webhook Engine - core</name>
+
+	<dependencies>
+		<!-- Internal Dependencies -->
+		<dependency>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-common-exception</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-common-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-common-mq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-common-httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-webhook-engine-persistence</artifactId>
+		</dependency>
+        
+        <!-- Testing -->
+        <dependency>
+            <groupId>com.plantssoil</groupId>
+            <artifactId>lettuce-common-test</artifactId>
+            <scope>compile</scope>
+        </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>

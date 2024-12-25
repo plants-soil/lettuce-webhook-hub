@@ -27,6 +27,10 @@ public class PersistenceException extends BusinessException {
     public final static int BUSINESS_EXCEPTION_CODE_13009 = 13009;
     public final static int BUSINESS_EXCEPTION_CODE_13010 = 13010;
     public final static int BUSINESS_EXCEPTION_CODE_13011 = 13011;
+    public final static int BUSINESS_EXCEPTION_CODE_13012 = 13012;
+    public final static int BUSINESS_EXCEPTION_CODE_13013 = 13013;
+    public final static int BUSINESS_EXCEPTION_CODE_13014 = 13014;
+    public final static int BUSINESS_EXCEPTION_CODE_13015 = 13015;
 
     public PersistenceException(String message, Throwable cause) {
         super(message, cause);

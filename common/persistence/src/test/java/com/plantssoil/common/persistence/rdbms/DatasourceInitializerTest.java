@@ -24,7 +24,7 @@ import org.junit.runners.MethodSorters;
 
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.LettuceConfiguration;
-import com.plantssoil.common.persistence.IInitializer;
+import com.plantssoil.common.persistence.IPersistenceInitializer;
 import com.plantssoil.common.test.TempDirectoryUtility;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -52,14 +52,14 @@ public class DatasourceInitializerTest {
         ic.rebind("datasource-lettuce" + r, bds);
 
         Properties p = new Properties();
-        p.setProperty(LettuceConfiguration.RDBMS_INIT_DDL_CONFIGURABLE, DatasourceInitializer.class.getName());
+        p.setProperty(LettuceConfiguration.PERSISTENCE_INITIALIZER_CONFIGURABLE, DatasourceInitializer.class.getName());
         p.setProperty(LettuceConfiguration.RDBMS_DATASOURCE, "datasource-lettuce" + r);
 
-        try (FileOutputStream out = new FileOutputStream(util.getSubDirectory("conf") + "/lettuce.properties")) {
-            p.store(out, "## All configurations for lettuce");
+        try (FileOutputStream out = new FileOutputStream(util.getSubDirectory("conf") + "/" + LettuceConfiguration.CONFIGURATION_FILE_NAME)) {
+            p.store(out, "## No comments");
         }
-        System.setProperty("lettuce.config.dir", util.getSubDirectory("conf"));
-        System.setProperty("lettuce.data.dir", util.getSubDirectory("data"));
+        System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getSubDirectory("conf"));
+        System.setProperty(LettuceConfiguration.DATA_DIRECTORY_PROPERTY_NAME, util.getSubDirectory("data"));
         ConfigFactory.reload();
     }
 
@@ -72,8 +72,8 @@ public class DatasourceInitializerTest {
         StringBuilder sb = endDatabaseChangeLog(initTable(new StringBuilder()));
         createFile(util.getSubDirectory("data") + "/lettuce-master.xml", sb);
         createInitTableFile();
-        IInitializer.createDefaultInitializer().initialize();
-        try (Connection conn = ((DatasourceInitializer) IInitializer.createDefaultInitializer()).getConnection()) {
+        IPersistenceInitializer.createInitializerInstance().initialize();
+        try (Connection conn = ((DatasourceInitializer) IPersistenceInitializer.createInitializerInstance()).getConnection()) {
             java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT * FROM client_info");
             stmt.executeQuery();
             assertTrue(true);
@@ -89,9 +89,9 @@ public class DatasourceInitializerTest {
         createFile(util.getSubDirectory("data") + "/lettuce-master.xml", sb);
         this.createInitTableFile();
         this.createAddTableFile();
-        IInitializer.createDefaultInitializer().initialize();
+        IPersistenceInitializer.createInitializerInstance().initialize();
 
-        try (Connection conn = ((DatasourceInitializer) IInitializer.createDefaultInitializer()).getConnection()) {
+        try (Connection conn = ((DatasourceInitializer) IPersistenceInitializer.createInitializerInstance()).getConnection()) {
             java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT * FROM client_address");
             stmt.executeQuery();
             assertTrue(true);
@@ -108,9 +108,9 @@ public class DatasourceInitializerTest {
         this.createInitTableFile();
         this.createAddTableFile();
         this.createAddColumnFile();
-        IInitializer.createDefaultInitializer().initialize();
+        IPersistenceInitializer.createInitializerInstance().initialize();
 
-        try (Connection conn = ((DatasourceInitializer) IInitializer.createDefaultInitializer()).getConnection()) {
+        try (Connection conn = ((DatasourceInitializer) IPersistenceInitializer.createInitializerInstance()).getConnection()) {
             java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT street, line1, line2, line3 FROM client_address");
             stmt.executeQuery();
             assertTrue(true);

@@ -60,9 +60,47 @@ public class ConfigurableLoader {
     }
 
     /**
+     * create the singleton instance of clazz, which implements IConfigurable
+     * 
+     * @param <T>   IConfigurable implementation
+     * @param clazz class which implements IConfigurable
+     * @return clazz singleton instance
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends IConfigurable> T createSingleton(Class<T> clazz) {
+        String clazzName = "<CLASS>-" + clazz.getName();
+        IConfigurable configurable = configurables.get(clazzName);
+        if (configurable != null) {
+            return (T) configurable;
+        }
+        synchronized (clazz) {
+            configurable = configurables.get(clazzName);
+            if (configurable == null) {
+                try {
+                    configurable = clazz.getConstructor().newInstance();
+                } catch (InstantiationException e) {
+                    throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12004, e);
+                } catch (IllegalAccessException e) {
+                    throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12005, e);
+                } catch (IllegalArgumentException e) {
+                    throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12006, e);
+                } catch (InvocationTargetException e) {
+                    throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12007, e);
+                } catch (NoSuchMethodException e) {
+                    throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12008, e);
+                } catch (SecurityException e) {
+                    throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12009, e);
+                }
+                configurables.put(clazzName, configurable);
+            }
+            return (T) configurable;
+        }
+    }
+
+    /**
      * Remove the configurable singleton instance (if it is and exists)<br/>
-     * The method {@link AutoCloseable#close()} will be called 1 seconds later if
-     * the singleton implements {@link AutoCloseable} interface <br/>
+     * The method {@link AutoCloseable#close()} will be called if the singleton
+     * implements {@link AutoCloseable} interface <br/>
      * 
      * @param configName configure item name
      * @return The singleton instance removed
@@ -82,6 +120,29 @@ public class ConfigurableLoader {
     }
 
     /**
+     * Remove the configurable singleton instance (if it is and exists)<br/>
+     * The method {@link AutoCloseable#close()} will be called if the singleton
+     * implements {@link AutoCloseable} interface <br/>
+     * 
+     * @param <T>   IConfigurable implementation
+     * @param clazz class which implements IConfigurable
+     * @return clazz singleton instance
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends IConfigurable> T removeSingleton(Class<T> clazz) {
+        String clazzName = "<CLASS>-" + clazz.getName();
+        IConfigurable singleton = configurables.remove(clazzName);
+        if (singleton != null && singleton instanceof AutoCloseable) {
+            try {
+                ((AutoCloseable) singleton).close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return (T) singleton;
+    }
+
+    /**
      * Create new configurable instance (which implements
      * com.plantssoil.common.config.IConfigurable)
      * 
@@ -97,7 +158,11 @@ public class ConfigurableLoader {
     }
 
     private IConfigurable createConfigurable(String configName, boolean singleton) {
-        String clazzName = ConfigFactory.getInstance().getConfiguration().getString(configName);
+        IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
+        if (!configuration.containsKey(configName)) {
+            return null;
+        }
+        String clazzName = configuration.getString(configName);
         if (clazzName == null || clazzName.strip().length() == 0) {
             throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12001, "Can't find the configuration: " + configName);
         }
