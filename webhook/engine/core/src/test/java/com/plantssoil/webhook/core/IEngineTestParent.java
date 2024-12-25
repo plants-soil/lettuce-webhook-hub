@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.plantssoil.common.persistence.EntityIdUtility;
+import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.webhook.core.IWebhook.SecurityStrategy;
 import com.plantssoil.webhook.core.IWebhook.WebhookStatus;
 import com.plantssoil.webhook.core.impl.SimpleDataGroup;
@@ -52,7 +52,7 @@ public class IEngineTestParent {
 
     private IPublisher createPublisherInstance() {
         IPublisher publisher = new SimplePublisher();
-        publisher.setPublisherId(EntityIdUtility.getInstance().generateUniqueId());
+        publisher.setPublisherId(EntityUtils.getInstance().createUniqueObjectId());
         // randomly support multi-datagroup
         if (ThreadLocalRandom.current().nextInt(1011) % 20 == 4) {
             publisher.setSupportDataGroup(false);
@@ -74,7 +74,7 @@ public class IEngineTestParent {
 
     private IEvent createEventInstance(String eventType) {
         IEvent event = new SimpleEvent();
-        event.setEventId(EntityIdUtility.getInstance().generateUniqueId());
+        event.setEventId(EntityUtils.getInstance().createUniqueObjectId());
         event.setEventTag("test");
         event.setEventType(eventType);
         event.setContentType("application/json");
@@ -91,7 +91,7 @@ public class IEngineTestParent {
 
     private ISubscriber createSubscriberInstance(IPublisher publisher) {
         ISubscriber subscriber = new SimpleSubscriber();
-        subscriber.setSubscriberId(EntityIdUtility.getInstance().generateUniqueId());
+        subscriber.setSubscriberId(EntityUtils.getInstance().createUniqueObjectId());
         subscriber.addWebhook(createWebhookInstance(publisher, subscriber));
         return subscriber;
     }
@@ -101,12 +101,12 @@ public class IEngineTestParent {
         headers.put("test-header-01", "test-value-01");
         headers.put("test-header-02", "test-value-02");
         IWebhook webhook = new SimpleWebhook();
-        webhook.setWebhookId(EntityIdUtility.getInstance().generateUniqueId());
-        webhook.setWebhookSecret(EntityIdUtility.getInstance().generateUniqueId());
+        webhook.setWebhookId(EntityUtils.getInstance().createUniqueObjectId());
+        webhook.setWebhookSecret(EntityUtils.getInstance().createUniqueObjectId());
         webhook.setWebhookStatus(WebhookStatus.TEST);
         webhook.setWebhookUrl(WEBHOOK_URL_PREFIX);
         webhook.setSecurityStrategy(SecurityStrategy.TOKEN);
-        webhook.setAccessToken(EntityIdUtility.getInstance().generateUniqueId());
+        webhook.setAccessToken(EntityUtils.getInstance().createUniqueObjectId());
         webhook.setPublisherId(publisher.getPublisherId());
         webhook.setPubliserhVersion("1.0.0");
         webhook.setCustomizedHeaders(headers);
@@ -125,22 +125,22 @@ public class IEngineTestParent {
     private IDataGroup createDataGroupInstance(String dataGroup) {
         IDataGroup dg = new SimpleDataGroup();
         dg.setDataGroup(dataGroup);
-        dg.setAccessToken(EntityIdUtility.getInstance().generateUniqueId());
-        dg.setRefreshToken(EntityIdUtility.getInstance().generateUniqueId());
+        dg.setAccessToken(EntityUtils.getInstance().createUniqueObjectId());
+        dg.setRefreshToken(EntityUtils.getInstance().createUniqueObjectId());
         return dg;
     }
 
     public void testTrigger() {
         final IEngine engine = IEngineFactory.getFactoryInstance().getEngine();
         final IRegistry registry = engine.getRegistry();
-        final int publisherQty = 10;
+        final int publisherQty = 100;
         ExecutorService es = Executors.newFixedThreadPool(1);
         for (int i = 0; i < publisherQty; i++) {
             es.submit(() -> {
                 List<IPublisher> publishers = registry.findAllPublishers(ThreadLocalRandom.current().nextInt(publisherQty), 1);
                 for (int j = 0; j < 3; j++) {
                     Message message = new Message(publishers.get(0).getPublisherId(), "1.0.0", EVENT_PREFIX + 3, "test", "application/json", "UTF-8", null,
-                            EntityIdUtility.getInstance().generateUniqueId(),
+                            EntityUtils.getInstance().createUniqueObjectId(),
                             "{\"data\": \"This is the test payload-" + startTimeMilliseconds + "-" + messageSequence.getAndIncrement() + "\"}");
                     engine.trigger(message);
                 }
@@ -151,6 +151,7 @@ public class IEngineTestParent {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println(String.format("%d message sent.", this.messageSequence.get()));
     }
 
 }

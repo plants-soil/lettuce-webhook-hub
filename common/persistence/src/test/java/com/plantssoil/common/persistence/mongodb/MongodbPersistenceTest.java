@@ -18,7 +18,7 @@ import org.junit.Test;
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.LettuceConfiguration;
-import com.plantssoil.common.persistence.EntityIdUtility;
+import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.common.persistence.IEntityQuery;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
@@ -36,7 +36,7 @@ public class MongodbPersistenceTest {
         MongodbPersistenceTest test = new MongodbPersistenceTest();
         test.testCreateQuery();
         MongodbPersistenceTest.tearDownAfterClass();
-        System.out.println(EntityIdUtility.getInstance().generateUniqueId());
+        System.out.println(EntityUtils.getInstance().createUniqueObjectId());
     }
 
     @BeforeClass
@@ -65,21 +65,21 @@ public class MongodbPersistenceTest {
 
     private Teacher newTeacherEntity() {
         Teacher teacher = new Teacher();
-        teacher.setTeacherId(EntityIdUtility.getInstance().generateUniqueId());
+        teacher.setTeacherId(EntityUtils.getInstance().createUniqueObjectId());
         teacher.setTeacherName("Teacher " + ThreadLocalRandom.current().nextInt());
         return teacher;
     }
 
     private Course newCourseEntity() {
         Course course = new Course();
-        course.setCourseId(EntityIdUtility.getInstance().generateUniqueId());
+        course.setCourseId(EntityUtils.getInstance().createUniqueObjectId());
         course.setCourseName("Course" + ThreadLocalRandom.current().nextInt());
         return course;
     }
 
     private Student newStudentEntity() {
         Student student = new Student();
-        student.setStudentId(EntityIdUtility.getInstance().generateUniqueId());
+        student.setStudentId(EntityUtils.getInstance().createUniqueObjectId());
         student.setStudentName("Student" + ThreadLocalRandom.current().nextInt());
         student.setGender(Student.Gender.Female);
         student.setAddress(new Address("Address No " + ThreadLocalRandom.current().nextInt(), "Street " + ThreadLocalRandom.current().nextInt(),

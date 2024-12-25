@@ -17,6 +17,11 @@
 			<artifactId>lettuce-common-security</artifactId>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-common-config</artifactId>
+			<scope>compile</scope>
+		</dependency>
 
 		<!-- External dependencies -->
 		<dependency>

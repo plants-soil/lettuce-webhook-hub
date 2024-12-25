@@ -19,8 +19,7 @@ import org.junit.runners.MethodSorters;
 
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.LettuceConfiguration;
-import com.plantssoil.common.persistence.EntityIdUtility;
-import com.plantssoil.common.persistence.mongodb.MongodbPersistenceFactory;
+import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.common.test.TempDirectoryUtility;
 import com.plantssoil.webhook.core.IWebhook.SecurityStrategy;
 import com.plantssoil.webhook.core.IWebhook.WebhookStatus;
@@ -47,9 +46,10 @@ public class WebhookPosterTest {
     public static void setUpBeforeClass() throws Exception {
         Thread.sleep(1000);
         Properties p = new Properties();
-        p.setProperty(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE, MongodbPersistenceFactory.class.getName());
-        p.setProperty(LettuceConfiguration.PERSISTENCE_DATABASE_URL,
-                "mongodb://lettuce:lettuce20241101@192.168.0.67:27017/?retryWrites=false&retryReads=false");
+        p.setProperty(LettuceConfiguration.HTTPCLIENT_CONFIGURABLE, "com.plantssoil.common.httpclient.impl.OkHttpClientImpl");
+//        p.setProperty(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE, MongodbPersistenceFactory.class.getName());
+//        p.setProperty(LettuceConfiguration.PERSISTENCE_DATABASE_URL,
+//                "mongodb://lettuce:lettuce20241101@192.168.0.67:27017/?retryWrites=false&retryReads=false");
         p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_MAX_REQUESTS_PER_HOST, String.valueOf(15));
         p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY5, String.valueOf(100002));
         p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY30, String.valueOf(100003));
@@ -76,7 +76,7 @@ public class WebhookPosterTest {
 
     private Message createMessageInstance() {
         Message message = new Message("publisher-id-0001", "1.0.0", "test.event.type.001", "test", "application/json", "UTF-8", null,
-                EntityIdUtility.getInstance().generateUniqueId(),
+                EntityUtils.getInstance().createUniqueObjectId(),
                 "{\"data\": \"This is the test payload-" + this.testNumber + "-" + this.payloadId.getAndIncrement() + "\"}");
         return message;
     }
@@ -87,12 +87,12 @@ public class WebhookPosterTest {
         headers.put("test-header-01", "test-value-01");
         headers.put("test-header-02", "test-value-02");
         IWebhook webhook = new SimpleWebhook();
-        webhook.setWebhookId(EntityIdUtility.getInstance().generateUniqueId());
-        webhook.setWebhookSecret(EntityIdUtility.getInstance().generateUniqueId());
+        webhook.setWebhookId(EntityUtils.getInstance().createUniqueObjectId());
+        webhook.setWebhookSecret(EntityUtils.getInstance().createUniqueObjectId());
         webhook.setWebhookStatus(WebhookStatus.TEST);
         webhook.setWebhookUrl(WEBHOOK_URL_PREFIX);
         webhook.setSecurityStrategy(SecurityStrategy.TOKEN);
-        webhook.setAccessToken(EntityIdUtility.getInstance().generateUniqueId());
+        webhook.setAccessToken(EntityUtils.getInstance().createUniqueObjectId());
         webhook.setPublisherId("publisher-id-0001");
         webhook.setPubliserhVersion("1.0.0");
         webhook.setCustomizedHeaders(headers);
@@ -102,7 +102,7 @@ public class WebhookPosterTest {
 
     private IEvent createEventInstance(String eventType) {
         IEvent event = new SimpleEvent();
-        event.setEventId(EntityIdUtility.getInstance().generateUniqueId());
+        event.setEventId(EntityUtils.getInstance().createUniqueObjectId());
         event.setEventTag("test");
         event.setEventType(eventType);
         event.setContentType("application/json");
@@ -131,7 +131,7 @@ public class WebhookPosterTest {
         IWebhook webhook = createWebhookInstance();
         ExecutorService e = Executors.newFixedThreadPool(1);
         int totally = 0;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 1000; i++) {
             int count = randomPostWebhook(e, webhook);
             totally += count;
             System.out.println(String.format("Looped %d, Randomly sent %d messages, totally %d.", i, count, totally));

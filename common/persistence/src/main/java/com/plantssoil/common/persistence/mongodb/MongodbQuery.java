@@ -14,7 +14,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.plantssoil.common.persistence.EntityIdUtility;
+import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.common.persistence.IEntityQuery;
 import com.plantssoil.common.persistence.SimpleFilter;
 import com.plantssoil.common.persistence.exception.PersistenceException;
@@ -61,7 +61,7 @@ class MongodbQuery<T> implements IEntityQuery<T> {
     @Override
     public CompletableFuture<T> singleResult(Object primaryKey) {
         return CompletableFuture.supplyAsync(() -> {
-            String idField = EntityIdUtility.getInstance().getIdField(entityClass);
+            String idField = EntityUtils.getInstance().getEntityIdField(entityClass);
             Document doc = mongoDatabase.getCollection(mongoCollectionName).find(Filters.eq(idField, primaryKey)).first();
             return transform(doc, new ObjectMapper());
         }).exceptionally(ex -> {

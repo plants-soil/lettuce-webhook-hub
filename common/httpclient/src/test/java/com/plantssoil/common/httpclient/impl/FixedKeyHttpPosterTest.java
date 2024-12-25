@@ -13,15 +13,15 @@ import com.plantssoil.common.httpclient.IHttpCallback;
 import com.plantssoil.common.httpclient.IHttpResponse;
 
 public class FixedKeyHttpPosterTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         FixedKeyHttpPosterTest test = new FixedKeyHttpPosterTest();
         for (int i = 0; i < 1000; i++) {
             test.test02AsyncPostNotification();
-//            System.out.println(String.format("Call the http url %d.", i));
         }
 //        for (int i = 0; i < 20; i++) {
 //            test.test01SyncPostNotification();
 //        }
+        Thread.sleep(100000);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class FixedKeyHttpPosterTest {
 
         notifier.post(url, headers, messageId, payload, new IHttpCallback() {
             @Override
-            public void onFailure(IOException e) {
+            public void onFailure(Exception e) {
                 System.out.println("Exception happened: " + e.getMessage());
             }
 

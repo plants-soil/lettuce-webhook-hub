@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.plantssoil.common.persistence.EntityIdUtility;
+import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.common.persistence.IEntityQuery;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
@@ -21,21 +21,21 @@ import com.plantssoil.common.persistence.beans.Teacher;
 public class JPAPersistenceTestUtil {
     private Teacher newTeacherEntity() {
         Teacher teacher = new Teacher();
-        teacher.setTeacherId(EntityIdUtility.getInstance().generateUniqueId());
+        teacher.setTeacherId(EntityUtils.getInstance().createUniqueObjectId());
         teacher.setTeacherName("Teacher " + ThreadLocalRandom.current().nextInt());
         return teacher;
     }
 
     private Course newCourseEntity() {
         Course course = new Course();
-        course.setCourseId(EntityIdUtility.getInstance().generateUniqueId());
+        course.setCourseId(EntityUtils.getInstance().createUniqueObjectId());
         course.setCourseName("Course" + ThreadLocalRandom.current().nextInt());
         return course;
     }
 
     private Student newStudentEntity() {
         Student student = new Student();
-        student.setStudentId(EntityIdUtility.getInstance().generateUniqueId());
+        student.setStudentId(EntityUtils.getInstance().createUniqueObjectId());
         student.setStudentName("Student" + ThreadLocalRandom.current().nextInt());
         student.setGender(Student.Gender.Female);
         student.setAddress(new Address("Address No " + ThreadLocalRandom.current().nextInt(), "Street " + ThreadLocalRandom.current().nextInt(),

@@ -11,7 +11,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
-import com.plantssoil.common.persistence.EntityIdUtility;
+import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.common.persistence.exception.PersistenceException;
 
 /**
@@ -56,7 +56,7 @@ class MongodbOperation implements IMongodbOperation {
 
     @Override
     public UpdateResult update(ClientSession clientSession) {
-        String id = EntityIdUtility.getInstance().getIdField(this.entity.getClass());
+        String id = EntityUtils.getInstance().getEntityIdField(this.entity.getClass());
         if (clientSession == null) {
             return this.getMongoCollection().replaceOne(Filters.eq(id, mongoDocument.get(id)), mongoDocument);
         } else {
@@ -66,7 +66,7 @@ class MongodbOperation implements IMongodbOperation {
 
     @Override
     public DeleteResult remove(ClientSession clientSession) {
-        String id = EntityIdUtility.getInstance().getIdField(this.entity.getClass());
+        String id = EntityUtils.getInstance().getEntityIdField(this.entity.getClass());
         if (clientSession == null) {
             return this.getMongoCollection().deleteOne(Filters.eq(id, mongoDocument.get(id)));
         } else {

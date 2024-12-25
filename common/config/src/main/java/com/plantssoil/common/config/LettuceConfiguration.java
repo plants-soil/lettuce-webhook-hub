@@ -98,6 +98,12 @@ public class LettuceConfiguration {
     public final static String PERSISTENCE_FACTORY_CONFIGURABLE = "persistence.fatory.configurable"; // Persistence Factory Configuration
 
     /**
+     * HttpClient implementation configuration, default as
+     * com.plantssoil.common.httpclient.impl.JdkHttpClientImpl
+     */
+    public final static String HTTPCLIENT_CONFIGURABLE = "httpclient.configurable";
+
+    /**
      * Persistence database configuration in non-webserver: connection URL (RDBMS
      * and NOSQL both use this URL)<br/>
      * This configure is no need if the following configured:<br/>

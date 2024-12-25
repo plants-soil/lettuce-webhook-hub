@@ -31,6 +31,7 @@ public class InMemoryEngineTest extends IEngineTestParent {
     public static void setUpBeforeClass() throws Exception {
         Thread.sleep(1000);
         Properties p = new Properties();
+        p.setProperty(LettuceConfiguration.HTTPCLIENT_CONFIGURABLE, "com.plantssoil.common.httpclient.impl.OkHttpClientImpl");
 //        p.setProperty(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE, MongodbPersistenceFactory.class.getName());
 //        p.setProperty(LettuceConfiguration.PERSISTENCE_DATABASE_URL,
 //                "mongodb://lettuce:lettuce20241101@192.168.0.67:27017/?retryWrites=false&retryReads=false");

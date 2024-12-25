@@ -9,7 +9,7 @@ public interface IHttpCallback {
      * exchange, it is possible that the remote server accepted the request before
      * the failure.
      */
-    void onFailure(IOException e);
+    void onFailure(Exception e);
 
     /**
      * Called when the HTTP response was successfully returned by the remote server.

@@ -17,11 +17,11 @@ import com.plantssoil.common.persistence.exception.PersistenceException;
  * @author danialdy
  * @Date 11 Nov 2024 9:34:21 am
  */
-public class EntityIdUtility {
-    private static volatile EntityIdUtility instance;
+public class EntityUtils {
+    private static volatile EntityUtils instance;
     private Map<String, String> idFieldMap;
 
-    private EntityIdUtility() {
+    private EntityUtils() {
         this.idFieldMap = new ConcurrentHashMap<>();
     }
 
@@ -30,11 +30,11 @@ public class EntityIdUtility {
      * 
      * @return Entity Id Getter instance
      */
-    public static EntityIdUtility getInstance() {
+    public static EntityUtils getInstance() {
         if (instance == null) {
-            synchronized (EntityIdUtility.class) {
+            synchronized (EntityUtils.class) {
                 if (instance == null) {
-                    instance = new EntityIdUtility();
+                    instance = new EntityUtils();
                 }
             }
         }
@@ -47,11 +47,11 @@ public class EntityIdUtility {
      * @param entityClass the entity class
      * @return ID field name
      */
-    public String getIdField(Class<?> entityClass) {
+    public String getEntityIdField(Class<?> entityClass) {
         String entityClassName = entityClass.getName();
         String idField = idFieldMap.get(entityClassName);
         if (idField == null) {
-            synchronized (this) {
+            synchronized (entityClassName) {
                 idField = idFieldMap.get(entityClassName);
                 if (idField == null) {
                     Field[] fields = entityClass.getDeclaredFields();
@@ -73,12 +73,12 @@ public class EntityIdUtility {
     }
 
     /**
-     * Generate unique id, which will be UNIQUE within the whole world (just like
-     * UUID)
+     * Create unique object id, which will be UNIQUE within the whole world (just
+     * like UUID)
      * 
-     * @return unique entity id string
+     * @return unique object id string
      */
-    public String generateUniqueId() {
+    public String createUniqueObjectId() {
         return new ObjectId().toHexString();
     }
 }

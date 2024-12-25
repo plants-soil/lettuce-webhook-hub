@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 
-import com.plantssoil.common.persistence.EntityIdUtility;
+import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.common.persistence.IEntityQuery;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
@@ -40,7 +40,7 @@ public class WebhookPostLogging implements IWebhookLogging {
                 WebhookEventLog log = query.singleResult(message.getRequestId()).get();
                 if (log != null) {
                     WebhookEventLogLine line = new WebhookEventLogLine();
-                    line.setLogLineId(EntityIdUtility.getInstance().generateUniqueId());
+                    line.setLogLineId(EntityUtils.getInstance().createUniqueObjectId());
                     line.setRequestId(message.getRequestId());
                     line.setSubscriberId(subscriber.getWebhookId());
                     line.setExecuteMillseconds(System.currentTimeMillis());

@@ -86,7 +86,7 @@ public class WebhookPoster implements IWebhookPoster {
         }
 
         @Override
-        public void onFailure(IOException e) {
+        public void onFailure(Exception e) {
             if (this.retryQueue == null) {
                 // discard the exception and the failed task, no need retry any more
                 if (LOGGER.isInfoEnabled()) {
@@ -256,6 +256,7 @@ public class WebhookPoster implements IWebhookPoster {
         poster.setMaxIdleConnections(this.connectionPoolSize);
         poster.setMaxRequests(this.maxRequests);
         poster.setMaxRequestsPerHost(this.maxRequestsPerHost);
+
         poster.post(webhook.getWebhookUrl(), webhook.getCustomizedHeaders(), message.getRequestId(), message.getPayload(), callback);
     }
 }
