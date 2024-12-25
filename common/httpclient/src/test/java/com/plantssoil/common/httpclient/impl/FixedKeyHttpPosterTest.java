@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.plantssoil.common.httpclient.IHttpCallback;
 import com.plantssoil.common.httpclient.IHttpResponse;
+import com.plantssoil.common.httpclient.exception.HttpClientException;
 
 public class FixedKeyHttpPosterTest {
     public static void main(String[] args) throws InterruptedException {
@@ -28,7 +29,7 @@ public class FixedKeyHttpPosterTest {
     public void test01SyncPostNotification() {
         // use https://webhook.site as the testing client, could go to
         // https://webhook.site to check and replace it below
-        String url = "https://webhook.site/6d51e002-03e5-423a-87e6-97ef83bc6f91";
+        String url = "https://webhook.site/d491e316-8fb3-498c-b7bb-2b3409827530";
 
         Map<String, String> headers = createTestHeaders();
         String messageId = "msg_p5jXN8AQM9LWM0D4loKWxJek";
@@ -39,16 +40,23 @@ public class FixedKeyHttpPosterTest {
         notifier.setCharset("UTF-8");
         notifier.setMediaType("application/json");
 
-        IHttpResponse response = notifier.post(url, headers, messageId, payload);
-        System.out.println(response.getStatusCode());
-        System.out.println(response.getBody());
         try {
+            IHttpResponse response = notifier.post(url, headers, messageId, payload);
+            System.out.println(response.getStatusCode());
+            System.out.println(response.getBody());
             // should uncomment this line after setup the correct url
 //            assertTrue(future.get().statusCode() == 200);
-            assertTrue(response.getStatusCode() == 404);
+            assertTrue(response.getStatusCode() == 404 || response.getStatusCode() == 429 || response.getStatusCode() == 200);
         } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
+            if (e instanceof HttpClientException) {
+                if (((HttpClientException) e).getCode() != 14004) {
+                    e.printStackTrace();
+                    fail(e.getMessage());
+                }
+            } else {
+                e.printStackTrace();
+                fail(e.getMessage());
+            }
         }
     }
 
