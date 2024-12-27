@@ -64,7 +64,7 @@ class MultiMessageQueueRegistry extends AbstractRegistry {
         // message listener
         MultiMessageQueueEventListener listener = new MultiMessageQueueEventListener();
         // consume message from message service
-        consumer.consumerId("WEBHOOK-CONSUMER-" + this.consumerId.incrementAndGet()).queueName(queueName).addMessageListener(listener).consume(Message.class);
+        consumer.consumerId("WEBHOOK-CONSUMER-" + this.consumerId.incrementAndGet()).channelName(queueName).addMessageListener(listener).consume(Message.class);
         // add consumer into map
         this.consumers.put(new PublisherKey(publisher.getPublisherId(), publisher.getVersion(), dataGroup), consumer);
     }

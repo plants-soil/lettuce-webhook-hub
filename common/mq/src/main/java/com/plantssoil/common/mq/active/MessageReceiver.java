@@ -2,26 +2,31 @@ package com.plantssoil.common.mq.active;
 
 import java.util.List;
 
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import com.plantssoil.common.io.ObjectJsonSerializer;
+import com.plantssoil.common.mq.ChannelType;
 import com.plantssoil.common.mq.IMessageListener;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 
 class MessageReceiver<T> implements Runnable {
     private Session session;
-    private String queueName;
+    private String channelName;
+    private ChannelType channelType;
     private String consumerId;
     private List<IMessageListener<T>> listeners;
     private Class<T> clazz;
     private boolean closed = false;
 
-    public MessageReceiver(Session session, String queueName, String consumerId, List<IMessageListener<T>> listeners, Class<T> clazz) {
+    public MessageReceiver(Session session, String channelName, ChannelType channelType, String consumerId, List<IMessageListener<T>> listeners,
+            Class<T> clazz) {
         this.session = session;
-        this.queueName = queueName;
+        this.channelName = channelName;
+        this.channelType = channelType;
         this.consumerId = consumerId;
         this.listeners = listeners;
         this.clazz = clazz;
@@ -29,7 +34,13 @@ class MessageReceiver<T> implements Runnable {
 
     @Override
     public void run() {
-        try (MessageConsumer consumer = this.session.createConsumer(this.session.createQueue(this.queueName))) {
+        Destination d;
+        try {
+            d = ChannelType.TOPIC == this.channelType ? this.session.createTopic(this.channelName) : this.session.createQueue(this.channelName);
+        } catch (JMSException e) {
+            throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15003, e);
+        }
+        try (MessageConsumer consumer = this.session.createConsumer(d)) {
             while (!this.closed) {
                 javax.jms.Message msg = null;
                 // try to receive message from consumer

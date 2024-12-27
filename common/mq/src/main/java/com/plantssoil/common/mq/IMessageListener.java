@@ -1,7 +1,7 @@
 package com.plantssoil.common.mq;
 
 /**
- * Listen the message comes from subscribed Message Queue<br/>
+ * Listen the message comes from subscribed Message Channel<br/>
  * Will process the messages<br/>
  * 
  * @param <T> the message type

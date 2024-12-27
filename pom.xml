@@ -56,10 +56,6 @@
 		<version.liquibase>4.16.1</version.liquibase>
 		<!-- Dependencies -->
 		<version.slf4j-api>2.0.13</version.slf4j-api>
-		<!--
-		<version.reactive-streams>1.0.4</version.reactive-streams>
-		<version.reactor-core>3.6.6</version.reactor-core>
-		-->
 		<version.okhttp3>3.14.9</version.okhttp3>
 		<version.hibernate>5.3.36.Final</version.hibernate>
 		<version.resteasy>4.7.9.Final</version.resteasy>
@@ -151,20 +147,6 @@
 				<artifactId>liquibase-core</artifactId>
 				<version>${version.liquibase}</version>
 			</dependency>
-
-			<!-- Reactor -->
-			<!--
-			<dependency>
-				<groupId>org.reactivestreams</groupId>
-				<artifactId>reactive-streams</artifactId>
-				<version>${version.reactive-streams}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.projectreactor</groupId>
-				<artifactId>reactor-core</artifactId>
-				<version>${version.reactor-core}</version>
-			</dependency>
-			-->
 
 			<!-- DB drivers -->
 			<dependency>

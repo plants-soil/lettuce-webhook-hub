@@ -50,7 +50,7 @@ class MultiMessageQueueEngine extends AbstractEngine implements IEngine {
         // message publisher
         try (IMessagePublisher<Message> messagePublisher = f.createMessagePublisher()) {
             // publish to message service
-            messagePublisher.queueName(getQueueName(message.getPublisherId(), message.getVersion(), message.getDataGroup())).publish(message);
+            messagePublisher.channelName(getQueueName(message.getPublisherId(), message.getVersion(), message.getDataGroup())).publish(message);
         } catch (Exception e) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20006, e);
         }

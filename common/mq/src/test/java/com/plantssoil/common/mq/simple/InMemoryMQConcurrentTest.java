@@ -72,7 +72,7 @@ public class InMemoryMQConcurrentTest {
         public void run() {
             IMessageServiceFactory<TestEventMessage> f = IMessageServiceFactory.getFactoryInstance();
             IMessageConsumer<TestEventMessage> consumer = f.createMessageConsumer().consumerId("Subscriber-" + this.no)
-                    .queueName(this.publisherId + "-" + this.version).addMessageListener(new MessageListener());
+                    .channelName(this.publisherId + "-" + this.version).addMessageListener(new MessageListener());
             consumer.consume(TestEventMessage.class);
         }
     }
@@ -91,7 +91,7 @@ public class InMemoryMQConcurrentTest {
         @Override
         public void run() {
             IMessageServiceFactory<TestEventMessage> f = IMessageServiceFactory.getFactoryInstance();
-            try (IMessagePublisher<TestEventMessage> publisher = f.createMessagePublisher().queueName(this.publisherId + "-" + this.version)) {
+            try (IMessagePublisher<TestEventMessage> publisher = f.createMessagePublisher().channelName(this.publisherId + "-" + this.version)) {
                 TestEventMessage om = new TestEventMessage("order.approved", String.valueOf(this.sequence),
                         String.format("This is the %d message comes from %s (%s)", this.sequence, this.publisherId, this.version));
                 publisher.publish(om);

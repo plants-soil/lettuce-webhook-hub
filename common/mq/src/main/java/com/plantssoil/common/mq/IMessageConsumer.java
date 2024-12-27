@@ -3,15 +3,30 @@ package com.plantssoil.common.mq;
 import java.util.List;
 
 /**
- * Consume message from specific publisher + version + data group<br/>
+ * Consume message from specific channel<br/>
  * Consumer could get messages from Message Queue Server which publisher created
- * (so the MQ Queue Name should be consistent with publisher's Queue Name)<br/>
+ * (so the MQ Channel Name should be consistent with publisher's Channel
+ * Name)<br/>
  * 
  * @author danialdy
  * @Date 1 Nov 2024 4:55:17 pm
  */
 public interface IMessageConsumer<T> {
-    public IMessageConsumer<T> queueName(String queueName);
+    /**
+     * The channel name to receive message
+     * 
+     * @param channelName channel name
+     * @return current consumer instance
+     */
+    public IMessageConsumer<T> channelName(String channelName);
+
+    /**
+     * The channel type to receive message, defaults to {@link ChannelType#QUEUE}
+     * 
+     * @param channelType channel type
+     * @return current consumer instance
+     */
+    public IMessageConsumer<T> channelType(ChannelType channelType);
 
     /**
      * Add the listener which to receive and process messages from publisher<br/>
@@ -34,9 +49,9 @@ public interface IMessageConsumer<T> {
     public IMessageConsumer<T> consumerId(String consumerId);
 
     /**
-     * Consume the message from the specific queue<br/>
+     * Consume the message from the specific channel<br/>
      * Consumer could get message from Message Queue Server which publisher created
-     * (so the MQ queue name should be consistent with publisher)<br/>
+     * (so the MQ channel name should be consistent with publisher)<br/>
      * 
      * @param clazz the Message Object class,
      *              {@link IMessageListener#onMessage(Object, String)} will receive
@@ -46,11 +61,18 @@ public interface IMessageConsumer<T> {
     public void consume(Class<T> clazz);
 
     /**
-     * Get queue name
+     * Get channel name
      * 
-     * @return queue name
+     * @return channel name
      */
-    public String getQueueName();
+    public String getChannelName();
+
+    /**
+     * Get channel type
+     * 
+     * @return channel type
+     */
+    public ChannelType getChannelType();
 
     /**
      * Get consumer id, if provided

@@ -28,7 +28,7 @@ class SingleMessageQueueRegistry extends AbstractRegistry {
         // message consumer
         IMessageConsumer<Message> consumer = f.createMessageConsumer();
         // consume message from message service
-        consumer.consumerId("WEBHOOK-CONSUMER-" + this.consumerId.incrementAndGet()).queueName(MESSAGE_QUEUE_NAME).addMessageListener(listener)
+        consumer.consumerId("WEBHOOK-CONSUMER-" + this.consumerId.incrementAndGet()).channelName(MESSAGE_QUEUE_NAME).addMessageListener(listener)
                 .consume(Message.class);
     }
 

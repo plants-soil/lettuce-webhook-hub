@@ -26,8 +26,8 @@ class MessageConsumer<T> extends AbstractMessageConsumer<T> {
 
     @Override
     public void consume(Class<T> clazz) {
-        this.mc = new MessageReceiver<T>(this.session, getQueueName(), getConsumerId(), getListeners(), clazz);
-        new Thread(this.mc, String.format("MQ Subscriber: %s", getQueueName())).start();
+        this.mc = new MessageReceiver<T>(this.session, getChannelName(), getChannelType(), getConsumerId(), getListeners(), clazz);
+        new Thread(this.mc, String.format("MQ Subscriber: %s", getChannelName())).start();
     }
 
     @Override

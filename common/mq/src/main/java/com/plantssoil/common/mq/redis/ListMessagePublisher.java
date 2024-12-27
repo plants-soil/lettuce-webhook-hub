@@ -26,10 +26,10 @@ class ListMessagePublisher<T> extends AbstractMessagePublisher<T> {
 
     @Override
     public void publish(T message) {
-        if (this.getQueueName() == null) {
+        if (this.getChannelName() == null) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15008, "The [queueName] should not be null!");
         }
-        String channel = getQueueName();
+        String channel = getChannelName();
         this.command.lpush(channel, ObjectJsonSerializer.getInstance().serialize(message));
     }
 

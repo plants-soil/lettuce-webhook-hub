@@ -50,7 +50,7 @@ class SingleMessageQueueEngine extends AbstractEngine implements IEngine {
         // message publisher
         try (IMessagePublisher<Message> messagePublisher = f.createMessagePublisher()) {
             // publish to message service
-            messagePublisher.queueName(SingleMessageQueueRegistry.MESSAGE_QUEUE_NAME).publish(message);
+            messagePublisher.channelName(SingleMessageQueueRegistry.MESSAGE_QUEUE_NAME).publish(message);
         } catch (Exception e) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20006, e);
         }

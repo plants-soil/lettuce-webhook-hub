@@ -26,7 +26,7 @@ class ListMessageConsumer<T> extends AbstractMessageConsumer<T> {
             @Override
             public void run() {
                 while (running) {
-                    command.rpop(getQueueName()).thenAccept(t -> {
+                    command.rpop(getChannelName()).thenAccept(t -> {
                         if (t == null) {
                             return;
                         }

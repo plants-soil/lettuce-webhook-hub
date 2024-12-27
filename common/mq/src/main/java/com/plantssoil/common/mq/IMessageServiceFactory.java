@@ -23,7 +23,7 @@ public interface IMessageServiceFactory<T> extends IConfigurable, AutoCloseable 
     public IMessagePublisher<T> createMessagePublisher();
 
     /**
-     * create message consumer (which is used to consume message from queue)
+     * create message consumer (which is used to consume message)
      * 
      * @return Message Consumer instance
      */

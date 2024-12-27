@@ -35,7 +35,7 @@ public class SingleRedisMessageQueueEngineTest extends IEngineTestParent {
 //        p.setProperty(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE, MongodbPersistenceFactory.class.getName());
 //        p.setProperty(LettuceConfiguration.PERSISTENCE_DATABASE_URL,
 //                "mongodb://lettuce:lettuce20241101@192.168.0.67:27017/?retryWrites=false&retryReads=false");
-        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE, com.plantssoil.common.mq.redis.ListMessageServiceFactory.class.getName());
+        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE, com.plantssoil.common.mq.redis.MessageServiceFactory.class.getName());
         p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_URI, "redis://192.168.0.67:6379");
         p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_VERSION, "1.0.0");
         p.setProperty(LettuceConfiguration.WEBHOOK_ENGINE_FACTORY_CONFIGURABLE,

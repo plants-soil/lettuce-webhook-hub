@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.plantssoil.common.mq.AbstractMessageConsumer;
+import com.plantssoil.common.mq.ChannelType;
 import com.plantssoil.common.mq.IMessageListener;
 
 /**
@@ -37,15 +38,28 @@ class MessageRunnable<T> implements Runnable {
                     continue;
                 }
                 T message = mq.take();
-                int i = ThreadLocalRandom.current().nextInt(consumers.size());
-                AbstractMessageConsumer<T> subscriber = consumers.get(i);
-                for (IMessageListener<T> l : subscriber.getListeners()) {
-                    l.onMessage(message, subscriber.getConsumerId());
+                if (consumers.size() <= 0) {
+                    continue;
+                }
+                if (ChannelType.TOPIC == consumers.get(0).getChannelType()) {
+                    for (AbstractMessageConsumer<T> subscriber : consumers) {
+                        noticeListeners(subscriber, message);
+                    }
+                } else {
+                    int i = ThreadLocalRandom.current().nextInt(consumers.size());
+                    AbstractMessageConsumer<T> subscriber = consumers.get(i);
+                    noticeListeners(subscriber, message);
                 }
                 Thread.sleep(0);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void noticeListeners(AbstractMessageConsumer<T> subscriber, T message) {
+        for (IMessageListener<T> l : subscriber.getListeners()) {
+            l.onMessage(message, subscriber.getConsumerId());
         }
     }
 
