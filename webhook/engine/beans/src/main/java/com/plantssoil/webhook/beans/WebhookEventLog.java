@@ -4,12 +4,14 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "LETTUCE_WEBHOOKEVENTLOG")
+@Table(name = "LETTUCE_WEBHOOKEVENTLOG", indexes = { @Index(name = "idx_we_pubid", columnList = "publisherId"),
+        @Index(name = "idx_we_eventType", columnList = "eventType"), @Index(name = "idx_we_requestId", columnList = "requestId") })
 public class WebhookEventLog implements java.io.Serializable {
     private static final long serialVersionUID = 4036647805497080463L;
     private String publisherId;

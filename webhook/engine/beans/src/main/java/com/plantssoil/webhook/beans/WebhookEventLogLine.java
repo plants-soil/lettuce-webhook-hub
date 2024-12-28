@@ -10,8 +10,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "LETTUCE_WEBHOOKEVENTLOGLINE", indexes = { @Index(name = "idx_wheventlogline_requestid", columnList = "requestId"),
-        @Index(name = "idx_wheventlogline_subscriberId", columnList = "subscriberId") })
+@Table(name = "LETTUCE_WEBHOOKEVENTLOGLINE", indexes = { @Index(name = "idx_welogline_requestid", columnList = "requestId"),
+        @Index(name = "idx_welogline_subscriberId", columnList = "subscriberId") })
 public class WebhookEventLogLine implements java.io.Serializable {
     private static final long serialVersionUID = 5368565382734058399L;
     @Id

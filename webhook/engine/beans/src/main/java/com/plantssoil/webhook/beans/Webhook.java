@@ -1,5 +1,6 @@
 package com.plantssoil.webhook.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
@@ -14,17 +15,16 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 /**
- * The webhook client app
+ * Webhook, also as the client app, which has webhook URL to receive events &
+ * messages from publisher
  * 
  * @author danialdy
- * @Date 19 Nov 2024 10:52:48 am
+ * @Date 28 Dec 2024 12:27:00 pm
  */
 @Entity
-@Table(name = "LETTUCE_CLIENTAPP", uniqueConstraints = @UniqueConstraint(columnNames = "appName"), indexes = {
-        @Index(name = "idx_clientapp_orgid", columnList = "organizationId") })
-public class WebhookClientApp implements java.io.Serializable {
-    private static final long serialVersionUID = -361959884539379835L;
-
+@Table(name = "LETTUCE_WEBHOOK", uniqueConstraints = @UniqueConstraint(columnNames = "appName"), indexes = {
+        @Index(name = "idx_webhook_subid", columnList = "subscriberId"), @Index(name = "idx_webhook_pubid", columnList = "publisherId") })
+public class Webhook implements Serializable {
     /**
      * The Security Strategy<br/>
      * <ul>
@@ -43,41 +43,60 @@ public class WebhookClientApp implements java.io.Serializable {
         SIGNATURE, TOKEN, NONE
     }
 
-    public enum ClientAppStatus {
+    /**
+     * The webhook status
+     * <ul>
+     * <li>TEST - The webhook still under development or testing</li>
+     * <li>AWAITING_FOR_APPROVEL - submit to publisher and waiting for the
+     * approval</li>
+     * <li>PRODUCTION - Got approved and running in production</li>
+     * </ul>
+     * 
+     * @author danialdy
+     * @Date 29 Nov 2024 2:56:48 pm
+     */
+    public enum WebhookStatus {
         TEST, AWAITING_FOR_APPROVEL, PRODUCTION
     }
 
+    private static final long serialVersionUID = -9107067549692351256L;
+
     @Id
-    private String clientAppId;
-    private String organizationId;
+    private String webhookId;
+    private String subscriberId;
     private String appName;
     private String appTag;
     private String description;
+    private String webhookSecret;
+    private String publisherId;
+    private String publisherVersion;
     @Enumerated(EnumType.STRING)
     private SecurityStrategy securityStrategy;
-    private String WebhookUrl;
+    private String webhookUrl;
     private Map<String, String> customizedHeaders;
     private String[] trustedIps;
     @Enumerated(EnumType.STRING)
-    private ClientAppStatus clientAppStatus;
+    private WebhookStatus webhookStatus;
+    private String accessToken;
+    private String refreshToken;
     private String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationTime;
 
-    public String getClientAppId() {
-        return clientAppId;
+    public String getWebhookId() {
+        return webhookId;
     }
 
-    public void setClientAppId(String clientAppId) {
-        this.clientAppId = clientAppId;
+    public void setWebhookId(String webhookId) {
+        this.webhookId = webhookId;
     }
 
-    public String getOrganizationId() {
-        return organizationId;
+    public String getSubscriberId() {
+        return subscriberId;
     }
 
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
+    public void setSubscriberId(String subscriberId) {
+        this.subscriberId = subscriberId;
     }
 
     public String getAppName() {
@@ -104,6 +123,30 @@ public class WebhookClientApp implements java.io.Serializable {
         this.description = description;
     }
 
+    public String getWebhookSecret() {
+        return webhookSecret;
+    }
+
+    public void setWebhookSecret(String webhookSecret) {
+        this.webhookSecret = webhookSecret;
+    }
+
+    public String getPublisherId() {
+        return publisherId;
+    }
+
+    public void setPublisherId(String publisherId) {
+        this.publisherId = publisherId;
+    }
+
+    public String getPublisherVersion() {
+        return publisherVersion;
+    }
+
+    public void setPublisherVersion(String publisherVersion) {
+        this.publisherVersion = publisherVersion;
+    }
+
     public SecurityStrategy getSecurityStrategy() {
         return securityStrategy;
     }
@@ -113,11 +156,11 @@ public class WebhookClientApp implements java.io.Serializable {
     }
 
     public String getWebhookUrl() {
-        return WebhookUrl;
+        return webhookUrl;
     }
 
     public void setWebhookUrl(String webhookUrl) {
-        WebhookUrl = webhookUrl;
+        this.webhookUrl = webhookUrl;
     }
 
     public Map<String, String> getCustomizedHeaders() {
@@ -136,12 +179,28 @@ public class WebhookClientApp implements java.io.Serializable {
         this.trustedIps = trustedIps;
     }
 
-    public ClientAppStatus getClientAppStatus() {
-        return clientAppStatus;
+    public WebhookStatus getWebhookStatus() {
+        return webhookStatus;
     }
 
-    public void setClientAppStatus(ClientAppStatus clientAppStatus) {
-        this.clientAppStatus = clientAppStatus;
+    public void setWebhookStatus(WebhookStatus webhookStatus) {
+        this.webhookStatus = webhookStatus;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public String getCreatedBy() {
