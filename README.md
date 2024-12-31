@@ -45,5 +45,5 @@ This is just the beginning, more applications will make things mess.
 
 If you want to fix a bug or make any changes, please log an issue in [GitHub Issues](https://github.com/plants-soil/lettuce/issues) describing the bug or new feature.
 
-You can [email us](mailto:danialdy@gmail.com?subject=Help Plants Soil&body=I%20need%20assistance with Lettuce.), if you want help, or to discuss a more complex issue.
+You can <a href="mailto:danialdy@gmail.com?subject=Help Plants Soil&body=I%20need%20assistance with Lettuce.">email us</a>, if you want help, or to discuss a more complex issue.
 
