@@ -21,7 +21,7 @@ This is just the beginning, more applications will make things mess.
 
 ---
 ## Use Cases
-<img src="docs/images/webhook-model.png" width="1280" height="960" />
+<img src="docs/images/webhook-model.png" width="860" height="640" />
 
 ## Key Features
 
@@ -38,7 +38,7 @@ This is just the beginning, more applications will make things mess.
 - Access Token, Refresh Token
 
 ## Roadmap & Progress
-<img src="docs/images/roadmap.png" width="1280" height="960" />
+<img src="docs/images/roadmap.png" width="860" height="640" />
 
 ## Contribute to Plants Soil
 **Plants Soil** is open source, and we welcome anybody who wants to participate and contribute!
