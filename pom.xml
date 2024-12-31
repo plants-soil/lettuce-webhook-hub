@@ -583,6 +583,7 @@
 		<module>common</module>
 		<module>webhook</module>
 		<module>integration</module>
+		<module>documentation</module>
 	</modules>
 
 	<profiles>
