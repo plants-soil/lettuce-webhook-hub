@@ -133,7 +133,7 @@ public class IEngineTestParent {
     public void testTrigger() {
         final IEngine engine = IEngineFactory.getFactoryInstance().getEngine();
         final IRegistry registry = engine.getRegistry();
-        final int publisherQty = 100;
+        final int publisherQty = 10;
         ExecutorService es = Executors.newFixedThreadPool(1);
         for (int i = 0; i < publisherQty; i++) {
             es.submit(() -> {

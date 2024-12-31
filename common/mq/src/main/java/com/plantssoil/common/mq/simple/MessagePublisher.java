@@ -18,9 +18,9 @@ class MessagePublisher<T> extends AbstractMessagePublisher<T> {
 
     @Override
     public void publish(T message) {
-        String queueName = getQueueName();
+        String channelName = getChannelName();
         try {
-            this.messageQueue.publish(queueName, message);
+            this.messageQueue.publish(channelName, message);
         } catch (InterruptedException e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15002, e);
         }

@@ -8,15 +8,25 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+/**
+ * The persistence entity of publisher data groups<br/>
+ * The publisher which support multi-datagroups could save data groups in this
+ * entity
+ * 
+ * @author danialdy
+ * @Date 28 Dec 2024 12:19:39 pm
+ */
 @Entity
-@Table(name = "LETTUCE_DATAGROUP", uniqueConstraints = @UniqueConstraint(columnNames = "organizationId,dataGroupName"), indexes = {
-        @Index(name = "idx_datagroup_orgid", columnList = "organizationId") })
+@Table(name = "LETTUCE_DATAGROUP", uniqueConstraints = @UniqueConstraint(columnNames = "publisherId,dataGroup"), indexes = {
+        @Index(name = "idx_datagroup_pubid", columnList = "publisherId") })
 public class DataGroup implements Serializable {
     private static final long serialVersionUID = 114811278647950932L;
     @Id
     private String dataGroupId;
-    private String organizationId;
-    private String dataGroupName;
+    private String publisherId;
+    private String dataGroup;
+    private String accessToken;
+    private String refreshToken;
 
     public String getDataGroupId() {
         return dataGroupId;
@@ -26,20 +36,35 @@ public class DataGroup implements Serializable {
         this.dataGroupId = dataGroupId;
     }
 
-    public String getOrganizationId() {
-        return organizationId;
+    public String getPublisherId() {
+        return publisherId;
     }
 
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
+    public void setPublisherId(String publisherId) {
+        this.publisherId = publisherId;
     }
 
-    public String getDataGroupName() {
-        return dataGroupName;
+    public String getDataGroup() {
+        return dataGroup;
     }
 
-    public void setDataGroupName(String dataGroupName) {
-        this.dataGroupName = dataGroupName;
+    public void setDataGroup(String dataGroup) {
+        this.dataGroup = dataGroup;
     }
 
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

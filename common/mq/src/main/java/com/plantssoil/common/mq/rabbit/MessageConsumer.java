@@ -5,6 +5,7 @@ import java.util.concurrent.TimeoutException;
 
 import com.plantssoil.common.io.ObjectJsonSerializer;
 import com.plantssoil.common.mq.AbstractMessageConsumer;
+import com.plantssoil.common.mq.ChannelType;
 import com.plantssoil.common.mq.IMessageListener;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 import com.rabbitmq.client.Channel;
@@ -16,7 +17,8 @@ import com.rabbitmq.client.Channel;
  * @Date 3 Nov 2024 8:37:13 pm
  */
 class MessageConsumer<T> extends AbstractMessageConsumer<T> {
-    private final static String EXCHANGE_NAME = "com.plantssoil.message.exchange";
+    private final static String EXCHANGE_NAME_DIRECT = "com.plantssoil.exchange.direct";
+    private final static String EXCHANGE_NAME_TOPIC = "com.plantssoil.exchange.fanout";
     private Channel channel;
 
     /**
@@ -30,13 +32,22 @@ class MessageConsumer<T> extends AbstractMessageConsumer<T> {
 
     @Override
     public void consume(Class<T> clazz) {
-        String routingKey = getQueueName();
         try {
-            this.channel.exchangeDeclare(EXCHANGE_NAME, "direct");
             // declare queue and bind with exchange
-            String queueName = getQueueName();
-            this.channel.queueDeclare(queueName, false, false, false, null);
-            this.channel.queueBind(queueName, EXCHANGE_NAME, routingKey);
+            String exchangeName = null;
+            String queueName = null;
+            if (ChannelType.TOPIC == getChannelType()) {
+                exchangeName = EXCHANGE_NAME_TOPIC;
+                this.channel.exchangeDeclare(exchangeName, "fanout");
+                queueName = this.channel.queueDeclare().getQueue();
+            } else {
+                exchangeName = EXCHANGE_NAME_DIRECT;
+                queueName = getChannelName();
+                this.channel.exchangeDeclare(exchangeName, "direct");
+                this.channel.queueDeclare(queueName, false, false, false, null);
+            }
+            String routingKey = getChannelName();
+            this.channel.queueBind(queueName, exchangeName, routingKey);
 
             // 每条消息的大小限制，0表示不限制, no limit message size
             int prefetchSize = 0;

@@ -13,10 +13,19 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+/**
+ * The events registered by publisher, pubisher may have multiple events.
+ * e.g.:<br/>
+ * product.created, product.approved, product.actived, order.created,
+ * order.paid, order.delivered
+ * 
+ * @author danialdy
+ * @Date 28 Dec 2024 12:22:28 pm
+ */
 @Entity
-@Table(name = "LETTUCE_WEBHOOKEVENT", uniqueConstraints = @UniqueConstraint(columnNames = "organizationId,version,eventType"), indexes = {
-        @Index(name = "idx_whevent_orgid", columnList = "organizationId") })
-public class WebhookEvent implements Serializable {
+@Table(name = "LETTUCE_EVENT", uniqueConstraints = @UniqueConstraint(columnNames = "publisherId,eventType"), indexes = {
+        @Index(name = "idx_event_pubid", columnList = "publisherId") })
+public class Event implements Serializable {
     private static final long serialVersionUID = 5996607146075281389L;
 
     /**
@@ -31,8 +40,7 @@ public class WebhookEvent implements Serializable {
 
     @Id
     private String eventId;
-    private String organizationId;
-    private String version;
+    private String publisherId;
     private String eventType;
     private String eventTag;
     private String contentType;
@@ -43,9 +51,6 @@ public class WebhookEvent implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationTime;
 
-    public WebhookEvent() {
-    }
-
     public String getEventId() {
         return eventId;
     }
@@ -54,20 +59,12 @@ public class WebhookEvent implements Serializable {
         this.eventId = eventId;
     }
 
-    public String getOrganizationId() {
-        return organizationId;
+    public String getPublisherId() {
+        return publisherId;
     }
 
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
+    public void setPublisherId(String publisherId) {
+        this.publisherId = publisherId;
     }
 
     public String getEventType() {

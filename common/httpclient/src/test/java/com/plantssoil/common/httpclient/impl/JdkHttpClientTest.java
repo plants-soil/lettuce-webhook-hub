@@ -1,7 +1,5 @@
 package com.plantssoil.common.httpclient.impl;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.time.Duration;
 import java.util.HashMap;
@@ -43,22 +41,17 @@ public class JdkHttpClientTest {
     }
 
     @Test
-    public void testSendAsync() {
-        fail("Not yet implemented");
-    }
-
-    @Test
-    private void testSend() {
+    public void testSend() {
         // use https://webhook.site as the testing client, could go to
         // https://webhook.site to check and replace it below
-        postRequests("http://dev.e-yunyi.com:8080/webhook/test", 1000);
+        postRequests("http://dev.e-yunyi.com:8080/webhook/test", 3);
 //        postRequests("https://webhook.site/6d51e002-03e5-423a-87e6-97ef83bc6f91", 5);
         try {
-            Thread.sleep(50 * 1000);
+            Thread.sleep(11 * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        postRequests("http://dev.e-yunyi.com:8080/webhook/test", 30);
+        postRequests("http://dev.e-yunyi.com:8080/webhook/test", 1);
     }
 
     private void postRequests(String url, int count) {

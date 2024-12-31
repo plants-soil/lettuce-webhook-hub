@@ -20,6 +20,9 @@ This is just the beginning, more applications will make things mess.
 **Plants Soil** is construted on J2EE architecture and compliance to popular standards. In order to meet different requirements, decoupled into different parts. As the key of application integration, event-driven webhooks engine could be embedded or standalone, which named **Lettuce**.
 
 ---
+## Use Cases
+<img src="docs/images/webhook-model.png" width="860" height="640" />
+
 ## Key Features
 
 - Multi - Oganization (or Tenant)
@@ -34,10 +37,13 @@ This is just the beginning, more applications will make things mess.
 - Client App Event Listener
 - Access Token, Refresh Token
 
-## Quick Start
+## Roadmap & Progress
+<img src="docs/images/roadmap.png" width="860" height="640" />
 
-*TODO*
+## Contribute to Plants Soil
+**Plants Soil** is open source, and we welcome anybody who wants to participate and contribute!
 
-## Replacable Implementations
+If you want to fix a bug or make any changes, please log an issue in [GitHub Issues](https://github.com/plants-soil/lettuce/issues) describing the bug or new feature.
 
-*TODO*
+You can <a href="mailto:danialdy@gmail.com?subject=Help Plants Soil&body=I%20need%20assistance with Lettuce.">email us</a>, if you want help, or to discuss a more complex issue.
+

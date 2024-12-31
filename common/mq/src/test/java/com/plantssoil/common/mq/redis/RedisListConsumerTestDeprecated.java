@@ -1,4 +1,4 @@
-package com.plantssoil.common.mq.rabbit;
+package com.plantssoil.common.mq.redis;
 
 import java.io.FileOutputStream;
 import java.util.Properties;
@@ -17,13 +17,12 @@ import com.plantssoil.common.mq.MessageConsumerParent;
 import com.plantssoil.common.test.TempDirectoryUtility;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class RabbitMQConsumerTest extends MessageConsumerParent {
+public class RedisListConsumerTestDeprecated extends MessageConsumerParent {
     public static void main(String[] args) throws Exception {
-        RabbitMQConsumerTest test = new RabbitMQConsumerTest();
+        RedisListConsumerTestDeprecated test = new RedisListConsumerTestDeprecated();
         setUpBeforeClass();
         test.test01ConsumeOrganization();
         test.test02ConsumeOrganization();
-        test.test03ConsumeTopicMessages();
         tearDownAfterClass();
     }
 
@@ -35,8 +34,8 @@ public class RabbitMQConsumerTest extends MessageConsumerParent {
         ConfigurableLoader.getInstance().removeSingleton(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE);
 
         Properties p = new Properties();
-        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE, MessageServiceFactory.class.getName());
-        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_URI, "amqp://lettuce:lettuce20241101@192.168.0.67:5672/lettuce");
+        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE, ListMessageServiceFactory.class.getName());
+        p.setProperty(LettuceConfiguration.MESSAGE_SERVICE_URI, "redis://192.168.0.67:6379");
 
         try (FileOutputStream out = new FileOutputStream(util.getTempDir() + "/" + LettuceConfiguration.CONFIGURATION_FILE_NAME)) {
             p.store(out, "## No comments");
@@ -62,9 +61,8 @@ public class RabbitMQConsumerTest extends MessageConsumerParent {
         consumeOrganization02();
     }
 
-    @Test
-    public void test03ConsumeTopicMessages() {
-        consumeTopicMessages03();
-    }
-
+//    @Test
+//    public void test03ConsumeTopicMessages() {
+//        consumeTopicMessages03();
+//    }
 }

@@ -17,12 +17,12 @@ class MessageConsumer<T> extends AbstractMessageConsumer<T> {
 
     @Override
     public void consume(Class<T> clazz) {
-        messageQueue.consume(getQueueName(), this);
+        messageQueue.consume(getChannelName(), this);
     }
 
     @Override
     public void close() {
-        messageQueue.removeConsumer(getQueueName(), this);
+        messageQueue.removeConsumer(getChannelName(), this);
     }
 
 }

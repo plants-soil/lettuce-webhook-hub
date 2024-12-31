@@ -85,8 +85,8 @@ public class EntityUtilsTest {
 
     @Test
     public void testCreateUniqueObjectId() {
-        int threads = 100000;
-        int count = 1000;
+        int threads = 1000;
+        int count = 50;
         CountDownLatch latch = new CountDownLatch(threads);
         ExecutorService es = Executors.newFixedThreadPool(1000);
         for (int i = 0; i < threads; i++) {

@@ -5,10 +5,13 @@
              version="2.2">
     <persistence-unit name="lettuce-persistence-unit">
         <class>com.plantssoil.webhook.beans.Organization</class>
+        <class>com.plantssoil.webhook.beans.Publisher</class>
         <class>com.plantssoil.webhook.beans.DataGroup</class>
-        <class>com.plantssoil.webhook.beans.WebhookClientApp</class>
-        <class>com.plantssoil.webhook.beans.WebhookEvent</class>
-        <class>com.plantssoil.webhook.beans.WebhookSubscribed</class>
+        <class>com.plantssoil.webhook.beans.Event</class>
+        <class>com.plantssoil.webhook.beans.Subscriber</class>
+        <class>com.plantssoil.webhook.beans.Webhook</class>
+        <class>com.plantssoil.webhook.beans.DataGroupSubscribed</class>
+        <class>com.plantssoil.webhook.beans.EventSubscribed</class>
         <class>com.plantssoil.webhook.beans.WebhookEventLog</class>
         <class>com.plantssoil.webhook.beans.WebhookEventLogLine</class>
     </persistence-unit>

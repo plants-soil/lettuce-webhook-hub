@@ -24,25 +24,25 @@ class InMemoryMessageQueue<T> {
         this.messageConsumers.clear();
     }
 
-    void removeConsumer(String queueName, AbstractMessageConsumer<T> consumer) {
-        MessageRunnable<T> mr = messageConsumers.get(queueName);
+    void removeConsumer(String channelName, AbstractMessageConsumer<T> consumer) {
+        MessageRunnable<T> mr = messageConsumers.get(channelName);
         if (mr != null) {
             mr.removeConsumer(consumer);
         }
     }
 
-    private LinkedBlockingQueue<T> getMessageQueue(String queueName) {
-        LinkedBlockingQueue<T> mq = this.messageQueues.get(queueName);
+    private LinkedBlockingQueue<T> getMessageQueue(String channelName) {
+        LinkedBlockingQueue<T> mq = this.messageQueues.get(channelName);
         if (mq == null) {
             synchronized ("getMessageQueue") {
-                mq = this.messageQueues.get(queueName);
+                mq = this.messageQueues.get(channelName);
                 if (mq == null) {
                     mq = new LinkedBlockingQueue<>();
-                    this.messageQueues.put(queueName, mq);
+                    this.messageQueues.put(channelName, mq);
                     MessageRunnable<T> messageConsumer = new MessageRunnable<>(mq);
-                    this.messageConsumers.put(queueName, messageConsumer);
+                    this.messageConsumers.put(channelName, messageConsumer);
                     Thread t = new Thread(messageConsumer);
-                    t.setName("InMemoryQueue-Consumer-" + queueName);
+                    t.setName("InMemoryQueue-Consumer-" + channelName);
                     t.start();
                 }
             }

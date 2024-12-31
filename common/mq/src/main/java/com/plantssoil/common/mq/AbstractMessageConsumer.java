@@ -4,19 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The abstract message consumer which hold queue name & consumer id & listeners
+ * The abstract message consumer which hold channel name & channel type &
+ * consumer id & listeners
  * 
  * @author danialdy
  * @Date 6 Nov 2024 7:42:02 pm
  */
 public abstract class AbstractMessageConsumer<T> implements IMessageConsumer<T> {
-    private String queueName;
+    private String channelName;
+    private ChannelType channelType = ChannelType.QUEUE;
     private String consumerId;
     private List<IMessageListener<T>> listeners = new ArrayList<>();
 
     @Override
-    public IMessageConsumer<T> queueName(String queueName) {
-        this.queueName = queueName;
+    public IMessageConsumer<T> channelName(String channelName) {
+        this.channelName = channelName;
+        return this;
+    }
+
+    @Override
+    public IMessageConsumer<T> channelType(ChannelType channelType) {
+        this.channelType = channelType;
         return this;
     }
 
@@ -33,8 +41,13 @@ public abstract class AbstractMessageConsumer<T> implements IMessageConsumer<T> 
     }
 
     @Override
-    public String getQueueName() {
-        return queueName;
+    public String getChannelName() {
+        return channelName;
+    }
+
+    @Override
+    public ChannelType getChannelType() {
+        return channelType;
     }
 
     @Override
