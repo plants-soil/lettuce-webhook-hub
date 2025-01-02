@@ -1,8 +1,17 @@
-package com.plantssoil.webhook.core.impl;
+package com.plantssoil.webhook.core.registry;
 
 import com.plantssoil.webhook.core.IDataGroup;
 
-public class SimpleDataGroup implements IDataGroup {
+/**
+ * The in-memory implementation of IDataGroup<br/>
+ * All data will be lost when JVM shutdown<br/>
+ * It's only for demonstration purpose, SHOULD AVOID be used in production
+ * environment<br/>
+ * 
+ * @author danialdy
+ * @Date 2 Jan 2025 5:07:28 pm
+ */
+public class InMemoryDataGroup implements IDataGroup {
     private String dataGroup;
     private String accessToken;
     private String refreshToken;

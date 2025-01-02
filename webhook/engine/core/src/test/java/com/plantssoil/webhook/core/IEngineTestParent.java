@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.webhook.core.IWebhook.SecurityStrategy;
 import com.plantssoil.webhook.core.IWebhook.WebhookStatus;
-import com.plantssoil.webhook.core.impl.SimpleDataGroup;
-import com.plantssoil.webhook.core.impl.SimpleEvent;
-import com.plantssoil.webhook.core.impl.SimplePublisher;
-import com.plantssoil.webhook.core.impl.SimpleSubscriber;
-import com.plantssoil.webhook.core.impl.SimpleWebhook;
+import com.plantssoil.webhook.core.registry.InMemoryDataGroup;
+import com.plantssoil.webhook.core.registry.InMemoryEvent;
+import com.plantssoil.webhook.core.registry.InMemoryPublisher;
+import com.plantssoil.webhook.core.registry.InMemorySubscriber;
+import com.plantssoil.webhook.core.registry.InMemoryWebhook;
 
 import io.netty.util.internal.ThreadLocalRandom;
 
@@ -51,7 +51,7 @@ public class IEngineTestParent {
     }
 
     private IPublisher createPublisherInstance() {
-        IPublisher publisher = new SimplePublisher();
+        IPublisher publisher = new InMemoryPublisher();
         publisher.setPublisherId(EntityUtils.getInstance().createUniqueObjectId());
         // randomly support multi-datagroup
         if (ThreadLocalRandom.current().nextInt(1011) % 20 == 4) {
@@ -73,7 +73,7 @@ public class IEngineTestParent {
     }
 
     private IEvent createEventInstance(String eventType) {
-        IEvent event = new SimpleEvent();
+        IEvent event = new InMemoryEvent();
         event.setEventId(EntityUtils.getInstance().createUniqueObjectId());
         event.setEventTag("test");
         event.setEventType(eventType);
@@ -90,7 +90,7 @@ public class IEngineTestParent {
     }
 
     private ISubscriber createSubscriberInstance(IPublisher publisher) {
-        ISubscriber subscriber = new SimpleSubscriber();
+        ISubscriber subscriber = new InMemorySubscriber();
         subscriber.setSubscriberId(EntityUtils.getInstance().createUniqueObjectId());
         subscriber.addWebhook(createWebhookInstance(publisher, subscriber));
         return subscriber;
@@ -100,7 +100,7 @@ public class IEngineTestParent {
         Map<String, String> headers = new HashMap<>();
         headers.put("test-header-01", "test-value-01");
         headers.put("test-header-02", "test-value-02");
-        IWebhook webhook = new SimpleWebhook();
+        IWebhook webhook = new InMemoryWebhook();
         webhook.setWebhookId(EntityUtils.getInstance().createUniqueObjectId());
         webhook.setWebhookSecret(EntityUtils.getInstance().createUniqueObjectId());
         webhook.setWebhookStatus(WebhookStatus.TEST);
@@ -123,7 +123,7 @@ public class IEngineTestParent {
     }
 
     private IDataGroup createDataGroupInstance(String dataGroup) {
-        IDataGroup dg = new SimpleDataGroup();
+        IDataGroup dg = new InMemoryDataGroup();
         dg.setDataGroup(dataGroup);
         dg.setAccessToken(EntityUtils.getInstance().createUniqueObjectId());
         dg.setRefreshToken(EntityUtils.getInstance().createUniqueObjectId());

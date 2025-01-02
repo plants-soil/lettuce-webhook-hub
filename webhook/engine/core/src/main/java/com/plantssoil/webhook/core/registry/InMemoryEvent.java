@@ -1,8 +1,17 @@
-package com.plantssoil.webhook.core.impl;
+package com.plantssoil.webhook.core.registry;
 
 import com.plantssoil.webhook.core.IEvent;
 
-public class SimpleEvent implements IEvent {
+/**
+ * The in-memory implementation of IEvent<br/>
+ * All data will be lost when JVM shutdown<br/>
+ * It's only for demonstration purpose, SHOULD AVOID be used in production
+ * environment<br/>
+ * 
+ * @author danialdy
+ * @Date 2 Jan 2025 5:08:29 pm
+ */
+public class InMemoryEvent implements IEvent {
     private String eventId;
     private String eventType;
     private String eventTag;

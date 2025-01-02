@@ -1,4 +1,4 @@
-package com.plantssoil.webhook.core.impl;
+package com.plantssoil.webhook.core.registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,16 @@ import java.util.List;
 import com.plantssoil.webhook.core.ISubscriber;
 import com.plantssoil.webhook.core.IWebhook;
 
-public class SimpleSubscriber implements ISubscriber {
+/**
+ * The in-memory implementation of ISubscriber<br/>
+ * All data will be lost when JVM shutdown<br/>
+ * It's only for demonstration purpose, SHOULD AVOID be used in production
+ * environment<br/>
+ * 
+ * @author danialdy
+ * @Date 2 Jan 2025 5:09:49 pm
+ */
+public class InMemorySubscriber implements ISubscriber {
     private String subscriberId;
     private List<IWebhook> webhooks = new ArrayList<>();
 
