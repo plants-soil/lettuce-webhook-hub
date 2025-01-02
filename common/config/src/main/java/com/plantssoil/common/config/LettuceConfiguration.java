@@ -63,6 +63,11 @@ public class LettuceConfiguration {
     public final static String WEBHOOK_ENGINE_FACTORY_CONFIGURABLE = "webhook.engine.factory.configurable";
 
     /**
+     * Lettuce Webhook Engine Registry implementation configuration
+     */
+    public final static String WEBHOOK_ENGINE_REGISTRY_CONFIGURABLE = "webhook.engine.registry.configurable";
+
+    /**
      * Lettuce Webhook Engine max idle http connection pool, defaults to 5
      */
     public final static String WEBHOOK_ENGINE_CONNECTION_POOL_SIZE = "webhook.engine.connection.pool.size";
@@ -95,7 +100,7 @@ public class LettuceConfiguration {
     /**
      * Persistence Factory implementation configuration
      */
-    public final static String PERSISTENCE_FACTORY_CONFIGURABLE = "persistence.fatory.configurable"; // Persistence Factory Configuration
+    public final static String PERSISTENCE_FACTORY_CONFIGURABLE = "persistence.fatory.configurable";
 
     /**
      * HttpClient implementation configuration, default as

@@ -1,4 +1,4 @@
-package com.plantssoil.webhook.core.impl;
+package com.plantssoil.webhook.core.registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,16 @@ import java.util.List;
 import com.plantssoil.webhook.core.IEvent;
 import com.plantssoil.webhook.core.IPublisher;
 
-public class SimplePublisher implements IPublisher {
+/**
+ * The in-memory implementation of IPublisher<br/>
+ * All data will be lost when JVM shutdown<br/>
+ * It's only for demonstration purpose, SHOULD AVOID be used in production
+ * environment<br/>
+ * 
+ * @author danialdy
+ * @Date 2 Jan 2025 5:09:23 pm
+ */
+public class InMemoryPublisher implements IPublisher {
     private String publisherId;
     private boolean supportDataGroup;
     private String version;

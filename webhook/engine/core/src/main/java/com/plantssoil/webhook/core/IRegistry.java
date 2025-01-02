@@ -2,6 +2,8 @@ package com.plantssoil.webhook.core;
 
 import java.util.List;
 
+import com.plantssoil.common.config.IConfigurable;
+
 /**
  * The registry of publishers & subscribers<br/>
  * <ul>
@@ -14,7 +16,7 @@ import java.util.List;
  * @author danialdy
  * @Date 29 Nov 2024 11:36:05 am
  */
-public interface IRegistry {
+public interface IRegistry extends IConfigurable {
     /**
      * Add new publisher into the webhook engine<br/>
      * Exception will happen if publisher id already exists
@@ -36,9 +38,9 @@ public interface IRegistry {
     /**
      * Remove an existing publisher from the webhook engine
      * 
-     * @param publisherId existing publisher (with publisherId) to remove
+     * @param publisher existing publisher to remove
      */
-    public void removePublisher(String publisherId);
+    public void removePublisher(IPublisher publisher);
 
     /**
      * Find existing publisher by publisher id
@@ -80,9 +82,9 @@ public interface IRegistry {
     /**
      * Remove an existing subscriber from the webhook engine
      * 
-     * @param subscriberId existing subscriber (with subscriberId) to remove
+     * @param subscriber existing subscriber to remove
      */
-    public void removeSubscriber(String subscriberId);
+    public void removeSubscriber(ISubscriber subscriber);
 
     /**
      * Find existing subscriber by subscriber id

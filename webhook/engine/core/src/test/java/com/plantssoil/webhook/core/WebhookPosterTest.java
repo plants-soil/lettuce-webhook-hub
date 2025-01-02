@@ -23,9 +23,9 @@ import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.common.test.TempDirectoryUtility;
 import com.plantssoil.webhook.core.IWebhook.SecurityStrategy;
 import com.plantssoil.webhook.core.IWebhook.WebhookStatus;
-import com.plantssoil.webhook.core.impl.SimpleEvent;
-import com.plantssoil.webhook.core.impl.SimpleWebhook;
 import com.plantssoil.webhook.core.impl.WebhookPoster;
+import com.plantssoil.webhook.core.registry.InMemoryEvent;
+import com.plantssoil.webhook.core.registry.InMemoryWebhook;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebhookPosterTest {
@@ -46,7 +46,7 @@ public class WebhookPosterTest {
     public static void setUpBeforeClass() throws Exception {
         Thread.sleep(1000);
         Properties p = new Properties();
-        p.setProperty(LettuceConfiguration.HTTPCLIENT_CONFIGURABLE, "com.plantssoil.common.httpclient.impl.OkHttpClientImpl");
+//        p.setProperty(LettuceConfiguration.HTTPCLIENT_CONFIGURABLE, "com.plantssoil.common.httpclient.impl.OkHttpClientImpl");
 //        p.setProperty(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE, MongodbPersistenceFactory.class.getName());
 //        p.setProperty(LettuceConfiguration.PERSISTENCE_DATABASE_URL,
 //                "mongodb://lettuce:lettuce20241101@192.168.0.67:27017/?retryWrites=false&retryReads=false");
@@ -86,7 +86,7 @@ public class WebhookPosterTest {
 //        headers.put("Authorization", "Basic YXBpdXNlcjE6NjY2NjY2NjY2Ng==");
         headers.put("test-header-01", "test-value-01");
         headers.put("test-header-02", "test-value-02");
-        IWebhook webhook = new SimpleWebhook();
+        IWebhook webhook = new InMemoryWebhook();
         webhook.setWebhookId(EntityUtils.getInstance().createUniqueObjectId());
         webhook.setWebhookSecret(EntityUtils.getInstance().createUniqueObjectId());
         webhook.setWebhookStatus(WebhookStatus.TEST);
@@ -101,7 +101,7 @@ public class WebhookPosterTest {
     }
 
     private IEvent createEventInstance(String eventType) {
-        IEvent event = new SimpleEvent();
+        IEvent event = new InMemoryEvent();
         event.setEventId(EntityUtils.getInstance().createUniqueObjectId());
         event.setEventTag("test");
         event.setEventType(eventType);

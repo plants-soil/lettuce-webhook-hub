@@ -1,4 +1,4 @@
-package com.plantssoil.webhook.core.impl;
+package com.plantssoil.webhook.core.registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,16 @@ import com.plantssoil.webhook.core.IDataGroup;
 import com.plantssoil.webhook.core.IEvent;
 import com.plantssoil.webhook.core.IWebhook;
 
-public class SimpleWebhook implements IWebhook {
+/**
+ * The in-memory implementation of IWebhook<br/>
+ * All data will be lost when JVM shutdown<br/>
+ * It's only for demonstration purpose, SHOULD AVOID be used in production
+ * environment<br/>
+ * 
+ * @author danialdy
+ * @Date 2 Jan 2025 5:10:09 pm
+ */
+public class InMemoryWebhook implements IWebhook {
     private String webhookId;
     private String subscriberId;
     private String webhookSecret;
