@@ -20,9 +20,9 @@ public class InMemoryEngineTest extends IEngineTestParent {
     public static void main(String[] args) throws Exception {
         InMemoryEngineTest.setUpBeforeClass();
         InMemoryEngineTest test = new InMemoryEngineTest();
-        test.test01GetVersion();
-        test.test02GetRegistry();
-        test.test03Trigger();
+        test.testGetVersion();
+        test.testGetRegistry();
+        test.testTrigger(100, 3);
         Thread.sleep(10000);
         InMemoryEngineTest.tearDownAfterClass();
     }
@@ -62,7 +62,7 @@ public class InMemoryEngineTest extends IEngineTestParent {
 
     @Test
     public void test03Trigger() {
-        testTrigger();
+        testTrigger(10, 3);
     }
 
 }

@@ -20,9 +20,9 @@ public class SingleSimpleMessageQueueEngineTest extends IEngineTestParent {
     public static void main(String[] args) throws Exception {
         SingleSimpleMessageQueueEngineTest.setUpBeforeClass();
         SingleSimpleMessageQueueEngineTest test = new SingleSimpleMessageQueueEngineTest();
-        test.test01GetVersion();
-        test.test02GetRegistry();
-        test.test03Trigger();
+        test.testGetVersion();
+        test.testGetRegistry();
+        test.testTrigger(100, 3);
         Thread.sleep(10000);
         SingleSimpleMessageQueueEngineTest.tearDownAfterClass();
     }
@@ -64,7 +64,7 @@ public class SingleSimpleMessageQueueEngineTest extends IEngineTestParent {
 
     @Test
     public void test03Trigger() {
-        testTrigger();
+        testTrigger(10, 3);
     }
 
 }

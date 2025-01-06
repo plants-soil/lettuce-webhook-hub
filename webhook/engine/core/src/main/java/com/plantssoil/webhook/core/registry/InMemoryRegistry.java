@@ -33,23 +33,37 @@ public class InMemoryRegistry extends AbstractRegistry {
     private Map<String, ISubscriber> subscribers = new ConcurrentHashMap<>();
 
     @Override
-    public void addPublisher(IPublisher publisher) {
+    protected void saveNewPublisher(IPublisher publisher) {
         // add publisher into map
         this.publishers.put(publisher.getPublisherId(), publisher);
-        super.addPublisher(publisher);
     }
 
     @Override
-    public void updatePublisher(IPublisher publisher) {
-        removePublisher(publisher);
-        addPublisher(publisher);
-        super.updatePublisher(publisher);
+    protected void saveUpdatedPublisher(IPublisher publisher) {
+        deletePublisher(publisher);
+        saveNewPublisher(publisher);
     }
 
     @Override
-    public void removePublisher(IPublisher publisher) {
+    protected void deletePublisher(IPublisher publisher) {
         this.publishers.remove(publisher.getPublisherId());
-        super.removePublisher(publisher);
+    }
+
+    @Override
+    protected void saveNewSubscriber(ISubscriber subscriber) {
+        // add subscriber into map
+        this.subscribers.put(subscriber.getSubscriberId(), subscriber);
+    }
+
+    @Override
+    protected void saveUpdatedSubscriber(ISubscriber subscriber) {
+        deleteSubscriber(subscriber);
+        saveNewSubscriber(subscriber);
+    }
+
+    @Override
+    protected void deleteSubscriber(ISubscriber subscriber) {
+        this.subscribers.remove(subscriber.getSubscriberId());
     }
 
     @Override
@@ -70,26 +84,6 @@ public class InMemoryRegistry extends AbstractRegistry {
             i++;
         }
         return list;
-    }
-
-    @Override
-    public void addSubscriber(ISubscriber subscriber) {
-        // add subscriber into map
-        this.subscribers.put(subscriber.getSubscriberId(), subscriber);
-        super.addSubscriber(subscriber);
-    }
-
-    @Override
-    public void updateSubscriber(ISubscriber subscriber) {
-        removeSubscriber(subscriber);
-        addSubscriber(subscriber);
-        super.updateSubscriber(subscriber);
-    }
-
-    @Override
-    public void removeSubscriber(ISubscriber subscriber) {
-        this.subscribers.remove(subscriber.getSubscriberId());
-        super.removeSubscriber(subscriber);
     }
 
     @Override

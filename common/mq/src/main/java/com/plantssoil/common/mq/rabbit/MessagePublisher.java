@@ -1,7 +1,5 @@
 package com.plantssoil.common.mq.rabbit;
 
-import java.io.IOException;
-
 import com.plantssoil.common.io.ObjectJsonSerializer;
 import com.plantssoil.common.mq.AbstractMessagePublisher;
 import com.plantssoil.common.mq.ChannelType;
@@ -45,7 +43,7 @@ class MessagePublisher<T> extends AbstractMessagePublisher<T> {
             }
             String routingKey = getChannelName();
             this.channel.basicPublish(exchangeName, routingKey, null, ObjectJsonSerializer.getInstance().serialize(message).getBytes("UTF-8"));
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15009, e);
         }
     }

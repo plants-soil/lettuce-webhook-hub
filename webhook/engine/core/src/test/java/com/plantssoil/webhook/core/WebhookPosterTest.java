@@ -19,7 +19,6 @@ import org.junit.runners.MethodSorters;
 
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.LettuceConfiguration;
-import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.common.test.TempDirectoryUtility;
 import com.plantssoil.webhook.core.IWebhook.SecurityStrategy;
 import com.plantssoil.webhook.core.IWebhook.WebhookStatus;
@@ -32,6 +31,7 @@ public class WebhookPosterTest {
     private static TempDirectoryUtility util = new TempDirectoryUtility();
     private final static String WEBHOOK_URL_PREFIX = "http://dev.e-yunyi.com:8080/webhook/test";
     private volatile AtomicInteger payloadId = new AtomicInteger(0);
+    private volatile AtomicInteger entitySequence = new AtomicInteger(0);
     private long testNumber = System.currentTimeMillis();
 
     public static void main(String[] args) throws Exception {
@@ -76,7 +76,7 @@ public class WebhookPosterTest {
 
     private Message createMessageInstance() {
         Message message = new Message("publisher-id-0001", "1.0.0", "test.event.type.001", "test", "application/json", "UTF-8", null,
-                EntityUtils.getInstance().createUniqueObjectId(),
+                "MESSAGE-" + testNumber + "-" + this.entitySequence.getAndIncrement(),
                 "{\"data\": \"This is the test payload-" + this.testNumber + "-" + this.payloadId.getAndIncrement() + "\"}");
         return message;
     }
@@ -87,12 +87,12 @@ public class WebhookPosterTest {
         headers.put("test-header-01", "test-value-01");
         headers.put("test-header-02", "test-value-02");
         IWebhook webhook = new InMemoryWebhook();
-        webhook.setWebhookId(EntityUtils.getInstance().createUniqueObjectId());
-        webhook.setWebhookSecret(EntityUtils.getInstance().createUniqueObjectId());
+        webhook.setWebhookId("WEBHOOK-" + testNumber + "-" + this.entitySequence.getAndIncrement());
+        webhook.setWebhookSecret("WEBHOOKSECRET-" + testNumber + "-" + this.entitySequence.getAndIncrement());
         webhook.setWebhookStatus(WebhookStatus.TEST);
         webhook.setWebhookUrl(WEBHOOK_URL_PREFIX);
         webhook.setSecurityStrategy(SecurityStrategy.TOKEN);
-        webhook.setAccessToken(EntityUtils.getInstance().createUniqueObjectId());
+        webhook.setAccessToken("ACCESSTOKEN-" + testNumber + "-" + this.entitySequence.getAndIncrement());
         webhook.setPublisherId("publisher-id-0001");
         webhook.setPubliserhVersion("1.0.0");
         webhook.setCustomizedHeaders(headers);
@@ -102,7 +102,7 @@ public class WebhookPosterTest {
 
     private IEvent createEventInstance(String eventType) {
         IEvent event = new InMemoryEvent();
-        event.setEventId(EntityUtils.getInstance().createUniqueObjectId());
+        event.setEventId("EVENT-" + testNumber + "-" + this.entitySequence.getAndIncrement());
         event.setEventTag("test");
         event.setEventType(eventType);
         event.setContentType("application/json");

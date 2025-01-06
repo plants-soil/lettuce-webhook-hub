@@ -28,10 +28,6 @@
 			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-common-httpclient</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.plantssoil</groupId>
-			<artifactId>lettuce-webhook-engine-persistence</artifactId>
-		</dependency>
         
         <!-- Testing -->
         <dependency>

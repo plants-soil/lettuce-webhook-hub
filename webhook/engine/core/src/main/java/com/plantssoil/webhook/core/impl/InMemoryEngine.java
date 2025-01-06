@@ -132,11 +132,6 @@ class InMemoryEngine extends AbstractEngine implements IEngine {
             this.submissionPublishers.remove(key);
         }
     }
-//
-//    private SubmissionPublisher<Message> getPublisher(String publisherId, String version, String dataGroup) {
-//        PublisherKey key = new PublisherKey(publisherId, version, dataGroup);
-//        return this.submissionPublishers.get(key);
-//    }
 
     @Override
     void loadSubscriber(ISubscriber subscriber) {

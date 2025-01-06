@@ -46,4 +46,29 @@ public interface IMessageServiceFactory<T> extends IConfigurable, AutoCloseable 
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15001, err);
         }
     }
+
+    /**
+     * Get the default implementation of this factory (which is singleton)<br/>
+     * The default implementation is specified by configuration
+     * {@link LettuceConfiguration#MESSAGE_SERVICE_FACTORY_CONFIGURABLE}
+     * 
+     * @param defaultImplementation The default implementation class if
+     *                              {@link LettuceConfiguration#MESSAGE_SERVICE_FACTORY_CONFIGURABLE}
+     *                              is not configured
+     * @return Singleton instance of {@link IMessageServiceFactory}
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static <T> IMessageServiceFactory<T> getFactoryInstance(Class<? extends IMessageServiceFactory> defaultImplementation) {
+        if (defaultImplementation == null) {
+            return getFactoryInstance();
+        }
+        IConfigurable configurable = ConfigurableLoader.getInstance().createSingleton(LettuceConfiguration.MESSAGE_SERVICE_FACTORY_CONFIGURABLE,
+                defaultImplementation.getName());
+        if (configurable instanceof IMessageServiceFactory) {
+            return (IMessageServiceFactory<T>) configurable;
+        } else {
+            String err = String.format("The class %s don't implements %s!", configurable.getClass().getName(), IMessageServiceFactory.class.getName());
+            throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15001, err);
+        }
+    }
 }

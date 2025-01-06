@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.plantssoil.common.mq.ChannelType;
 import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
@@ -51,10 +52,10 @@ class SingleMessageQueueEngine extends AbstractEngine implements IEngine {
         // message service factory
         IMessageServiceFactory<Message> f = IMessageServiceFactory.getFactoryInstance();
         // message consumer
-        IMessageConsumer<Message> consumer = f.createMessageConsumer();
+        IMessageConsumer<Message> consumer = f.createMessageConsumer().consumerId("WEBHOOK-CONSUMER-" + this.consumerId.incrementAndGet())
+                .channelName(MESSAGE_QUEUE_NAME).channelType(ChannelType.QUEUE).addMessageListener(listener);
         // consume message from message service
-        consumer.consumerId("WEBHOOK-CONSUMER-" + this.consumerId.incrementAndGet()).channelName(MESSAGE_QUEUE_NAME).addMessageListener(listener)
-                .consume(Message.class);
+        consumer.consume(Message.class);
     }
 
     @Override
@@ -62,9 +63,9 @@ class SingleMessageQueueEngine extends AbstractEngine implements IEngine {
         // message service factory
         IMessageServiceFactory<Message> f = IMessageServiceFactory.getFactoryInstance();
         // message publisher
-        try (IMessagePublisher<Message> messagePublisher = f.createMessagePublisher()) {
+        try (IMessagePublisher<Message> messagePublisher = f.createMessagePublisher().channelName(MESSAGE_QUEUE_NAME).channelType(ChannelType.QUEUE)) {
             // publish to message service
-            messagePublisher.channelName(MESSAGE_QUEUE_NAME).publish(message);
+            messagePublisher.publish(message);
         } catch (Exception e) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20006, e);
         }

@@ -3,7 +3,6 @@ package com.plantssoil.webhook.core.impl;
 import com.plantssoil.common.config.IConfigurable;
 import com.plantssoil.webhook.core.IEngine;
 import com.plantssoil.webhook.core.IEngineFactory;
-import com.plantssoil.webhook.core.logging.WebhookLoggingHandler;
 
 /**
  * The abstract engine factory, all implementations should be subclass of this
@@ -21,7 +20,8 @@ abstract class AbstractEngineFactory implements IConfigurable, IEngineFactory {
     public AbstractEngineFactory() {
         // create engine instance (use proxy to AOP logging)
         IEngine engineImpl = createEngineInstance();
-        this.engine = (IEngine) WebhookLoggingHandler.createProxy(engineImpl);
+        this.engine = engineImpl;
+//        this.engine = (IEngine) WebhookLoggingHandler.createProxy(engineImpl);
     }
 
     /**

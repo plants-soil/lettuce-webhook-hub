@@ -8,6 +8,13 @@ import com.plantssoil.common.mq.IMessageListener;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.pubsub.api.reactive.RedisPubSubReactiveCommands;
 
+/**
+ * The IMessageSubscriber implementation base on Redis PubSub & List
+ * 
+ * @param <T> the message type
+ * @author danialdy
+ * @Date 4 Jan 2025 4:09:26 pm
+ */
 class MessageConsumer<T> extends AbstractMessageConsumer<T> {
     private final static String LETTUCE_QUEUE_NOTIFICATION_CHANNEL = "com.plantssoil.mq.notification.channel";
     private RedisPubSubReactiveCommands<String, String> command;
@@ -22,7 +29,7 @@ class MessageConsumer<T> extends AbstractMessageConsumer<T> {
     public void consume(Class<T> clazz) {
         if (ChannelType.TOPIC == getChannelType()) {
             this.command.observeChannels().doOnNext((message) -> {
-                if (message.getMessage() == null) {
+                if (message.getMessage() == null || !message.getChannel().equals(getChannelName())) {
                     return;
                 }
                 consumeMessage(message.getMessage(), clazz);
@@ -32,11 +39,14 @@ class MessageConsumer<T> extends AbstractMessageConsumer<T> {
             this.command.subscribe(getChannelName()).subscribe();
         } else {
             this.command.observeChannels().doOnNext((message) -> {
+                if (!message.getChannel().equals(LETTUCE_QUEUE_NOTIFICATION_CHANNEL)) {
+                    return;
+                }
                 String listName = message.getMessage();
                 if (listName == null || !listName.equals(getChannelName())) {
                     return;
                 }
-                consumeListMessage(clazz);
+                consumeListMessage(clazz, listName);
             }).doOnError(ex -> {
                 ex.printStackTrace();
             }).subscribe();
@@ -44,13 +54,16 @@ class MessageConsumer<T> extends AbstractMessageConsumer<T> {
         }
     }
 
-    private void consumeListMessage(Class<T> clazz) {
-        this.consumerConnection.async().rpop(getChannelName()).thenAccept(t -> {
-            if (t == null) {
-                return;
+    private void consumeListMessage(Class<T> clazz, String listName) {
+        String v = this.consumerConnection.sync().rpop(listName);
+        while (v != null) {
+            consumeMessage(v, clazz);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
             }
-            consumeMessage(t, clazz);
-        });
+            v = this.consumerConnection.sync().rpop(listName);
+        }
     }
 
     private void consumeMessage(String t, Class<T> clazz) {

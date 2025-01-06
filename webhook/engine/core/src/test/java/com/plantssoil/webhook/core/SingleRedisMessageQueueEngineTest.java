@@ -20,9 +20,9 @@ public class SingleRedisMessageQueueEngineTest extends IEngineTestParent {
     public static void main(String[] args) throws Exception {
         SingleRedisMessageQueueEngineTest.setUpBeforeClass();
         SingleRedisMessageQueueEngineTest test = new SingleRedisMessageQueueEngineTest();
-        test.test01GetVersion();
-        test.test02GetRegistry();
-        test.test03Trigger();
+        test.testGetVersion();
+        test.testGetRegistry();
+        test.testTrigger(100, 3);
         Thread.sleep(10000);
         SingleRedisMessageQueueEngineTest.tearDownAfterClass();
     }
@@ -65,7 +65,7 @@ public class SingleRedisMessageQueueEngineTest extends IEngineTestParent {
 
     @Test
     public void test03Trigger() {
-        testTrigger();
+        testTrigger(10, 3);
     }
 
 }

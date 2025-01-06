@@ -6,9 +6,10 @@ import com.plantssoil.common.mq.ChannelType;
 import com.plantssoil.common.mq.exception.MessageQueueException;
 
 import io.lettuce.core.api.async.RedisAsyncCommands;
+import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
 
 /**
- * The IMessagePublisher implementation base on Redis List
+ * The IMessagePublisher implementation base on Redis PubSub & List
  * 
  * @author danialdy
  * @Date 6 Nov 2024 4:34:30 pm
@@ -16,16 +17,16 @@ import io.lettuce.core.api.async.RedisAsyncCommands;
 class MessagePublisher<T> extends AbstractMessagePublisher<T> {
     private final static String LETTUCE_QUEUE_NOTIFICATION_CHANNEL = "com.plantssoil.mq.notification.channel";
     private RedisAsyncCommands<String, String> command;
-//    private RedisPubSubReactiveCommands<String, String> pubsubCommand;
+    private RedisPubSubAsyncCommands<String, String> pubsubCommand;
 
     /**
      * Constructor mandatory
      * 
      * @param command Redis command - to execute publish command
      */
-    protected MessagePublisher(RedisAsyncCommands<String, String> command/* , RedisPubSubReactiveCommands<String, String> pubsubCommand */) {
+    protected MessagePublisher(RedisAsyncCommands<String, String> command, RedisPubSubAsyncCommands<String, String> pubsubCommand) {
         this.command = command;
-//        this.pubsubCommand = pubsubCommand;
+        this.pubsubCommand = pubsubCommand;
     }
 
     @Override
@@ -35,18 +36,15 @@ class MessagePublisher<T> extends AbstractMessagePublisher<T> {
         }
         String channel = getChannelName();
         if (ChannelType.TOPIC == getChannelType()) {
-            this.command.publish(channel, ObjectJsonSerializer.getInstance().serialize(message));
-//            this.pubsubCommand.publish(channel, ObjectJsonSerializer.getInstance().serialize(message)).doOnNext((result) -> {
-//            }).doOnError((ex) -> {
-//            }).subscribe();
+            this.pubsubCommand.publish(channel, ObjectJsonSerializer.getInstance().serialize(message));
         } else {
             // push message to the channel left end
             this.command.lpush(channel, ObjectJsonSerializer.getInstance().serialize(message));
-            this.command.publish(LETTUCE_QUEUE_NOTIFICATION_CHANNEL, channel);
-//            // notification
-//            this.pubsubCommand.publish(LETTUCE_QUEUE_NOTIFICATION_CHANNEL, channel).doOnNext((result) -> {
-//            }).doOnError((ex) -> {
-//            }).subscribe();
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+            }
+            this.pubsubCommand.publish(LETTUCE_QUEUE_NOTIFICATION_CHANNEL, channel);
         }
     }
 
