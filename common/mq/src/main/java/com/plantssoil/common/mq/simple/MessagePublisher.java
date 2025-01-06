@@ -21,7 +21,7 @@ class MessagePublisher<T> extends AbstractMessagePublisher<T> {
         String channelName = getChannelName();
         try {
             this.messageQueue.publish(channelName, message);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15002, e);
         }
     }

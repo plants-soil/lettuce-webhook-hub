@@ -53,47 +53,37 @@ public class ConfigurableLoader {
         synchronized (configName) {
             configurable = configurables.get(configName);
             if (configurable == null) {
-                configurable = createConfigurable(configName, true);
+                configurable = createConfigurable(configName, null, true);
             }
             return configurable;
         }
     }
 
     /**
-     * create the singleton instance of clazz, which implements IConfigurable
+     * Load the configurable singleton instance (which implements
+     * com.plantssoil.common.config.IConfigurable), usually used for factory
+     * initialize
      * 
-     * @param <T>   IConfigurable implementation
-     * @param clazz class which implements IConfigurable
-     * @return clazz singleton instance
+     * @param configName         configure item name
+     * @param defaultConfigValue the default configuration value if it's not
+     *                           configured
+     * @return The singleton instance which implements
+     *         com.plantssoil.common.config.IConfigurable
+     * 
+     * @see com.plantssoil.common.config.IConfigurable
      */
-    @SuppressWarnings("unchecked")
-    public <T extends IConfigurable> T createSingleton(Class<T> clazz) {
-        String clazzName = "<CLASS>-" + clazz.getName();
-        IConfigurable configurable = configurables.get(clazzName);
+    public IConfigurable createSingleton(String configName, String defaultConfigValue) {
+        IConfigurable configurable = configurables.get(configName);
         if (configurable != null) {
-            return (T) configurable;
+            return configurable;
         }
-        synchronized (clazz) {
-            configurable = configurables.get(clazzName);
+
+        synchronized (configName) {
+            configurable = configurables.get(configName);
             if (configurable == null) {
-                try {
-                    configurable = clazz.getConstructor().newInstance();
-                } catch (InstantiationException e) {
-                    throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12004, e);
-                } catch (IllegalAccessException e) {
-                    throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12005, e);
-                } catch (IllegalArgumentException e) {
-                    throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12006, e);
-                } catch (InvocationTargetException e) {
-                    throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12007, e);
-                } catch (NoSuchMethodException e) {
-                    throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12008, e);
-                } catch (SecurityException e) {
-                    throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12009, e);
-                }
-                configurables.put(clazzName, configurable);
+                configurable = createConfigurable(configName, defaultConfigValue, true);
             }
-            return (T) configurable;
+            return configurable;
         }
     }
 
@@ -154,15 +144,31 @@ public class ConfigurableLoader {
      * 
      */
     public IConfigurable createConfigurable(String configName) {
-        return createConfigurable(configName, false);
+        return createConfigurable(configName, null, false);
     }
 
-    private IConfigurable createConfigurable(String configName, boolean singleton) {
+    /**
+     * Create new configurable instance (which implements
+     * com.plantssoil.common.config.IConfigurable)
+     * 
+     * @param configName         configure item name
+     * @param defaultConfigValue the default configuration value if it's not
+     *                           configured
+     * @return The new instance which implements
+     *         com.plantssoil.common.config.IConfigurable
+     * 
+     * @see com.plantssoil.common.config.IConfigurable
+     */
+    public IConfigurable createConfigurable(String configName, String defaultConfigValue) {
+        return createConfigurable(configName, defaultConfigValue, false);
+    }
+
+    private IConfigurable createConfigurable(String configName, String defaultConfigValue, boolean singleton) {
         IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
-        if (!configuration.containsKey(configName)) {
+        if (!configuration.containsKey(configName) && defaultConfigValue == null) {
             return null;
         }
-        String clazzName = configuration.getString(configName);
+        String clazzName = configuration.getString(configName, defaultConfigValue);
         if (clazzName == null || clazzName.strip().length() == 0) {
             throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12001, "Can't find the configuration: " + configName);
         }

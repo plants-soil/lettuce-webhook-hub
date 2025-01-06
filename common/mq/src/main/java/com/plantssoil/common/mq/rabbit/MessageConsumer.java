@@ -67,7 +67,7 @@ class MessageConsumer<T> extends AbstractMessageConsumer<T> {
                 }
             }, (consumerTag) -> {
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new MessageQueueException(MessageQueueException.BUSINESS_EXCEPTION_CODE_15011, e);
         }
     }

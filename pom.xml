@@ -124,6 +124,11 @@
 			
 			<dependency>
 				<groupId>com.plantssoil</groupId>
+				<artifactId>lettuce-webhook-engine-core</artifactId>
+				<version>${version.parent}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-webhook-engine-beans</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
@@ -583,7 +588,6 @@
 		<module>common</module>
 		<module>webhook</module>
 		<module>integration</module>
-		<module>documentation</module>
 	</modules>
 
 	<profiles>

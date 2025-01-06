@@ -22,7 +22,6 @@ import com.plantssoil.webhook.core.IWebhook;
 import com.plantssoil.webhook.core.IWebhookPoster;
 import com.plantssoil.webhook.core.Message;
 import com.plantssoil.webhook.core.exception.EngineException;
-import com.plantssoil.webhook.core.logging.WebhookLoggingHandler;
 
 /**
  * The webhook url poster, which with retry logics:
@@ -191,7 +190,8 @@ public class WebhookPoster implements IWebhookPoster {
                 if (instance == null) {
                     // create poster instance (use proxy to AOP logging)
                     WebhookPoster poster = new WebhookPoster();
-                    instance = (IWebhookPoster) WebhookLoggingHandler.createProxy(poster);
+                    instance = poster;
+//                    instance = (IWebhookPoster) WebhookLoggingHandler.createProxy(poster);
                 }
             }
         }

@@ -9,6 +9,9 @@ import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.IConfiguration;
 import com.plantssoil.common.config.LettuceConfiguration;
+import com.plantssoil.common.mq.ChannelType;
+import com.plantssoil.common.mq.IMessageConsumer;
+import com.plantssoil.common.mq.IMessageServiceFactory;
 import com.plantssoil.webhook.core.IPublisher;
 import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.ISubscriber;
@@ -22,11 +25,10 @@ import com.plantssoil.webhook.core.registry.InMemoryRegistry;
  */
 public abstract class AbstractEngine {
     private final static Logger LOGGER = LoggerFactory.getLogger(AbstractEngine.class.getName());
+    final static String REGISTRY_CHANGE_MESSAGE_QUEUE_NAME = "com.plantssoil.mq.registry.channel";
     final static int PAGE_SIZE = 50;
-    /**
-     * Registry
-     */
     private IRegistry registry;
+    private RegistryChangeListener registryChangeListener = new RegistryChangeListener(this);
 
     public AbstractEngine() {
         super();
@@ -35,6 +37,8 @@ public abstract class AbstractEngine {
         LOGGER.info("Loading existing publishers & consumers...");
         loadExistingPublishers();
         loadExistingSubscribers();
+        LOGGER.info("Add listener for registry changing...");
+        addRegistryChangeListener();
     }
 
     private void loadExistingPublishers() {
@@ -69,6 +73,17 @@ public abstract class AbstractEngine {
         }
     }
 
+    private void addRegistryChangeListener() {
+        // message service factory
+        IMessageServiceFactory<RegistryChangeMessage> f = IMessageServiceFactory
+                .getFactoryInstance(com.plantssoil.common.mq.simple.MessageServiceFactory.class);
+        // message consumer
+        IMessageConsumer<RegistryChangeMessage> consumer = f.createMessageConsumer().consumerId("REGISTRY-CHANGE-CONSUMER")
+                .channelName(REGISTRY_CHANGE_MESSAGE_QUEUE_NAME).channelType(ChannelType.TOPIC).addMessageListener(this.registryChangeListener);
+        // consume message from message service
+        consumer.consume(RegistryChangeMessage.class);
+    }
+
     public String getVersion() {
         IConfiguration configuraiton = ConfigFactory.getInstance().getConfiguration();
         if (configuraiton.containsKey(LettuceConfiguration.WEBHOOK_ENGINE_VERSION)) {
@@ -89,7 +104,6 @@ public abstract class AbstractEngine {
                         this.registry = (IRegistry) ConfigurableLoader.getInstance()
                                 .createConfigurable(LettuceConfiguration.WEBHOOK_ENGINE_REGISTRY_CONFIGURABLE);
                     }
-                    ((AbstractRegistry) this.registry).setEngine(this);
                 }
             }
         }

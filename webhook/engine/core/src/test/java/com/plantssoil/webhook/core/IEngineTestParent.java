@@ -9,7 +9,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.webhook.core.IWebhook.SecurityStrategy;
 import com.plantssoil.webhook.core.IWebhook.WebhookStatus;
 import com.plantssoil.webhook.core.registry.InMemoryDataGroup;
@@ -25,6 +24,7 @@ public class IEngineTestParent {
     private final static String DATAGROUP_PREFIX = "test.data.group.";
     private final static String WEBHOOK_URL_PREFIX = "http://dev.e-yunyi.com:8080/webhook/test";
     private AtomicInteger messageSequence = new AtomicInteger(0);
+    private AtomicInteger entitySequence = new AtomicInteger(0);
     private long startTimeMilliseconds = System.currentTimeMillis();
 
     public void testGetVersion() {
@@ -52,7 +52,7 @@ public class IEngineTestParent {
 
     private IPublisher createPublisherInstance() {
         IPublisher publisher = new InMemoryPublisher();
-        publisher.setPublisherId(EntityUtils.getInstance().createUniqueObjectId());
+        publisher.setPublisherId("PUBLISHER-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
         // randomly support multi-datagroup
         if (ThreadLocalRandom.current().nextInt(1011) % 20 == 4) {
             publisher.setSupportDataGroup(false);
@@ -74,7 +74,7 @@ public class IEngineTestParent {
 
     private IEvent createEventInstance(String eventType) {
         IEvent event = new InMemoryEvent();
-        event.setEventId(EntityUtils.getInstance().createUniqueObjectId());
+        event.setEventId("EVENT-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
         event.setEventTag("test");
         event.setEventType(eventType);
         event.setContentType("application/json");
@@ -91,7 +91,7 @@ public class IEngineTestParent {
 
     private ISubscriber createSubscriberInstance(IPublisher publisher) {
         ISubscriber subscriber = new InMemorySubscriber();
-        subscriber.setSubscriberId(EntityUtils.getInstance().createUniqueObjectId());
+        subscriber.setSubscriberId("SUBSCRIBER-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
         subscriber.addWebhook(createWebhookInstance(publisher, subscriber));
         return subscriber;
     }
@@ -101,12 +101,12 @@ public class IEngineTestParent {
         headers.put("test-header-01", "test-value-01");
         headers.put("test-header-02", "test-value-02");
         IWebhook webhook = new InMemoryWebhook();
-        webhook.setWebhookId(EntityUtils.getInstance().createUniqueObjectId());
-        webhook.setWebhookSecret(EntityUtils.getInstance().createUniqueObjectId());
+        webhook.setWebhookId("WEBHOOK-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
+        webhook.setWebhookSecret("WEBHOOKSECRET-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
         webhook.setWebhookStatus(WebhookStatus.TEST);
         webhook.setWebhookUrl(WEBHOOK_URL_PREFIX);
         webhook.setSecurityStrategy(SecurityStrategy.TOKEN);
-        webhook.setAccessToken(EntityUtils.getInstance().createUniqueObjectId());
+        webhook.setAccessToken("ACCESSTOKEN-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
         webhook.setPublisherId(publisher.getPublisherId());
         webhook.setPubliserhVersion("1.0.0");
         webhook.setCustomizedHeaders(headers);
@@ -125,22 +125,26 @@ public class IEngineTestParent {
     private IDataGroup createDataGroupInstance(String dataGroup) {
         IDataGroup dg = new InMemoryDataGroup();
         dg.setDataGroup(dataGroup);
-        dg.setAccessToken(EntityUtils.getInstance().createUniqueObjectId());
-        dg.setRefreshToken(EntityUtils.getInstance().createUniqueObjectId());
+        dg.setAccessToken("ACCESSTOKEN-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
+        dg.setRefreshToken("REFRESHTOKEN-" + +startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
         return dg;
     }
 
-    public void testTrigger() {
+    public void testTrigger(int publisherCount, int messagesPerPublisher) {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         final IEngine engine = IEngineFactory.getFactoryInstance().getEngine();
         final IRegistry registry = engine.getRegistry();
-        final int publisherQty = 10;
         ExecutorService es = Executors.newFixedThreadPool(1);
-        for (int i = 0; i < publisherQty; i++) {
+        for (int i = 0; i < publisherCount; i++) {
             es.submit(() -> {
-                List<IPublisher> publishers = registry.findAllPublishers(ThreadLocalRandom.current().nextInt(publisherQty), 1);
-                for (int j = 0; j < 3; j++) {
+                List<IPublisher> publishers = registry.findAllPublishers(ThreadLocalRandom.current().nextInt(publisherCount), 1);
+                for (int j = 0; j < messagesPerPublisher; j++) {
                     Message message = new Message(publishers.get(0).getPublisherId(), "1.0.0", EVENT_PREFIX + 3, "test", "application/json", "UTF-8", null,
-                            EntityUtils.getInstance().createUniqueObjectId(),
+                            "MESSAGE-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement(),
                             "{\"data\": \"This is the test payload-" + startTimeMilliseconds + "-" + messageSequence.getAndIncrement() + "\"}");
                     engine.trigger(message);
                 }

@@ -33,7 +33,7 @@ public class MessageServiceFactory<T extends java.io.Serializable> implements IM
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageServiceFactory.class.getName());
     private RedisClient client;
     private long connectionTimeout;
-//    private StatefulRedisPubSubConnection<String, String> pubsubPublisherConnection;
+    private StatefulRedisPubSubConnection<String, String> pubsubPublisherConnection;
     private StatefulRedisPubSubConnection<String, String> pubsubConsumerConnection;
     private StatefulRedisConnection<String, String> publisherConnection;
     private StatefulRedisConnection<String, String> consumerConnection;
@@ -59,9 +59,9 @@ public class MessageServiceFactory<T extends java.io.Serializable> implements IM
         // commands in milliseconds, defaults to 30 seconds.
         this.connectionTimeout = configuration.getLong(LettuceConfiguration.MESSAGE_SERVICE_CONNECTION_TIMEOUT, 30 * 1000);
 
-//        // create publisher connection
-//        this.pubsubPublisherConnection = this.client.connectPubSub();
-//        this.pubsubPublisherConnection.setTimeout(Duration.ofMillis(this.connectionTimeout));
+        // create publisher connection
+        this.pubsubPublisherConnection = this.client.connectPubSub();
+        this.pubsubPublisherConnection.setTimeout(Duration.ofMillis(this.connectionTimeout));
 
         // create consumer connection
         this.pubsubConsumerConnection = this.client.connectPubSub();
@@ -87,9 +87,6 @@ public class MessageServiceFactory<T extends java.io.Serializable> implements IM
                 consumer.close();
             }
         }
-//        if (this.pubsubPublisherConnection != null) {
-//            this.pubsubPublisherConnection.close();
-//        }
         if (this.pubsubConsumerConnection != null) {
             this.pubsubConsumerConnection.close();
         }
@@ -104,7 +101,7 @@ public class MessageServiceFactory<T extends java.io.Serializable> implements IM
 
     @Override
     public IMessagePublisher<T> createMessagePublisher() {
-        return new MessagePublisher<T>(this.publisherConnection.async());
+        return new MessagePublisher<T>(this.publisherConnection.async(), this.pubsubPublisherConnection.async());
     }
 
     @Override

@@ -23,7 +23,7 @@ public class EngineException extends BusinessException {
     public final static int BUSINESS_EXCEPTION_CODE_20004 = 20004;
     public final static int BUSINESS_EXCEPTION_CODE_20005 = 20005;
     public final static int BUSINESS_EXCEPTION_CODE_20006 = 20006;
-//    public final static int BUSINESS_EXCEPTION_CODE_20007 = 20007;
+    public final static int BUSINESS_EXCEPTION_CODE_20007 = 20007;
 //    public final static int BUSINESS_EXCEPTION_CODE_20008 = 20008;
 //    public final static int BUSINESS_EXCEPTION_CODE_20009 = 20009;
 //    public final static int BUSINESS_EXCEPTION_CODE_20010 = 20010;
@@ -88,7 +88,7 @@ public class EngineException extends BusinessException {
     }
 
     public void setCode(int code) {
-        if (code < BusinessExceptionCode.BUSINESS_EXCEPTION_CODE_20000 || code >= BusinessExceptionCode.BUSINESS_EXCEPTION_CODE_20000) {
+        if (code < BusinessExceptionCode.BUSINESS_EXCEPTION_CODE_20000 || code >= BusinessExceptionCode.BUSINESS_EXCEPTION_CODE_21000) {
             String err = String.format("Exception code %d beyond scope %d - %d.", code, BusinessExceptionCode.BUSINESS_EXCEPTION_CODE_20000,
                     BusinessExceptionCode.BUSINESS_EXCEPTION_CODE_21000);
             throw new IllegalArgumentException(err);
