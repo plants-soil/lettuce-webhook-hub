@@ -13,11 +13,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.plantssoil</groupId>
-			<artifactId>lettuce-common-persistence</artifactId>
+			<artifactId>lettuce-webhook-engine-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-webhook-engine-beans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.plantssoil</groupId>
+			<artifactId>lettuce-common-persistence</artifactId>
 		</dependency>
 	</dependencies>
 
