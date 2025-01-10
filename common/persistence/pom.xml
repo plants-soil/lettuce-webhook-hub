@@ -13,6 +13,11 @@
 
 	<dependencies>
 		<!-- Internal Dependencies -->
+        <dependency>
+            <groupId>com.plantssoil</groupId>
+            <artifactId>lettuce-common-io</artifactId>
+            <scope>compile</scope>
+        </dependency>
 		<dependency>
 			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-common-filesystem</artifactId>

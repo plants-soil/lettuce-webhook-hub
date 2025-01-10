@@ -92,6 +92,7 @@ public class JdkHttpClientTest {
 
     private Map<String, String> createTestHeaders() {
         Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Basic YXBpdXNlcjE6NjY2NjY2NjY2Ng==");
         headers.put("X-webhook-fixedkey01", "X-webhook-value01");
         headers.put("X-webhook-fixedkey02", "X-webhook-value02");
         return headers;

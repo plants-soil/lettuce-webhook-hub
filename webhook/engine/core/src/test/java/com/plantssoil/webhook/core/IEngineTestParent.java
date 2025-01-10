@@ -98,6 +98,7 @@ public class IEngineTestParent {
 
     private IWebhook createWebhookInstance(IPublisher publisher, ISubscriber subscriber) {
         Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Basic YXBpdXNlcjE6NjY2NjY2NjY2Ng==");
         headers.put("test-header-01", "test-value-01");
         headers.put("test-header-02", "test-value-02");
         IWebhook webhook = new InMemoryWebhook();
