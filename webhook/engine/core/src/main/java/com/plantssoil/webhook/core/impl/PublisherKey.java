@@ -11,72 +11,76 @@ import java.util.Objects;
  * @Date 3 Dec 2024 3:46:17 pm
  */
 class PublisherKey {
-    private final static String NULL_STRING = "##NULL##";
-    private String publisherId;
-    private String version;
-    private String dataGroup = NULL_STRING;
+	private final static String NULL_STRING = "##NULL##";
+	private String publisherId;
+	private String version;
+	private String dataGroup = NULL_STRING;
 
-    /**
-     * Constructor
-     * 
-     * @param publisherId publisher id, should not be null
-     * @param version     version, should not be null
-     * @param dataGroup   data group, optional
-     */
-    PublisherKey(String publisherId, String version, String dataGroup) {
-        super();
-        this.publisherId = publisherId;
-        this.version = version;
-        if (dataGroup != null) {
-            this.dataGroup = dataGroup;
-        }
-    }
+	/**
+	 * Constructor
+	 * 
+	 * @param publisherId publisher id, should not be null
+	 * @param version     version, should not be null
+	 * @param dataGroup   data group, optional
+	 */
+	PublisherKey(String publisherId, String version, String dataGroup) {
+		super();
+		this.publisherId = publisherId;
+		this.version = version;
+		if (dataGroup != null) {
+			this.dataGroup = dataGroup;
+		}
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(publisherId, version, dataGroup);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(publisherId, version, dataGroup);
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        PublisherKey other = (PublisherKey) obj;
-        return Objects.equals(publisherId, other.publisherId) && Objects.equals(version, other.version) && Objects.equals(dataGroup, other.dataGroup);
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		PublisherKey other = (PublisherKey) obj;
+		return Objects.equals(publisherId, other.publisherId) && Objects.equals(version, other.version) && Objects.equals(dataGroup, other.dataGroup);
+	}
 
-    /**
-     * Get publisher id
-     * 
-     * @return publisher id
-     */
-    public String getPublisherId() {
-        return publisherId;
-    }
+	@Override
+	public String toString() {
+		return "publisherId=" + this.publisherId + ", " + "version=" + this.version + ", dataGroup=" + this.dataGroup;
+	}
 
-    /**
-     * Get version
-     * 
-     * @return version
-     */
-    public String getVersion() {
-        return version;
-    }
+	/**
+	 * Get publisher id
+	 * 
+	 * @return publisher id
+	 */
+	public String getPublisherId() {
+		return publisherId;
+	}
 
-    /**
-     * Get data group
-     * 
-     * @return data group, null if not set
-     */
-    public String getDataGroup() {
-        return NULL_STRING.equals(this.dataGroup) ? null : this.dataGroup;
-    }
+	/**
+	 * Get version
+	 * 
+	 * @return version
+	 */
+	public String getVersion() {
+		return version;
+	}
 
+	/**
+	 * Get data group
+	 * 
+	 * @return data group, null if not set
+	 */
+	public String getDataGroup() {
+		return NULL_STRING.equals(this.dataGroup) ? null : this.dataGroup;
+	}
 }

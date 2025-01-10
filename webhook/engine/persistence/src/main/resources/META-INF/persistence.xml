@@ -14,5 +14,10 @@
         <class>com.plantssoil.webhook.beans.EventSubscribed</class>
         <class>com.plantssoil.webhook.beans.WebhookEventLog</class>
         <class>com.plantssoil.webhook.beans.WebhookEventLogLine</class>
+        
+        <!-- Need delete this configuration in runtime -->
+        <properties>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create" />
+        </properties>
     </persistence-unit>
 </persistence>

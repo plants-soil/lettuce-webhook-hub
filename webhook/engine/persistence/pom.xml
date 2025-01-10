@@ -11,18 +11,27 @@
 	<name>Webhook Engine - persistence</name>
 
 	<dependencies>
+	   <!-- Internal dependencies -->
 		<dependency>
 			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-webhook-engine-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.plantssoil</groupId>
-			<artifactId>lettuce-webhook-engine-beans</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.plantssoil</groupId>
 			<artifactId>lettuce-common-persistence</artifactId>
 		</dependency>
+        
+        <!-- Testing -->
+        <dependency>
+            <groupId>com.plantssoil</groupId>
+            <artifactId>lettuce-common-test</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 
 </project>
