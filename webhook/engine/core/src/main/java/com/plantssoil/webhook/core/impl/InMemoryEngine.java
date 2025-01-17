@@ -3,12 +3,14 @@ package com.plantssoil.webhook.core.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.SubmissionPublisher;
 
 import com.plantssoil.webhook.core.IDataGroup;
 import com.plantssoil.webhook.core.IEngine;
 import com.plantssoil.webhook.core.IEngineFactory;
+import com.plantssoil.webhook.core.IEvent;
 import com.plantssoil.webhook.core.IPublisher;
 import com.plantssoil.webhook.core.ISubscriber;
 import com.plantssoil.webhook.core.IWebhook;
@@ -56,8 +58,8 @@ class InMemoryEngine extends AbstractEngine implements IEngine {
         SubmissionPublisher<Message> publisher = this.submissionPublishers.get(key);
         if (publisher == null) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20002,
-                    String.format("Can't found the publisher (publisherId: %s, version: %s, dataGroup: %s)", message.getPublisherId(), message.getVersion(),
-                            message.getDataGroup() == null ? "NULL" : message.getDataGroup()));
+                    String.format("The publisher (publisherId: %s, version: %s, dataGroup: %s) does not register yet!", message.getPublisherId(),
+                            message.getVersion(), message.getDataGroup() == null ? "NULL" : message.getDataGroup()));
         }
         // don't need publish the message if there is no subscriber
         // otherwise publisher.submit() will block after the messages exceed the maximum
@@ -76,125 +78,50 @@ class InMemoryEngine extends AbstractEngine implements IEngine {
             return;
         }
         this.publishersLoaded.put(publisher.getPublisherId(), publisher.getPublisherId());
-        // load submission publisher
-        loadSubmissionPublisher(publisher);
-    }
-
-    private void loadSubmissionPublisher(IPublisher publisher) {
-        if (publisher.isSupportDataGroup()) {
-            int page = 0;
-            List<String> dataGroups = publisher.findDataGroups(page, PAGE_SIZE);
-            while (dataGroups != null && dataGroups.size() > 0) {
-                for (String dataGroup : dataGroups) {
-                    this.submissionPublishers.put(new PublisherKey(publisher.getPublisherId(), publisher.getVersion(), dataGroup),
-                            new SubmissionPublisher<Message>());
-                }
-                if (dataGroups.size() < PAGE_SIZE) {
-                    break;
-                }
-                page++;
-                dataGroups = publisher.findDataGroups(page, PAGE_SIZE);
-            }
-        } else {
+        // load submission publisher when IPublisher does not support data group
+        if (!publisher.isSupportDataGroup()) {
             this.submissionPublishers.put(new PublisherKey(publisher.getPublisherId(), publisher.getVersion(), null), new SubmissionPublisher<Message>());
         }
     }
 
     @Override
-    void unloadPublisher(IPublisher publisher) {
-        removeSubmissionPublisher(publisher);
-        this.publishersLoaded.remove(publisher.getPublisherId());
+    void loadEvent(IPublisher publisher, IEvent event) {
+        // nothing to do when load event
     }
 
-    private void removeSubmissionPublisher(IPublisher publisher) {
+    @Override
+    void loadDataGroup(IPublisher publisher, IDataGroup dataGroup) {
+        // load submission publisher when IPublisher supports data group
         if (publisher.isSupportDataGroup()) {
-            int page = 0;
-            List<String> dataGroups = publisher.findDataGroups(page, PAGE_SIZE);
-            while (dataGroups != null && dataGroups.size() > 0) {
-                for (String dataGroup : dataGroups) {
-                    removeSubmissionPublisher(new PublisherKey(publisher.getPublisherId(), publisher.getVersion(), dataGroup));
-                }
-                if (dataGroups.size() < PAGE_SIZE) {
-                    break;
-                }
-                page++;
-                dataGroups = publisher.findDataGroups(page, PAGE_SIZE);
-            }
-        } else {
-            removeSubmissionPublisher(new PublisherKey(publisher.getPublisherId(), publisher.getVersion(), null));
-        }
-    }
-
-    private void removeSubmissionPublisher(PublisherKey key) {
-        SubmissionPublisher<Message> pub = this.submissionPublishers.get(key);
-        if (pub != null) {
-            pub.close();
-            this.submissionPublishers.remove(key);
+            this.submissionPublishers.put(new PublisherKey(publisher.getPublisherId(), publisher.getVersion(), dataGroup.getDataGroup()),
+                    new SubmissionPublisher<Message>());
         }
     }
 
     @Override
     void loadSubscriber(ISubscriber subscriber) {
-        // don't need add again if already added
-        if (this.submissionSubscribers.containsKey(subscriber.getSubscriberId())) {
-            return;
-        }
-        // construct and load subscriber
-        loadSubmissionSubscriber(subscriber);
+        // nothing to do when load subscriber
     }
 
-    private void loadSubmissionSubscriber(ISubscriber subscriber) {
-        List<InMemorySubscriber> ssubscribers = this.submissionSubscribers.get(subscriber.getSubscriberId());
+    private List<InMemorySubscriber> getSubscriberList(String subscriberId) {
+        List<InMemorySubscriber> ssubscribers = this.submissionSubscribers.get(subscriberId);
         if (ssubscribers == null) {
-            synchronized (subscriber.getSubscriberId().intern()) {
-                ssubscribers = this.submissionSubscribers.get(subscriber.getSubscriberId());
+            synchronized (subscriberId.intern()) {
+                ssubscribers = this.submissionSubscribers.get(subscriberId);
                 if (ssubscribers == null) {
                     ssubscribers = new ArrayList<InMemorySubscriber>();
-                    this.submissionSubscribers.put(subscriber.getSubscriberId(), ssubscribers);
+                    this.submissionSubscribers.put(subscriberId, ssubscribers);
                 }
             }
         }
-        int page = 0;
-        List<IWebhook> webhooks = subscriber.findWebhooks(page, PAGE_SIZE);
-        while (webhooks != null && webhooks.size() > 0) {
-            for (IWebhook webhook : webhooks) {
-                loadSubmissionSubscriber(ssubscribers, webhook);
-            }
-            if (webhooks.size() < PAGE_SIZE) {
-                break;
-            }
-            page++;
-            webhooks = subscriber.findWebhooks(page, PAGE_SIZE);
-        }
-    }
-
-    private void loadSubmissionSubscriber(List<InMemorySubscriber> ssubscribers, IWebhook webhook) {
-        int page = 0;
-        boolean hasDataGroup = false;
-        List<IDataGroup> dataGroups = webhook.findSubscribedDataGroups(page, PAGE_SIZE);
-        while (dataGroups != null && dataGroups.size() > 0) {
-            if (!hasDataGroup) {
-                hasDataGroup = true;
-            }
-            for (IDataGroup dataGroup : dataGroups) {
-                loadSubmissionSubscriber(ssubscribers, webhook, dataGroup.getDataGroup());
-            }
-            if (dataGroups.size() < PAGE_SIZE) {
-                break;
-            }
-            page++;
-            dataGroups = webhook.findSubscribedDataGroups(page, PAGE_SIZE);
-        }
-        if (!hasDataGroup) {
-            loadSubmissionSubscriber(ssubscribers, webhook, null);
-        }
+        return ssubscribers;
     }
 
     private void loadSubmissionSubscriber(List<InMemorySubscriber> ssubscribers, IWebhook webhook, String dataGroup) {
         PublisherKey key = new PublisherKey(webhook.getPublisherId(), webhook.getPublisherVersion(), dataGroup);
-        SubmissionPublisher<Message> publisher = submissionPublishers.get(key);
+        SubmissionPublisher<Message> publisher = this.submissionPublishers.get(key);
         if (publisher != null) {
-            InMemorySubscriber ssub = new InMemorySubscriber(webhook);
+            InMemorySubscriber ssub = new InMemorySubscriber(webhook, dataGroup);
             publisher.subscribe(ssub);
             ssubscribers.add(ssub);
         }
@@ -212,5 +139,101 @@ class InMemoryEngine extends AbstractEngine implements IEngine {
         }
         ssubscribers.clear();
         this.submissionSubscribers.remove(subscriber.getSubscriberId());
+    }
+
+    @Override
+    void loadWebhook(IWebhook webhook) {
+        IPublisher publisher = getRegistry().findPublisher(webhook.getPublisherId());
+        // load submission subscriber if IPublisher the webhook subscribed does not
+        // support data group
+        if (!publisher.isSupportDataGroup()) {
+            loadSubmissionSubscriber(getSubscriberList(webhook.getSubscriberId()), webhook, null);
+        }
+    }
+
+    @Override
+    void unloadWebhook(IWebhook webhook) {
+        List<InMemorySubscriber> ssubscribers = getSubscriberList(webhook.getSubscriberId());
+        List<Integer> indexes = new ArrayList<>();
+        for (int i = 0; i < ssubscribers.size(); i++) {
+            InMemorySubscriber ssubscriber = ssubscribers.get(i);
+            if (Objects.equals(webhook.getWebhookId(), ssubscriber.getWebhook().getWebhookId())) {
+                indexes.add(i);
+                ssubscriber.unsubscribe();
+            }
+        }
+        for (Integer index : indexes) {
+            ssubscribers.remove(index.intValue());
+        }
+    }
+
+    @Override
+    void loadSubscribedEvent(IWebhook webhook, List<IEvent> events) {
+        List<InMemorySubscriber> ssubscribers = getSubscriberList(webhook.getSubscriberId());
+        for (int i = 0; i < ssubscribers.size(); i++) {
+            InMemorySubscriber ssubscriber = ssubscribers.get(i);
+            if (Objects.equals(webhook.getWebhookId(), ssubscriber.getWebhook().getWebhookId())) {
+                for (IEvent event : events) {
+                    ssubscriber.addEventSubscribed(event.getEventType());
+                }
+            }
+        }
+    }
+
+    @Override
+    void unloadSubscribedEvent(IWebhook webhook, List<IEvent> events) {
+        List<InMemorySubscriber> ssubscribers = getSubscriberList(webhook.getSubscriberId());
+        for (int i = 0; i < ssubscribers.size(); i++) {
+            InMemorySubscriber ssubscriber = ssubscribers.get(i);
+            if (Objects.equals(webhook.getWebhookId(), ssubscriber.getWebhook().getWebhookId())) {
+                for (IEvent event : events) {
+                    ssubscriber.removeEventSubscribed(event.getEventType());
+                }
+            }
+        }
+    }
+
+    @Override
+    void loadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup) {
+        IPublisher publisher = getRegistry().findPublisher(webhook.getPublisherId());
+        if (!publisher.isSupportDataGroup()) {
+            return;
+        }
+
+        int existingIndex = -1;
+        List<InMemorySubscriber> ssubscribers = getSubscriberList(webhook.getSubscriberId());
+        for (int i = 0; i < ssubscribers.size(); i++) {
+            InMemorySubscriber ssubscriber = ssubscribers.get(i);
+            if (Objects.equals(webhook.getWebhookId(), ssubscriber.getWebhook().getWebhookId())
+                    && Objects.equals(dataGroup.getDataGroup(), ssubscriber.getDataGroupSubscribed())) {
+                existingIndex = i;
+                break;
+            }
+        }
+        if (existingIndex < 0) {
+            loadSubmissionSubscriber(ssubscribers, webhook, dataGroup.getDataGroup());
+        }
+    }
+
+    @Override
+    void unloadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup) {
+        IPublisher publisher = getRegistry().findPublisher(webhook.getPublisherId());
+        if (!publisher.isSupportDataGroup()) {
+            return;
+        }
+
+        List<InMemorySubscriber> ssubscribers = getSubscriberList(webhook.getSubscriberId());
+        List<Integer> indexes = new ArrayList<>();
+        for (int i = 0; i < ssubscribers.size(); i++) {
+            InMemorySubscriber ssubscriber = ssubscribers.get(i);
+            if (Objects.equals(webhook.getWebhookId(), ssubscriber.getWebhook().getWebhookId())
+                    && Objects.equals(dataGroup.getDataGroup(), ssubscriber.getDataGroupSubscribed())) {
+                indexes.add(i);
+                ssubscriber.unsubscribe();
+            }
+        }
+        for (Integer index : indexes) {
+            ssubscribers.remove(index.intValue());
+        }
     }
 }

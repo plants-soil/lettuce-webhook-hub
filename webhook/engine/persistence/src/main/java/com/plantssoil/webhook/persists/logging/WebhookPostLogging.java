@@ -8,10 +8,10 @@ import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.common.persistence.IEntityQuery;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
-import com.plantssoil.webhook.beans.WebhookEventLog;
-import com.plantssoil.webhook.beans.WebhookEventLogLine;
 import com.plantssoil.webhook.core.IWebhook;
 import com.plantssoil.webhook.core.Message;
+import com.plantssoil.webhook.persists.beans.WebhookEventLog;
+import com.plantssoil.webhook.persists.beans.WebhookEventLogLine;
 
 /**
  * Webhook HTTP Post Logging

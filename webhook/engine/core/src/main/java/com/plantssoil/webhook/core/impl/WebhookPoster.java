@@ -17,7 +17,8 @@ import com.plantssoil.common.httpclient.IHttpCallback;
 import com.plantssoil.common.httpclient.IHttpPoster;
 import com.plantssoil.common.httpclient.IHttpResponse;
 import com.plantssoil.webhook.core.IDataGroup;
-import com.plantssoil.webhook.core.IEvent;
+import com.plantssoil.webhook.core.IEngineFactory;
+import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.IWebhook;
 import com.plantssoil.webhook.core.IWebhookPoster;
 import com.plantssoil.webhook.core.Message;
@@ -40,7 +41,6 @@ import com.plantssoil.webhook.core.exception.EngineException;
  */
 public class WebhookPoster implements IWebhookPoster {
     private final static Logger LOGGER = LoggerFactory.getLogger(WebhookPoster.class.getName());
-    private final static int PAGE_SIZE = 50;
     private static volatile IWebhookPoster instance;
     private int connectionPoolSize, maxRequests, maxRequestsPerHost, retryQueueCapacity5, retryQueueCapacity30;
     private ScheduledExecutorService retryScheduler; // scheduler every 5 seconds
@@ -200,11 +200,6 @@ public class WebhookPoster implements IWebhookPoster {
 
     @Override
     public void postWebhook(final Message message, final IWebhook webhook) {
-        // if event is not subscribed, not need post webhook
-        if (!eventSubscried(message, webhook)) {
-            return;
-        }
-
         try {
             post(message, webhook, new HttpCallback(message, webhook, this.retryWebhooks5, System.currentTimeMillis() + 5 * 1000));
         } catch (Exception e) {
@@ -212,33 +207,13 @@ public class WebhookPoster implements IWebhookPoster {
         }
     }
 
-    private boolean eventSubscried(Message message, IWebhook webhook) {
-        boolean subscribed = false;
-        int page = 0;
-
-        List<IEvent> events = webhook.findSubscribedEvents(page, PAGE_SIZE);
-        while (events != null && events.size() > 0) {
-            for (IEvent event : events) {
-                if (event.getEventType().equals(message.getEventType())) {
-                    subscribed = true;
-                    break;
-                }
-            }
-            if (events.size() < PAGE_SIZE) {
-                break;
-            }
-            page++;
-            events = webhook.findSubscribedEvents(page, PAGE_SIZE);
-        }
-        return subscribed;
-    }
-
     private void post(Message message, IWebhook webhook, IHttpCallback callback) {
         IHttpPoster poster = IHttpPoster
                 .createInstance(com.plantssoil.common.httpclient.IHttpPoster.SecurityStrategy.valueOf(webhook.getSecurityStrategy().name()));
         if (message.getDataGroup() != null) {
             // get access token from data group (if supported)
-            IDataGroup dataGroup = webhook.findSubscribedDataGroup(message.getDataGroup());
+            IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+            IDataGroup dataGroup = r.findSubscribedDataGroup(webhook.getWebhookId(), message.getDataGroup());
             if (dataGroup != null) {
                 poster.setAccessToken(dataGroup.getAccessToken());
             } else {

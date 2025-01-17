@@ -7,8 +7,8 @@ import java.util.concurrent.CompletableFuture;
 import com.plantssoil.common.persistence.IEntityQuery;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
-import com.plantssoil.webhook.beans.WebhookEventLog;
 import com.plantssoil.webhook.core.Message;
+import com.plantssoil.webhook.persists.beans.WebhookEventLog;
 
 /**
  * Webhook Publish Logging

@@ -8,6 +8,13 @@ package com.plantssoil.webhook.core;
  */
 public interface IDataGroup {
     /**
+     * Set the data group id
+     * 
+     * @param dataGroupId data group id
+     */
+    public void setDataGroupId(String dataGroupId);
+
+    /**
      * Set the data group
      * 
      * @param dataGroup data group name
@@ -27,6 +34,13 @@ public interface IDataGroup {
      * @param refreshToken refresh token on data group
      */
     public void setRefreshToken(String refreshToken);
+
+    /**
+     * Get the data group id
+     * 
+     * @return the data group id
+     */
+    public String getDataGroupId();
 
     /**
      * Get the data group

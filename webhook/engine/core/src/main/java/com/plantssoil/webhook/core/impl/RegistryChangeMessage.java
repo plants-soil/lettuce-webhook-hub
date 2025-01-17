@@ -1,5 +1,7 @@
 package com.plantssoil.webhook.core.impl;
 
+import java.util.Set;
+
 /**
  * The message used to notify webhook engine via MQ when registry changed.
  * 
@@ -16,7 +18,7 @@ public class RegistryChangeMessage implements java.io.Serializable {
      * @Date 3 Jan 2025 9:30:22 am
      */
     public enum RegistryType {
-        PUBLISHER, SUBSCRIBER
+        PUBLISHER, EVENT, DATAGROUP, SUBSCRIBER, WEBHOOK, EVENT_SUBSCRIBE, DATAGROUP_SUBSCRIBE
     }
 
     /**
@@ -26,21 +28,23 @@ public class RegistryChangeMessage implements java.io.Serializable {
      * @Date 3 Jan 2025 9:30:58 am
      */
     public enum ChangeType {
-        ADD, UPDATE, REMOVE
+        ADD, UPDATE, REMOVE, ACTIVATE, DEACTIVATE, SUBSCRIBE, UNSUBSCRIBE
     }
 
     private RegistryType registryType;
     private ChangeType changeType;
-    private String registryId;
+    private String publisherId;
+    private String subscriberId;
+    private String webhookId;
+    private Set<String> registryId;
 
     public RegistryChangeMessage() {
     }
 
-    public RegistryChangeMessage(RegistryType registryType, ChangeType changeType, String registryId) {
+    public RegistryChangeMessage(RegistryType registryType, ChangeType changeType) {
         super();
         this.registryType = registryType;
         this.changeType = changeType;
-        this.registryId = registryId;
     }
 
     public RegistryType getRegistryType() {
@@ -59,11 +63,35 @@ public class RegistryChangeMessage implements java.io.Serializable {
         this.changeType = changeType;
     }
 
-    public String getRegistryId() {
+    public String getPublisherId() {
+        return publisherId;
+    }
+
+    public void setPublisherId(String publisherId) {
+        this.publisherId = publisherId;
+    }
+
+    public String getSubscriberId() {
+        return subscriberId;
+    }
+
+    public void setSubscriberId(String subscriberId) {
+        this.subscriberId = subscriberId;
+    }
+
+    public String getWebhookId() {
+        return webhookId;
+    }
+
+    public void setWebhookId(String webhookId) {
+        this.webhookId = webhookId;
+    }
+
+    public Set<String> getRegistryId() {
         return registryId;
     }
 
-    public void setRegistryId(String registryId) {
+    public void setRegistryId(Set<String> registryId) {
         this.registryId = registryId;
     }
 }

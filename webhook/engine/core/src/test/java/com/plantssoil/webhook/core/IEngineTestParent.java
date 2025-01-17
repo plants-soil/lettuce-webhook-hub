@@ -13,6 +13,7 @@ import com.plantssoil.webhook.core.IWebhook.SecurityStrategy;
 import com.plantssoil.webhook.core.IWebhook.WebhookStatus;
 import com.plantssoil.webhook.core.registry.InMemoryDataGroup;
 import com.plantssoil.webhook.core.registry.InMemoryEvent;
+import com.plantssoil.webhook.core.registry.InMemoryOrganization;
 import com.plantssoil.webhook.core.registry.InMemoryPublisher;
 import com.plantssoil.webhook.core.registry.InMemorySubscriber;
 import com.plantssoil.webhook.core.registry.InMemoryWebhook;
@@ -40,8 +41,7 @@ public class IEngineTestParent {
 
     private void addPublishersAndSubscribers(IRegistry registry) {
         for (int i = 0; i < 100; i++) {
-            IPublisher publisher = createPublisherInstance();
-            registry.addPublisher(publisher);
+            IPublisher publisher = createPublisherInstance(registry);
             // randomly don't have subscriber for some publisher
             if (ThreadLocalRandom.current().nextInt(1011) % 10 == 4) {
                 continue;
@@ -50,9 +50,18 @@ public class IEngineTestParent {
         }
     }
 
-    private IPublisher createPublisherInstance() {
+    private IOrganization createOrganizationInstance(IRegistry registry) {
+        IOrganization o = new InMemoryOrganization();
+        o.setOrganizationId("ORGANIZATION-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
+        registry.addOrganization(o);
+        return o;
+    }
+
+    private IPublisher createPublisherInstance(IRegistry registry) {
+        IOrganization o = createOrganizationInstance(registry);
         IPublisher publisher = new InMemoryPublisher();
         publisher.setPublisherId("PUBLISHER-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
+        publisher.setOrganizationId(o.getOrganizationId());
         // randomly support multi-datagroup
         if (ThreadLocalRandom.current().nextInt(1011) % 20 == 4) {
             publisher.setSupportDataGroup(false);
@@ -60,13 +69,15 @@ public class IEngineTestParent {
             publisher.setSupportDataGroup(false);
         }
         publisher.setVersion("1.0.0");
+        registry.addPublisher(publisher);
         for (int i = 0; i < 10; i++) {
-            publisher.addEvent(createEventInstance(EVENT_PREFIX + i));
+            registry.addEvent(publisher.getPublisherId(), createEventInstance(EVENT_PREFIX + i));
         }
 
         if (publisher.isSupportDataGroup()) {
             for (int i = 0; i < 15; i++) {
-                publisher.addDataGroup(DATAGROUP_PREFIX + i);
+                IDataGroup dg = createDataGroupInstance(DATAGROUP_PREFIX + i);
+                registry.addDataGroup(publisher.getPublisherId(), dg);
             }
         }
         return publisher;
@@ -84,19 +95,20 @@ public class IEngineTestParent {
 
     private void addSubscribers(IRegistry registry, IPublisher publisher) {
         for (int i = 0; i < 3; i++) {
-            ISubscriber subscriber = createSubscriberInstance(publisher);
-            registry.addSubscriber(subscriber);
+            createSubscriberInstance(registry, publisher);
         }
     }
 
-    private ISubscriber createSubscriberInstance(IPublisher publisher) {
+    private void createSubscriberInstance(IRegistry r, IPublisher publisher) {
+        IOrganization o = createOrganizationInstance(r);
         ISubscriber subscriber = new InMemorySubscriber();
         subscriber.setSubscriberId("SUBSCRIBER-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
-        subscriber.addWebhook(createWebhookInstance(publisher, subscriber));
-        return subscriber;
+        subscriber.setOrganizationId(o.getOrganizationId());
+        r.addSubscriber(subscriber);
+        createWebhookInstance(r, publisher, subscriber);
     }
 
-    private IWebhook createWebhookInstance(IPublisher publisher, ISubscriber subscriber) {
+    private void createWebhookInstance(IRegistry r, IPublisher publisher, ISubscriber subscriber) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", "Basic YXBpdXNlcjE6NjY2NjY2NjY2Ng==");
         headers.put("test-header-01", "test-value-01");
@@ -109,18 +121,19 @@ public class IEngineTestParent {
         webhook.setSecurityStrategy(SecurityStrategy.TOKEN);
         webhook.setAccessToken("ACCESSTOKEN-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
         webhook.setPublisherId(publisher.getPublisherId());
-        webhook.setPubliserhVersion("1.0.0");
+        webhook.setPublisherVersion("1.0.0");
+        webhook.setSubscriberId(subscriber.getSubscriberId());
         webhook.setCustomizedHeaders(headers);
-        List<IEvent> events = publisher.findEvents(0, 100);
-        webhook.subscribeEvent(events.get(1));
-        webhook.subscribeEvent(events.get(3));
-        webhook.subscribeEvent(events.get(5));
+        r.addWebhook(webhook);
+
+        List<IEvent> events = r.findEvents(publisher.getPublisherId(), 0, 100);
+        r.subscribeEvent(webhook, events.get(1));
+        r.subscribeEvent(webhook, events.get(3));
+        r.subscribeEvent(webhook, events.get(5));
         if (publisher.isSupportDataGroup()) {
-            List<String> dgs = publisher.findDataGroups(0, 100);
-            IDataGroup dg = createDataGroupInstance(dgs.get(9));
-            webhook.subscribeDataGroup(dg);
+            List<IDataGroup> dgs = r.findDataGroups(publisher.getPublisherId(), 0, 100);
+            r.subscribeDataGroup(webhook, dgs.get(9));
         }
-        return webhook;
     }
 
     private IDataGroup createDataGroupInstance(String dataGroup) {

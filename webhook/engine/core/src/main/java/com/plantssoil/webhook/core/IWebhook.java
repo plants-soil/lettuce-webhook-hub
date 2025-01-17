@@ -1,6 +1,5 @@
 package com.plantssoil.webhook.core;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -8,9 +7,8 @@ import java.util.Map;
  * subscriber could have multiple webhooks if have multiple client application.
  * <p>
  * If the webhook property changed, such as security strategy / request headers
- * / webhook id / webhook secret / events subscribed / etc., need call
- * {@link ISubscriber#updateWebhook} to ensure consumer to reloaded &
- * re-subscribe
+ * / webhook id / webhook secret / etc., need call
+ * {@link IRegistry#updateWebhook} to ensure consumer to reloaded & re-subscribe
  * </p>
  * 
  * @author danialdy
@@ -32,7 +30,19 @@ public interface IWebhook {
      * @Date 29 Nov 2024 2:53:02 pm
      */
     public enum SecurityStrategy {
-        SIGNATURE, TOKEN, NONE
+        /**
+         * Signature the webhook request with access token + timestamp + request id +
+         * payload
+         */
+        SIGNATURE,
+        /**
+         * Signature the webhook request with static access token
+         */
+        TOKEN,
+        /**
+         * Not signature the webhook request
+         */
+        NONE
     }
 
     /**
@@ -42,13 +52,29 @@ public interface IWebhook {
      * <li>AWAITING_FOR_APPROVEL - submit to publisher and waiting for the
      * approval</li>
      * <li>PRODUCTION - Got approved and running in production</li>
+     * <li>INACTIVE - Got approved but deactivated</li>
      * </ul>
      * 
      * @author danialdy
      * @Date 29 Nov 2024 2:56:48 pm
      */
     public enum WebhookStatus {
-        TEST, AWAITING_FOR_APPROVEL, PRODUCTION
+        /**
+         * The webhook still under development or testing
+         */
+        TEST,
+        /**
+         * submit to publisher and waiting for the approval
+         */
+        AWAITING_FOR_APPROVEL,
+        /**
+         * Got approved and running in production
+         */
+        PRODUCTION,
+        /**
+         * Got approved but deactivated
+         */
+        INACTIVE
     }
 
     /**
@@ -122,7 +148,7 @@ public interface IWebhook {
      * 
      * @param publisherVersion publisher version subscribed
      */
-    public void setPubliserhVersion(String publisherVersion);
+    public void setPublisherVersion(String publisherVersion);
 
     /**
      * Set access token
@@ -137,34 +163,6 @@ public interface IWebhook {
      * @param refreshToken refresh token
      */
     public void setRefreshToken(String refreshToken);
-
-    /**
-     * Add the event subscribed
-     * 
-     * @param event event to subscribe
-     */
-    public void subscribeEvent(IEvent event);
-
-    /**
-     * Add the events subscribed
-     * 
-     * @param events events subscribed
-     */
-    public void subscribeEvent(List<IEvent> events);
-
-    /**
-     * Add the data group subscribed
-     * 
-     * @param dataGroup data group subscribed
-     */
-    public void subscribeDataGroup(IDataGroup dataGroup);
-
-    /**
-     * Add the data groups subscribed
-     * 
-     * @param dataGroups data groups subscribed
-     */
-    public void subscribeDataGroup(List<IDataGroup> dataGroups);
 
     /**
      * Get webhook id
@@ -252,30 +250,4 @@ public interface IWebhook {
      * @return refresh token
      */
     public String getRefreshToken();
-
-    /**
-     * Query the subscribed events, support pagination
-     * 
-     * @param page     page index
-     * @param pageSize maximum events on current page
-     * @return events on current page
-     */
-    public List<IEvent> findSubscribedEvents(int page, int pageSize);
-
-    /**
-     * Query the subscribed data groups, support pagination
-     * 
-     * @param page     page index
-     * @param pageSize maximum events on current page
-     * @return data groups on current page
-     */
-    public List<IDataGroup> findSubscribedDataGroups(int page, int pageSize);
-
-    /**
-     * Query the subscribed data group with the specified data group name
-     * 
-     * @param dataGroup the data group name to query
-     * @return the data group found
-     */
-    public IDataGroup findSubscribedDataGroup(String dataGroup);
 }

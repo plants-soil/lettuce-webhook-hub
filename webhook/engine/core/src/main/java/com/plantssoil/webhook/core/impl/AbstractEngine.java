@@ -12,9 +12,12 @@ import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.mq.ChannelType;
 import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessageServiceFactory;
+import com.plantssoil.webhook.core.IDataGroup;
+import com.plantssoil.webhook.core.IEvent;
 import com.plantssoil.webhook.core.IPublisher;
 import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.ISubscriber;
+import com.plantssoil.webhook.core.IWebhook;
 import com.plantssoil.webhook.core.registry.InMemoryRegistry;
 
 /**
@@ -26,7 +29,7 @@ import com.plantssoil.webhook.core.registry.InMemoryRegistry;
 public abstract class AbstractEngine {
     private final static Logger LOGGER = LoggerFactory.getLogger(AbstractEngine.class.getName());
     final static String REGISTRY_CHANGE_MESSAGE_QUEUE_NAME = "com.plantssoil.mq.registry.channel";
-    final static int PAGE_SIZE = 50;
+    final static int PAGE_SIZE = 20;
     private IRegistry registry;
     private RegistryChangeListener registryChangeListener = new RegistryChangeListener(this);
 
@@ -48,6 +51,10 @@ public abstract class AbstractEngine {
         while (publishers.size() > 0) {
             for (IPublisher publisher : publishers) {
                 loadPublisher(publisher);
+                loadExistingEvents(publisher);
+                if (publisher.isSupportDataGroup()) {
+                    loadExistingDataGroups(publisher);
+                }
             }
             if (publishers.size() < PAGE_SIZE) {
                 break;
@@ -57,6 +64,39 @@ public abstract class AbstractEngine {
         }
     }
 
+    private void loadExistingEvents(IPublisher publisher) {
+        IRegistry r = getRegistry();
+        int page = 0;
+        List<IEvent> events = r.findEvents(publisher.getPublisherId(), page, PAGE_SIZE);
+        while (events.size() > 0) {
+            for (IEvent event : events) {
+                loadEvent(publisher, event);
+            }
+            if (events.size() < PAGE_SIZE) {
+                break;
+            }
+            page++;
+            events = r.findEvents(publisher.getPublisherId(), page, PAGE_SIZE);
+        }
+    }
+
+    private void loadExistingDataGroups(IPublisher publisher) {
+        IRegistry r = getRegistry();
+        int page = 0;
+        List<IDataGroup> dataGroups = r.findDataGroups(publisher.getPublisherId(), page, PAGE_SIZE);
+        while (dataGroups.size() > 0) {
+            for (IDataGroup dataGroup : dataGroups) {
+                loadDataGroup(publisher, dataGroup);
+            }
+            if (dataGroups.size() < PAGE_SIZE) {
+                break;
+            }
+            page++;
+            dataGroups = r.findDataGroups(publisher.getPublisherId(), page, PAGE_SIZE);
+        }
+
+    }
+
     private void loadExistingSubscribers() {
         IRegistry r = getRegistry();
         int page = 0;
@@ -64,12 +104,64 @@ public abstract class AbstractEngine {
         while (subscribers.size() > 0) {
             for (ISubscriber subscriber : subscribers) {
                 loadSubscriber(subscriber);
+                loadExistingWebhooks(subscriber);
             }
             if (subscribers.size() < PAGE_SIZE) {
                 break;
             }
             page++;
             subscribers = r.findAllSubscribers(page, PAGE_SIZE);
+        }
+    }
+
+    private void loadExistingWebhooks(ISubscriber subscriber) {
+        IRegistry r = getRegistry();
+        int page = 0;
+        List<IWebhook> webhooks = r.findWebhooks(subscriber.getSubscriberId(), page, PAGE_SIZE);
+        while (webhooks.size() > 0) {
+            for (IWebhook webhook : webhooks) {
+                loadWebhook(webhook);
+                loadExistingEventsSubscribed(webhook);
+                IPublisher publisher = r.findPublisher(webhook.getPublisherId());
+                if (publisher != null && publisher.isSupportDataGroup()) {
+                    loadExistingDataGroupsSubscribed(webhook);
+                }
+            }
+            if (webhooks.size() < PAGE_SIZE) {
+                break;
+            }
+            page++;
+            webhooks = r.findWebhooks(subscriber.getSubscriberId(), page, PAGE_SIZE);
+        }
+    }
+
+    void loadExistingEventsSubscribed(IWebhook webhook) {
+        IRegistry r = getRegistry();
+        int page = 0;
+        List<IEvent> events = r.findSubscribedEvents(webhook.getWebhookId(), page, PAGE_SIZE);
+        while (events.size() > 0) {
+            loadSubscribedEvent(webhook, events);
+            if (events.size() < PAGE_SIZE) {
+                break;
+            }
+            page++;
+            events = r.findSubscribedEvents(webhook.getWebhookId(), page, PAGE_SIZE);
+        }
+    }
+
+    void loadExistingDataGroupsSubscribed(IWebhook webhook) {
+        IRegistry r = getRegistry();
+        int page = 0;
+        List<IDataGroup> dataGroups = r.findSubscribedDataGroups(webhook.getWebhookId(), page, PAGE_SIZE);
+        while (dataGroups.size() > 0) {
+            for (IDataGroup dataGroup : dataGroups) {
+                loadSubscribedDataGroup(webhook, dataGroup);
+            }
+            if (dataGroups.size() < PAGE_SIZE) {
+                break;
+            }
+            page++;
+            dataGroups = r.findSubscribedDataGroups(webhook.getWebhookId(), page, PAGE_SIZE);
         }
     }
 
@@ -111,50 +203,87 @@ public abstract class AbstractEngine {
     }
 
     /**
-     * Load publisher into engine
+     * Load publisher into engine, should update publisher if already loaded
      * 
      * @param publisher publisher to load
      */
     abstract void loadPublisher(IPublisher publisher);
 
     /**
-     * Re-load publisher of engine, the publisher id should keep same
+     * Load event into engine, should update event if already loaded
      * 
-     * @param publisher publisher to re-load
+     * @param publisher the publisher which event belongs to
+     * @param event     the event to load
      */
-    void reloadPublisher(IPublisher publisher) {
-        unloadPublisher(publisher);
-        loadPublisher(publisher);
-    }
+    abstract void loadEvent(IPublisher publisher, IEvent event);
 
     /**
-     * Unload publisher from engine
+     * Load data group into engine, should update data group if already loaded
      * 
-     * @param publisher the publisher to unload
+     * @param publisher the publisher which data group belongs to
+     * @param dataGroup the data group to load
      */
-    abstract void unloadPublisher(IPublisher publisher);
+    abstract void loadDataGroup(IPublisher publisher, IDataGroup dataGroup);
 
     /**
-     * Load subscriber into engine
+     * Load subscriber into engine, should update subscriber if already loaded
      * 
      * @param subscriber subscriber to load
      */
     abstract void loadSubscriber(ISubscriber subscriber);
 
     /**
-     * Re-load subscriber of engine, the subscriber id should keep same
-     * 
-     * @param subscriber subscriber to re-load
-     */
-    void reloadSubscriber(ISubscriber subscriber) {
-        unloadSubscriber(subscriber);
-        loadSubscriber(subscriber);
-    }
-
-    /**
-     * Unload subscriber from engine
+     * Unload subscriber from engine, including belongs (webhooks, events
+     * subscribed, datagroups subscribed, etc.)
      * 
      * @param subscriber the subscriber to unload
      */
     abstract void unloadSubscriber(ISubscriber subscriber);
+
+    /**
+     * Load webhook into webhook engine, should update webhook if already loaded
+     * 
+     * @param webhook the webhook to load
+     */
+    abstract void loadWebhook(IWebhook webhook);
+
+    /**
+     * Unload webhook from engine, including belongs (events subscribed, datagroups
+     * subscribed, etc.)
+     * 
+     * @param webhook the webhook to unload
+     */
+    abstract void unloadWebhook(IWebhook webhook);
+
+    /**
+     * Load subscribed event into webhook engine
+     * 
+     * @param webhook the webhook which the event belongs to
+     * @param event   the event to load
+     */
+    abstract void loadSubscribedEvent(IWebhook webhook, List<IEvent> events);
+
+    /**
+     * Unload event subscribed from engine
+     * 
+     * @param webhook the webhook which event belongs to
+     * @param events  the events to unload
+     */
+    abstract void unloadSubscribedEvent(IWebhook webhook, List<IEvent> events);
+
+    /**
+     * Load subscribed data group into webhook engine
+     * 
+     * @param webhook   the webhook which the data group belongs to
+     * @param dataGroup the data group to load
+     */
+    abstract void loadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup);
+
+    /**
+     * Unload data group subscribed from webhook engine
+     * 
+     * @param webhook   the webhook which data group belongs to
+     * @param dataGroup the data group to unload
+     */
+    abstract void unloadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup);
 }
