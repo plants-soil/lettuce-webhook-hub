@@ -23,7 +23,6 @@ import com.plantssoil.common.test.TempDirectoryUtility;
 import com.plantssoil.webhook.core.IWebhook.SecurityStrategy;
 import com.plantssoil.webhook.core.IWebhook.WebhookStatus;
 import com.plantssoil.webhook.core.impl.WebhookPoster;
-import com.plantssoil.webhook.core.registry.InMemoryEvent;
 import com.plantssoil.webhook.core.registry.InMemoryWebhook;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -94,21 +93,20 @@ public class WebhookPosterTest {
         webhook.setSecurityStrategy(SecurityStrategy.TOKEN);
         webhook.setAccessToken("ACCESSTOKEN-" + testNumber + "-" + this.entitySequence.getAndIncrement());
         webhook.setPublisherId("publisher-id-0001");
-        webhook.setPubliserhVersion("1.0.0");
+        webhook.setPublisherVersion("1.0.0");
         webhook.setCustomizedHeaders(headers);
-        webhook.subscribeEvent(createEventInstance("test.event.type.001"));
         return webhook;
     }
-
-    private IEvent createEventInstance(String eventType) {
-        IEvent event = new InMemoryEvent();
-        event.setEventId("EVENT-" + testNumber + "-" + this.entitySequence.getAndIncrement());
-        event.setEventTag("test");
-        event.setEventType(eventType);
-        event.setContentType("application/json");
-        event.setCharset("UTF-8");
-        return event;
-    }
+//
+//    private IEvent createEventInstance(String eventType) {
+//        IEvent event = new InMemoryEvent();
+//        event.setEventId("EVENT-" + testNumber + "-" + this.entitySequence.getAndIncrement());
+//        event.setEventTag("test");
+//        event.setEventType(eventType);
+//        event.setContentType("application/json");
+//        event.setCharset("UTF-8");
+//        return event;
+//    }
 
     private int randomPostWebhook(ExecutorService e, IWebhook webhook) {
         final int count = ThreadLocalRandom.current().nextInt(5);

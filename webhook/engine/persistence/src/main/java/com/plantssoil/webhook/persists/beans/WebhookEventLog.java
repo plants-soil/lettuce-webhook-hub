@@ -1,4 +1,4 @@
-package com.plantssoil.webhook.beans;
+package com.plantssoil.webhook.persists.beans;
 
 import java.util.Date;
 
@@ -27,6 +27,9 @@ public class WebhookEventLog implements java.io.Serializable {
     private String webhookStatus;
     @Temporal(TemporalType.TIMESTAMP)
     private Date triggerTime;
+
+    public WebhookEventLog() {
+    }
 
     public String getPublisherId() {
         return publisherId;

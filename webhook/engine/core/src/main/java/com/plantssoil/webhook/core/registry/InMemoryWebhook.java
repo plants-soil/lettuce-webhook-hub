@@ -1,11 +1,7 @@
 package com.plantssoil.webhook.core.registry;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import com.plantssoil.webhook.core.IDataGroup;
-import com.plantssoil.webhook.core.IEvent;
 import com.plantssoil.webhook.core.IWebhook;
 
 /**
@@ -25,13 +21,11 @@ public class InMemoryWebhook implements IWebhook {
     private String webhookUrl;
     private Map<String, String> customizedHeaders;
     private String[] trustedIps;
-    private WebhookStatus webhookStatus;
+    private WebhookStatus webhookStatus = WebhookStatus.TEST;
     private String publisherId;
     private String publisherVersion;
     private String accessToken;
     private String refreshToken;
-    private List<IEvent> eventsSubscribed = new ArrayList<>();
-    private List<IDataGroup> dataGroupsSubscribed = new ArrayList<>();
 
     @Override
     public void setWebhookId(String webhookId) {
@@ -79,7 +73,7 @@ public class InMemoryWebhook implements IWebhook {
     }
 
     @Override
-    public void setPubliserhVersion(String publisherVersion) {
+    public void setPublisherVersion(String publisherVersion) {
         this.publisherVersion = publisherVersion;
     }
 
@@ -91,26 +85,6 @@ public class InMemoryWebhook implements IWebhook {
     @Override
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
-    }
-
-    @Override
-    public void subscribeEvent(IEvent event) {
-        this.eventsSubscribed.add(event);
-    }
-
-    @Override
-    public void subscribeEvent(List<IEvent> events) {
-        this.eventsSubscribed.addAll(events);
-    }
-
-    @Override
-    public void subscribeDataGroup(IDataGroup dataGroup) {
-        this.dataGroupsSubscribed.add(dataGroup);
-    }
-
-    @Override
-    public void subscribeDataGroup(List<IDataGroup> dataGroups) {
-        this.dataGroupsSubscribed.addAll(dataGroups);
     }
 
     @Override
@@ -172,41 +146,4 @@ public class InMemoryWebhook implements IWebhook {
     public String getRefreshToken() {
         return this.refreshToken;
     }
-
-    @Override
-    public List<IEvent> findSubscribedEvents(int page, int pageSize) {
-        List<IEvent> list = new ArrayList<>();
-        int beginIndex = page * pageSize;
-        int endIndex = beginIndex + pageSize;
-
-        for (int i = beginIndex; i < this.eventsSubscribed.size() && i < endIndex; i++) {
-            list.add(this.eventsSubscribed.get(i));
-        }
-        return list;
-    }
-
-    @Override
-    public List<IDataGroup> findSubscribedDataGroups(int page, int pageSize) {
-        List<IDataGroup> list = new ArrayList<>();
-        int beginIndex = page * pageSize;
-        int endIndex = beginIndex + pageSize;
-
-        for (int i = beginIndex; i < this.dataGroupsSubscribed.size() && i < endIndex; i++) {
-            list.add(this.dataGroupsSubscribed.get(i));
-        }
-        return list;
-    }
-
-    @Override
-    public IDataGroup findSubscribedDataGroup(String dataGroup) {
-        IDataGroup dg = null;
-        for (IDataGroup d : this.dataGroupsSubscribed) {
-            if (d.getDataGroup().equals(dataGroup)) {
-                dg = d;
-                break;
-            }
-        }
-        return dg;
-    }
-
 }

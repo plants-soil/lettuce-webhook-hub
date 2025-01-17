@@ -4,16 +4,16 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
              version="2.2">
     <persistence-unit name="lettuce-persistence-unit">
-        <class>com.plantssoil.webhook.beans.Organization</class>
-        <class>com.plantssoil.webhook.beans.Publisher</class>
-        <class>com.plantssoil.webhook.beans.DataGroup</class>
-        <class>com.plantssoil.webhook.beans.Event</class>
-        <class>com.plantssoil.webhook.beans.Subscriber</class>
-        <class>com.plantssoil.webhook.beans.Webhook</class>
-        <class>com.plantssoil.webhook.beans.DataGroupSubscribed</class>
-        <class>com.plantssoil.webhook.beans.EventSubscribed</class>
-        <class>com.plantssoil.webhook.beans.WebhookEventLog</class>
-        <class>com.plantssoil.webhook.beans.WebhookEventLogLine</class>
+        <class>com.plantssoil.webhook.persists.beans.Organization</class>
+        <class>com.plantssoil.webhook.persists.beans.Publisher</class>
+        <class>com.plantssoil.webhook.persists.beans.DataGroup</class>
+        <class>com.plantssoil.webhook.persists.beans.Event</class>
+        <class>com.plantssoil.webhook.persists.beans.Subscriber</class>
+        <class>com.plantssoil.webhook.persists.beans.Webhook</class>
+        <class>com.plantssoil.webhook.persists.beans.DataGroupSubscribed</class>
+        <class>com.plantssoil.webhook.persists.beans.EventSubscribed</class>
+        <class>com.plantssoil.webhook.persists.beans.WebhookEventLog</class>
+        <class>com.plantssoil.webhook.persists.beans.WebhookEventLogLine</class>
         
         <!-- Need delete this configuration in runtime -->
         <properties>

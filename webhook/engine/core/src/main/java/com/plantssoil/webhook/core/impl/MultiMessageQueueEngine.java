@@ -2,6 +2,7 @@ package com.plantssoil.webhook.core.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -12,7 +13,9 @@ import com.plantssoil.common.mq.IMessageServiceFactory;
 import com.plantssoil.webhook.core.IDataGroup;
 import com.plantssoil.webhook.core.IEngine;
 import com.plantssoil.webhook.core.IEngineFactory;
+import com.plantssoil.webhook.core.IEvent;
 import com.plantssoil.webhook.core.IPublisher;
+import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.ISubscriber;
 import com.plantssoil.webhook.core.IWebhook;
 import com.plantssoil.webhook.core.Message;
@@ -39,10 +42,6 @@ class MultiMessageQueueEngine extends AbstractEngine implements IEngine {
      * key - the publisher id loaded, value - the publisher id loaded
      */
     private Map<String, String> publishersLoaded = new ConcurrentHashMap<>();
-    /**
-     * key - the subscriber id loaded, value - the subscriber id loaded
-     */
-    private Map<String, String> subscriberLoaded = new ConcurrentHashMap<>();
     private Map<PublisherKey, IMessageConsumer<Message>> consumers = new ConcurrentHashMap<>();
     private volatile AtomicInteger consumerId = new AtomicInteger(0);
 
@@ -79,29 +78,16 @@ class MultiMessageQueueEngine extends AbstractEngine implements IEngine {
             return;
         }
         this.publishersLoaded.put(publisher.getPublisherId(), publisher.getPublisherId());
-        loadConsumer(publisher);
-    }
-
-    private void loadConsumer(IPublisher publisher) {
-        if (publisher.isSupportDataGroup()) {
-            int page = 0;
-            List<String> dataGroups = publisher.findDataGroups(page, PAGE_SIZE);
-            while (dataGroups != null && dataGroups.size() > 0) {
-                for (String dataGroup : dataGroups) {
-                    loadConsumer(publisher, dataGroup);
-                }
-                if (dataGroups.size() < PAGE_SIZE) {
-                    break;
-                }
-                page++;
-                dataGroups = publisher.findDataGroups(page, PAGE_SIZE);
-            }
-        } else {
+        if (!publisher.isSupportDataGroup()) {
             loadConsumer(publisher, null);
         }
     }
 
     private void loadConsumer(IPublisher publisher, String dataGroup) {
+        PublisherKey key = new PublisherKey(publisher.getPublisherId(), publisher.getVersion(), dataGroup);
+        if (this.consumers.containsKey(key)) {
+            return;
+        }
         // queue name
         String queueName = getQueueName(publisher.getPublisherId(), publisher.getVersion(), dataGroup);
         // message service factory
@@ -113,106 +99,26 @@ class MultiMessageQueueEngine extends AbstractEngine implements IEngine {
         // consume message from message service
         consumer.consumerId("WEBHOOK-CONSUMER-" + this.consumerId.incrementAndGet()).channelName(queueName).addMessageListener(listener).consume(Message.class);
         // add consumer into map
-        this.consumers.put(new PublisherKey(publisher.getPublisherId(), publisher.getVersion(), dataGroup), consumer);
+        this.consumers.put(key, consumer);
     }
 
     @Override
-    void unloadPublisher(IPublisher publisher) {
-        removePublisher(publisher);
-        this.publishersLoaded.remove(publisher.getPublisherId());
+    void loadEvent(IPublisher publisher, IEvent event) {
+        // Nothing needed to do when load event, MQ will be received and the
+        // listener will determine where the message should go
     }
 
-    private void removePublisher(IPublisher publisher) {
+    @Override
+    void loadDataGroup(IPublisher publisher, IDataGroup dataGroup) {
         if (publisher.isSupportDataGroup()) {
-            int page = 0;
-            List<String> dataGroups = publisher.findDataGroups(page, PAGE_SIZE);
-            while (dataGroups != null && dataGroups.size() > 0) {
-                for (String dataGroup : dataGroups) {
-                    removePublisher(publisher.getPublisherId(), publisher.getVersion(), dataGroup);
-                }
-                if (dataGroups.size() < PAGE_SIZE) {
-                    break;
-                }
-                page++;
-                dataGroups = publisher.findDataGroups(page, PAGE_SIZE);
-            }
-        } else {
-            removePublisher(publisher.getPublisherId(), publisher.getVersion(), null);
+            loadConsumer(publisher, dataGroup.getDataGroup());
         }
-    }
-
-    private void removePublisher(String publisherId, String version, String dataGroup) {
-        PublisherKey key = new PublisherKey(publisherId, version, dataGroup);
-        IMessageConsumer<Message> consumer = this.consumers.get(key);
-        if (consumer == null) {
-            return;
-        }
-        consumer.close();
-        this.consumers.remove(key);
     }
 
     @Override
     void loadSubscriber(ISubscriber subscriber) {
-        // don't need add again if already added
-        if (this.subscriberLoaded.containsKey(subscriber.getSubscriberId())) {
-            return;
-        }
-        this.subscriberLoaded.put(subscriber.getSubscriberId(), subscriber.getSubscriberId());
-        // construct and load subscriber
-        loadSubscriber0(subscriber);
-    }
-
-    private void loadSubscriber0(ISubscriber subscriber) {
-        int page = 0;
-        List<IWebhook> webhooks = subscriber.findWebhooks(page, PAGE_SIZE);
-        while (webhooks != null && webhooks.size() > 0) {
-            for (IWebhook webhook : webhooks) {
-                loadSubscriber(subscriber, webhook);
-            }
-            if (webhooks.size() < PAGE_SIZE) {
-                break;
-            }
-            page++;
-            webhooks = subscriber.findWebhooks(page, PAGE_SIZE);
-        }
-    }
-
-    private void loadSubscriber(ISubscriber subscriber, IWebhook webhook) {
-        int page = 0;
-        boolean hasDataGroup = false;
-        List<IDataGroup> dataGroups = webhook.findSubscribedDataGroups(page, PAGE_SIZE);
-        while (dataGroups != null && dataGroups.size() > 0) {
-            if (!hasDataGroup) {
-                hasDataGroup = true;
-            }
-            for (IDataGroup dataGroup : dataGroups) {
-                loadSubscriber(subscriber, webhook, dataGroup);
-            }
-            if (dataGroups.size() < PAGE_SIZE) {
-                break;
-            }
-            page++;
-            dataGroups = webhook.findSubscribedDataGroups(page, PAGE_SIZE);
-        }
-        if (!hasDataGroup) {
-            loadSubscriber(subscriber, webhook, null);
-        }
-    }
-
-    private void loadSubscriber(ISubscriber subscriber, IWebhook webhook, IDataGroup dataGroup) {
-        PublisherKey key = new PublisherKey(webhook.getPublisherId(), webhook.getPublisherVersion(), dataGroup == null ? null : dataGroup.getDataGroup());
-        IMessageConsumer<Message> consumer = this.consumers.get(key);
-        if (consumer == null) {
-            return;
-        }
-        for (IMessageListener<Message> l : consumer.getListeners()) {
-            l.getClass().isAssignableFrom(MultiMessageQueueEventListener.class);
-            if (!(l instanceof MultiMessageQueueEventListener)) {
-                continue;
-            }
-            MultiMessageQueueEventListener mql = (MultiMessageQueueEventListener) l;
-            mql.addSubscriber(subscriber, webhook);
-        }
+        // Nothing needed to do when load subscriber, MQ will be received and the
+        // listener will determine where the message should go
     }
 
     @Override
@@ -226,7 +132,111 @@ class MultiMessageQueueEngine extends AbstractEngine implements IEngine {
                 mql.removeSubscriber(subscriber.getSubscriberId());
             }
         }
-        this.subscriberLoaded.remove(subscriber.getSubscriberId());
+    }
+
+    private void loadSubscriber(IWebhook webhook, IDataGroup dataGroup) {
+        PublisherKey key = new PublisherKey(webhook.getPublisherId(), webhook.getPublisherVersion(), dataGroup == null ? null : dataGroup.getDataGroup());
+        IMessageConsumer<Message> consumer = this.consumers.get(key);
+        if (consumer == null) {
+            return;
+        }
+        for (IMessageListener<Message> l : consumer.getListeners()) {
+            if (!(l instanceof MultiMessageQueueEventListener)) {
+                continue;
+            }
+            MultiMessageQueueEventListener mql = (MultiMessageQueueEventListener) l;
+            mql.addSubscriber(webhook);
+            if (dataGroup != null) {
+                mql.addDataGroupSubscribed(webhook.getWebhookId(), dataGroup.getDataGroup());
+            }
+        }
+    }
+
+    @Override
+    void loadWebhook(IWebhook webhook) {
+        IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+        IPublisher publisher = r.findPublisher(webhook.getPublisherId());
+        if (!publisher.isSupportDataGroup()) {
+            loadSubscriber(webhook, null);
+        }
+    }
+
+    @Override
+    void unloadWebhook(IWebhook webhook) {
+        for (Map.Entry<PublisherKey, IMessageConsumer<Message>> entry : this.consumers.entrySet()) {
+            PublisherKey key = entry.getKey();
+            if (!Objects.equals(key.getPublisherId(), webhook.getPublisherId()) || !Objects.equals(key.getVersion(), webhook.getPublisherVersion())) {
+                continue;
+            }
+            for (IMessageListener<Message> l : entry.getValue().getListeners()) {
+                if (!(l instanceof MultiMessageQueueEventListener)) {
+                    continue;
+                }
+                MultiMessageQueueEventListener mql = (MultiMessageQueueEventListener) l;
+                mql.removeWebhook(webhook);
+            }
+        }
+    }
+
+    @Override
+    void loadSubscribedEvent(IWebhook webhook, List<IEvent> events) {
+        for (Map.Entry<PublisherKey, IMessageConsumer<Message>> entry : this.consumers.entrySet()) {
+            PublisherKey key = entry.getKey();
+            if (!Objects.equals(key.getPublisherId(), webhook.getPublisherId()) || !Objects.equals(key.getVersion(), webhook.getPublisherVersion())) {
+                continue;
+            }
+            for (IMessageListener<Message> l : entry.getValue().getListeners()) {
+                if (!(l instanceof MultiMessageQueueEventListener)) {
+                    continue;
+                }
+                MultiMessageQueueEventListener mql = (MultiMessageQueueEventListener) l;
+                mql.addEventsSubscribed(webhook.getWebhookId(), events);
+            }
+        }
+    }
+
+    @Override
+    void unloadSubscribedEvent(IWebhook webhook, List<IEvent> events) {
+        for (Map.Entry<PublisherKey, IMessageConsumer<Message>> entry : this.consumers.entrySet()) {
+            PublisherKey key = entry.getKey();
+            if (!Objects.equals(key.getPublisherId(), webhook.getPublisherId()) || !Objects.equals(key.getVersion(), webhook.getPublisherVersion())) {
+                continue;
+            }
+            for (IMessageListener<Message> l : entry.getValue().getListeners()) {
+                if (!(l instanceof MultiMessageQueueEventListener)) {
+                    continue;
+                }
+                MultiMessageQueueEventListener mql = (MultiMessageQueueEventListener) l;
+                mql.removeEventsSubscribed(webhook.getWebhookId(), events);
+            }
+        }
+    }
+
+    @Override
+    void loadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup) {
+        IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+        IPublisher publisher = r.findPublisher(webhook.getPublisherId());
+        if (publisher.isSupportDataGroup()) {
+            loadSubscriber(webhook, dataGroup);
+        }
+    }
+
+    @Override
+    void unloadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup) {
+        IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+        IPublisher publisher = r.findPublisher(webhook.getPublisherId());
+        if (publisher.isSupportDataGroup()) {
+            PublisherKey key = new PublisherKey(webhook.getPublisherId(), webhook.getPublisherVersion(), dataGroup.getDataGroup());
+            IMessageConsumer<Message> consumer = this.consumers.get(key);
+            List<IMessageListener<Message>> ls = consumer.getListeners();
+            for (IMessageListener<Message> l : ls) {
+                if (!(l instanceof MultiMessageQueueEventListener)) {
+                    continue;
+                }
+                MultiMessageQueueEventListener mql = (MultiMessageQueueEventListener) l;
+                mql.removeDataGroupSubscribed(webhook.getWebhookId(), dataGroup.getDataGroup());
+            }
+        }
     }
 
 }

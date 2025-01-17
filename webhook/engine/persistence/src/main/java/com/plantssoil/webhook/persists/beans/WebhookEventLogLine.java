@@ -1,4 +1,4 @@
-package com.plantssoil.webhook.beans;
+package com.plantssoil.webhook.persists.beans;
 
 import java.util.Date;
 
@@ -23,6 +23,9 @@ public class WebhookEventLogLine implements java.io.Serializable {
     private String responseMessage;
     @Temporal(TemporalType.TIMESTAMP)
     private Date postTime;
+
+    public WebhookEventLogLine() {
+    }
 
     public String getLogLineId() {
         return logLineId;

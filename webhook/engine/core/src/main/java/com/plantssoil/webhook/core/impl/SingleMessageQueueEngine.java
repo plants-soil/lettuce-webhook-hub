@@ -1,8 +1,6 @@
 package com.plantssoil.webhook.core.impl;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.plantssoil.common.mq.ChannelType;
@@ -12,7 +10,9 @@ import com.plantssoil.common.mq.IMessageServiceFactory;
 import com.plantssoil.webhook.core.IDataGroup;
 import com.plantssoil.webhook.core.IEngine;
 import com.plantssoil.webhook.core.IEngineFactory;
+import com.plantssoil.webhook.core.IEvent;
 import com.plantssoil.webhook.core.IPublisher;
+import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.ISubscriber;
 import com.plantssoil.webhook.core.IWebhook;
 import com.plantssoil.webhook.core.Message;
@@ -35,11 +35,7 @@ import com.plantssoil.webhook.core.exception.EngineException;
  * @Date 5 Dec 2024 3:40:29 pm
  */
 class SingleMessageQueueEngine extends AbstractEngine implements IEngine {
-    public final static String MESSAGE_QUEUE_NAME = "LETTUCE_WEBHOOK_UNIVERSAL_QUEQUE";
-    /**
-     * key - the subscriber id loaded, value - the subscriber id loaded
-     */
-    private Map<String, String> subscriberLoaded = new ConcurrentHashMap<>();
+    public final static String MESSAGE_QUEUE_NAME = "com.plantssoil.mq.universal.channel";
     private SingleMessageQueueEventListener listener = new SingleMessageQueueEventListener();
     private volatile AtomicInteger consumerId = new AtomicInteger(0);
 
@@ -78,68 +74,72 @@ class SingleMessageQueueEngine extends AbstractEngine implements IEngine {
     }
 
     @Override
-    void unloadPublisher(IPublisher publisher) {
-        // Nothing needed to do when unload publisher, because nothing did when load
-        // publisher
+    void loadEvent(IPublisher publisher, IEvent event) {
+        // Nothing needed to do when load event, MQ will be received and the
+        // listener will determine where the message should go
+    }
+
+    @Override
+    void loadDataGroup(IPublisher publisher, IDataGroup dataGroup) {
+        // Nothing needed to do when load dataGroup, MQ will be received and the
+        // listener will determine where the message should go
     }
 
     @Override
     void loadSubscriber(ISubscriber subscriber) {
-        // don't need add again if already added
-        if (this.subscriberLoaded.containsKey(subscriber.getSubscriberId())) {
-            return;
-        }
-        this.subscriberLoaded.put(subscriber.getSubscriberId(), subscriber.getSubscriberId());
-        // construct and load subscriber
-        loadSubscriber0(subscriber);
+        // Nothing needed to do when load subscriber, MQ will be received and the
+        // listener will determine where the message should go
     }
 
-    private void loadSubscriber0(ISubscriber subscriber) {
-        int page = 0;
-        List<IWebhook> webhooks = subscriber.findWebhooks(page, PAGE_SIZE);
-        while (webhooks != null && webhooks.size() > 0) {
-            for (IWebhook webhook : webhooks) {
-                loadSubscriber(subscriber, webhook);
-            }
-            if (webhooks.size() < PAGE_SIZE) {
-                break;
-            }
-            page++;
-            webhooks = subscriber.findWebhooks(page, PAGE_SIZE);
-        }
-    }
-
-    private void loadSubscriber(ISubscriber subscriber, IWebhook webhook) {
-        int page = 0;
-        boolean hasDataGroup = false;
-        List<IDataGroup> dataGroups = webhook.findSubscribedDataGroups(page, PAGE_SIZE);
-        while (dataGroups != null && dataGroups.size() > 0) {
-            if (!hasDataGroup) {
-                hasDataGroup = true;
-            }
-            for (IDataGroup dataGroup : dataGroups) {
-                loadSubscriber(subscriber, webhook, dataGroup);
-            }
-            if (dataGroups.size() < PAGE_SIZE) {
-                break;
-            }
-            page++;
-            dataGroups = webhook.findSubscribedDataGroups(page, PAGE_SIZE);
-        }
-        if (!hasDataGroup) {
-            loadSubscriber(subscriber, webhook, null);
-        }
-    }
-
-    private void loadSubscriber(ISubscriber subscriber, IWebhook webhook, IDataGroup dataGroup) {
+    private void loadSubscriber(IWebhook webhook, IDataGroup dataGroup) {
         PublisherKey key = new PublisherKey(webhook.getPublisherId(), webhook.getPublisherVersion(), dataGroup == null ? null : dataGroup.getDataGroup());
         this.listener.addSubscriber(key, webhook);
+        if (dataGroup != null) {
+            this.listener.addDataGroupSubscribed(webhook.getWebhookId(), dataGroup.getDataGroup());
+        }
     }
 
     @Override
     void unloadSubscriber(ISubscriber subscriber) {
         this.listener.removeSubscriber(subscriber.getSubscriberId());
-        this.subscriberLoaded.remove(subscriber.getSubscriberId());
+    }
+
+    @Override
+    void loadWebhook(IWebhook webhook) {
+        IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+        IPublisher publisher = r.findPublisher(webhook.getPublisherId());
+        if (!publisher.isSupportDataGroup()) {
+            loadSubscriber(webhook, null);
+        }
+    }
+
+    @Override
+    void unloadWebhook(IWebhook webhook) {
+        this.listener.removeWebhook(webhook);
+    }
+
+    @Override
+    void loadSubscribedEvent(IWebhook webhook, List<IEvent> events) {
+        this.listener.addEventsSubscribed(webhook.getWebhookId(), events);
+    }
+
+    @Override
+    void unloadSubscribedEvent(IWebhook webhook, List<IEvent> events) {
+        this.listener.removeEventsSubscribed(webhook.getWebhookId(), events);
+    }
+
+    @Override
+    void loadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup) {
+        IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+        IPublisher publisher = r.findPublisher(webhook.getPublisherId());
+        if (publisher.isSupportDataGroup()) {
+            loadSubscriber(webhook, dataGroup);
+        }
+    }
+
+    @Override
+    void unloadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup) {
+        this.listener.removeDataGroupSubscribed(webhook.getWebhookId(), dataGroup.getDataGroup());
     }
 
 }

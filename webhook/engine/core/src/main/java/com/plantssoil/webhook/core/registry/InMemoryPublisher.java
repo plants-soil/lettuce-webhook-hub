@@ -1,9 +1,5 @@
 package com.plantssoil.webhook.core.registry;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.plantssoil.webhook.core.IEvent;
 import com.plantssoil.webhook.core.IPublisher;
 
 /**
@@ -17,10 +13,19 @@ import com.plantssoil.webhook.core.IPublisher;
  */
 public class InMemoryPublisher implements IPublisher {
     private String publisherId;
+    private String organizationId;
     private boolean supportDataGroup;
     private String version;
-    private List<String> dataGroups = new ArrayList<>();
-    private List<IEvent> events = new ArrayList<>();
+
+    @Override
+    public String getOrganizationId() {
+        return organizationId;
+    }
+
+    @Override
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
+    }
 
     @Override
     public void setPublisherId(String publisherId) {
@@ -38,26 +43,6 @@ public class InMemoryPublisher implements IPublisher {
     }
 
     @Override
-    public void addDataGroup(String dataGroup) {
-        this.dataGroups.add(dataGroup);
-    }
-
-    @Override
-    public void addDataGroup(List<String> dataGroups) {
-        this.dataGroups.addAll(dataGroups);
-    }
-
-    @Override
-    public void addEvent(IEvent event) {
-        this.events.add(event);
-    }
-
-    @Override
-    public void addEvent(List<IEvent> events) {
-        this.events.addAll(events);
-    }
-
-    @Override
     public String getPublisherId() {
         return this.publisherId;
     }
@@ -71,29 +56,4 @@ public class InMemoryPublisher implements IPublisher {
     public String getVersion() {
         return this.version;
     }
-
-    @Override
-    public List<String> findDataGroups(int page, int pageSize) {
-        List<String> list = new ArrayList<>();
-        int beginIndex = page * pageSize;
-        int endIndex = beginIndex + pageSize;
-
-        for (int i = beginIndex; i < this.dataGroups.size() && i < endIndex; i++) {
-            list.add(this.dataGroups.get(i));
-        }
-        return list;
-    }
-
-    @Override
-    public List<IEvent> findEvents(int page, int pageSize) {
-        List<IEvent> list = new ArrayList<>();
-        int beginIndex = page * pageSize;
-        int endIndex = beginIndex + pageSize;
-
-        for (int i = beginIndex; i < this.events.size() && i < endIndex; i++) {
-            list.add(this.events.get(i));
-        }
-        return list;
-    }
-
 }
