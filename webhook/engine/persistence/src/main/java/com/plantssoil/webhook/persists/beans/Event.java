@@ -13,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.IEvent;
 
 /**
@@ -27,7 +28,7 @@ import com.plantssoil.webhook.core.IEvent;
 @Entity
 @Table(name = "LETTUCE_EVENT", uniqueConstraints = @UniqueConstraint(columnNames = { "publisherId", "eventType" }), indexes = {
         @Index(name = "idx_event_pubid", columnList = "publisherId") })
-public class Event implements IEvent, Serializable {
+public class Event extends ClonableBean implements IEvent, Serializable {
     private static final long serialVersionUID = 5996607146075281389L;
 
     /**

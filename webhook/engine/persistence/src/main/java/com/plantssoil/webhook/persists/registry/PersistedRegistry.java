@@ -55,6 +55,7 @@ public class PersistedRegistry extends AbstractRegistry {
 
     @Override
     public void addOrganization(IOrganization organization) {
+        super.addOrganization(organization);
         if (!(organization instanceof Organization)) {
             String msg = String.format("Only the instance of %s could be persisted!", Organization.class.getName());
             throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21005, msg);
@@ -73,7 +74,8 @@ public class PersistedRegistry extends AbstractRegistry {
     }
 
     @Override
-    public void updateOrganizationId(IOrganization organization) {
+    public void updateOrganization(IOrganization organization) {
+        super.updateOrganization(organization);
         if (!(organization instanceof Organization)) {
             String msg = String.format("Only the instance of %s could be persisted!", Organization.class.getName());
             throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21005, msg);
@@ -180,6 +182,10 @@ public class PersistedRegistry extends AbstractRegistry {
         }
         IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
         try (IPersistence p = f.create()) {
+            if (p.createQuery(Publisher.class).singleResult(publisherId).get() == null) {
+                throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21003,
+                        String.format("The publisher (publisherId: %s) does not exist!", publisherId));
+            }
             // should avoid event type duplicated with existing event types from persistence
             Set<String> existingEventTypes = existingUniqueValues(p, Event.class, "publisherId", publisherId, Event.class.getMethod("getEventType"));
             for (IEvent event : events) {
@@ -214,6 +220,10 @@ public class PersistedRegistry extends AbstractRegistry {
         // persist
         IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
         try (IPersistence p = f.create()) {
+            if (p.createQuery(Publisher.class).singleResult(publisherId).get() == null) {
+                throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21003,
+                        String.format("The publisher (publisherId: %s) does not exist!", publisherId));
+            }
             Set<String> existingDataGroupsNames = this.existingUniqueValues(p, DataGroup.class, "publisherId", publisherId,
                     DataGroup.class.getMethod("getDataGroup"));
             for (IDataGroup dataGroup : dataGroups) {
@@ -274,7 +284,7 @@ public class PersistedRegistry extends AbstractRegistry {
             }
             if (!Objects.equals(old.getOrganizationId(), subscriber.getOrganizationId())) {
                 throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21006, String.format(
-                        "The attribute (organization id, old: %s, new: %s) could not be change!", old.getOrganizationId(), subscriber.getOrganizationId()));
+                        "The attribute organization id (old: %s, new: %s) could not be change!", old.getOrganizationId(), subscriber.getOrganizationId()));
             }
             // persist
             p.update(subscriber);
@@ -339,7 +349,7 @@ public class PersistedRegistry extends AbstractRegistry {
             }
             if (p.createQuery(Subscriber.class).singleResult(webhook.getSubscriberId()).get() == null) {
                 throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21009,
-                        String.format("The subscriber (subscriber: %s) does not exists!", webhook.getSubscriberId()));
+                        String.format("The subscriber (subscriberId: %s) does not exists!", webhook.getSubscriberId()));
             }
             if (p.createQuery(Publisher.class).singleResult(webhook.getPublisherId()).get() == null) {
                 throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21009,
@@ -367,18 +377,16 @@ public class PersistedRegistry extends AbstractRegistry {
                         String.format("The webhook (webhookId: %s) to be update does not exists!", webhook.getWebhookId()));
             }
             if (!Objects.equals(webhook.getPublisherId(), old.getPublisherId())) {
-                throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21010, String.format(
-                        "The publisher id (old publisherId: %s, new publisherId: %s) can't be changed!", old.getPublisherId(), webhook.getPublisherId()));
+                throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21010,
+                        String.format("The publisher id (old: %s, new: %s) can't be changed!", old.getPublisherId(), webhook.getPublisherId()));
             }
             if (!Objects.equals(webhook.getPublisherVersion(), old.getPublisherVersion())) {
                 throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21010,
-                        String.format("The publisher version (old publisher version: %s, new publisher vewsion: %s) can't be changed!",
-                                old.getPublisherVersion(), webhook.getPublisherVersion()));
+                        String.format("The publisher version (old: %s, new: %s) can't be changed!", old.getPublisherVersion(), webhook.getPublisherVersion()));
             }
             if (!Objects.equals(webhook.getSubscriberId(), old.getSubscriberId())) {
                 throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21010,
-                        String.format("The subscriber id (old subscriber id: %s, new subscriber id: %s) can't be changed!", old.getSubscriberId(),
-                                webhook.getSubscriberId()));
+                        String.format("The subscriber id (old: %s, new: %s) can't be changed!", old.getSubscriberId(), webhook.getSubscriberId()));
             }
             // persist
             p.update(webhook);
@@ -441,6 +449,11 @@ public class PersistedRegistry extends AbstractRegistry {
 
     @Override
     protected void saveEventSubscribed(IWebhook webhook, List<IEvent> events) {
+        IWebhook tmp = queryEntity(Webhook.class, webhook.getWebhookId());
+        if (tmp == null) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21013,
+                    String.format("The webhook (webhookId: %s) to subscribe events does not exists!", webhook.getWebhookId()));
+        }
         Set<String> existingIds = null;
         IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
         try (IPersistence p = f.create()) {
@@ -468,6 +481,11 @@ public class PersistedRegistry extends AbstractRegistry {
 
     @Override
     protected void saveEventUnsubscribed(IWebhook webhook, List<IEvent> events) {
+        IWebhook tmp = queryEntity(Webhook.class, webhook.getWebhookId());
+        if (tmp == null) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21013,
+                    String.format("The webhook (webhookId: %s) to unsubscribe events does not exists!", webhook.getWebhookId()));
+        }
         List<EventSubscribed> existingEvents = queryEntities(EventSubscribed.class, "webhookId", webhook.getWebhookId());
         Map<String, EventSubscribed> existingIds = new HashMap<>();
         for (EventSubscribed event : existingEvents) {
@@ -491,6 +509,12 @@ public class PersistedRegistry extends AbstractRegistry {
 
     @Override
     protected void saveDataGroupSubscribed(IWebhook webhook, List<IDataGroup> dataGroups) {
+        IWebhook tmp = queryEntity(Webhook.class, webhook.getWebhookId());
+        if (tmp == null) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21013,
+                    String.format("The webhook (webhookId: %s) to subscribe data groups does not exists!", webhook.getWebhookId()));
+        }
+
         Set<String> existingIds = null;
         // save
         IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
@@ -521,6 +545,12 @@ public class PersistedRegistry extends AbstractRegistry {
 
     @Override
     protected void saveDataGroupUnsubscribed(IWebhook webhook, List<IDataGroup> dataGroups) {
+        IWebhook tmp = queryEntity(Webhook.class, webhook.getWebhookId());
+        if (tmp == null) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21013,
+                    String.format("The webhook (webhookId: %s) to unsubscribe data groups does not exists!", webhook.getWebhookId()));
+        }
+
         List<DataGroupSubscribed> existingDataGroups = queryEntities(DataGroupSubscribed.class, "webhookId", webhook.getWebhookId());
         Map<String, DataGroupSubscribed> existingIds = new HashMap<>();
         for (DataGroupSubscribed existingDataGroup : existingDataGroups) {
@@ -539,6 +569,28 @@ public class PersistedRegistry extends AbstractRegistry {
             p.remove(unsubscribeDataGroups);
         } catch (Exception e) {
             throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21016, e);
+        }
+    }
+
+    @Override
+    public IOrganization findOrganization(String organizationId) {
+        if (organizationId == null) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21017,
+                    "Organization id should not be null when query organization!");
+        }
+        return queryEntity(Organization.class, organizationId);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<IOrganization> findAllOrganizations(int page, int pageSize) {
+        IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
+        try (IPersistence p = f.create()) {
+            @SuppressWarnings("rawtypes")
+            IEntityQuery q = p.createQuery(Organization.class).firstResult(page * pageSize).maxResults(pageSize);
+            return (List<IOrganization>) q.resultList().get();
+        } catch (Exception e) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21017, e);
         }
     }
 

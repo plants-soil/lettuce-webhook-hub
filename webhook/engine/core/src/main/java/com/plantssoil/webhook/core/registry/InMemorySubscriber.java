@@ -1,5 +1,6 @@
 package com.plantssoil.webhook.core.registry;
 
+import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.ISubscriber;
 
 /**
@@ -11,7 +12,7 @@ import com.plantssoil.webhook.core.ISubscriber;
  * @author danialdy
  * @Date 2 Jan 2025 5:09:49 pm
  */
-public class InMemorySubscriber implements ISubscriber {
+public class InMemorySubscriber extends ClonableBean implements ISubscriber {
     private String subscriberId;
     private String organizationId;
 

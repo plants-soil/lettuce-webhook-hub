@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
+import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.ISubscriber;
 
 /**
@@ -18,7 +19,7 @@ import com.plantssoil.webhook.core.ISubscriber;
  */
 @Entity
 @Table(name = "LETTUCE_SUBSCRIBER", indexes = { @Index(name = "idx_subscriber_orgid", columnList = "organizationId") })
-public class Subscriber implements ISubscriber, Serializable {
+public class Subscriber extends ClonableBean implements ISubscriber, Serializable {
     private static final long serialVersionUID = 1848865673559702879L;
     @Id
     private String subscriberId;
@@ -38,10 +39,12 @@ public class Subscriber implements ISubscriber, Serializable {
         this.subscriberId = subscriberId;
     }
 
+    @Override
     public String getOrganizationId() {
         return organizationId;
     }
 
+    @Override
     public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }

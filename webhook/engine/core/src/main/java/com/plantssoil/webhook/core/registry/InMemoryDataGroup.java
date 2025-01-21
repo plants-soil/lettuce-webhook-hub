@@ -1,5 +1,6 @@
 package com.plantssoil.webhook.core.registry;
 
+import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.IDataGroup;
 
 /**
@@ -11,7 +12,7 @@ import com.plantssoil.webhook.core.IDataGroup;
  * @author danialdy
  * @Date 2 Jan 2025 5:07:28 pm
  */
-public class InMemoryDataGroup implements IDataGroup {
+public class InMemoryDataGroup extends ClonableBean implements IDataGroup {
     private String dataGroupId;
     private String dataGroup;
     private String accessToken;

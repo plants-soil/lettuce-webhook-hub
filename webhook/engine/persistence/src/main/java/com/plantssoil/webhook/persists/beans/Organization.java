@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.IOrganization;
 
 /**
@@ -24,7 +25,7 @@ import com.plantssoil.webhook.core.IOrganization;
  */
 @Entity
 @Table(name = "LETTUCE_ORGANIZATION", indexes = { @Index(name = "idx_organization_email", columnList = "email") })
-public class Organization implements IOrganization, Serializable {
+public class Organization extends ClonableBean implements IOrganization, Serializable {
     private static final long serialVersionUID = -1431122765874295449L;
 
     public enum OrganizationStatus {
@@ -48,10 +49,12 @@ public class Organization implements IOrganization, Serializable {
     public Organization() {
     }
 
+    @Override
     public String getOrganizationId() {
         return organizationId;
     }
 
+    @Override
     public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }

@@ -2,6 +2,7 @@ package com.plantssoil.webhook.core.registry;
 
 import java.util.Map;
 
+import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.IWebhook;
 
 /**
@@ -13,7 +14,7 @@ import com.plantssoil.webhook.core.IWebhook;
  * @author danialdy
  * @Date 2 Jan 2025 5:10:09 pm
  */
-public class InMemoryWebhook implements IWebhook {
+public class InMemoryWebhook extends ClonableBean implements IWebhook {
     private String webhookId;
     private String subscriberId;
     private String webhookSecret;

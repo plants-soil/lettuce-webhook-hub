@@ -1,5 +1,6 @@
 package com.plantssoil.webhook.core.registry;
 
+import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.IEvent;
 
 /**
@@ -11,7 +12,7 @@ import com.plantssoil.webhook.core.IEvent;
  * @author danialdy
  * @Date 2 Jan 2025 5:08:29 pm
  */
-public class InMemoryEvent implements IEvent {
+public class InMemoryEvent extends ClonableBean implements IEvent {
     private String eventId;
     private String eventType;
     private String eventTag;

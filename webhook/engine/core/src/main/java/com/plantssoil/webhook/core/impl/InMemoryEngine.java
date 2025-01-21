@@ -124,6 +124,9 @@ class InMemoryEngine extends AbstractEngine implements IEngine {
             InMemorySubscriber ssub = new InMemorySubscriber(webhook, dataGroup);
             publisher.subscribe(ssub);
             ssubscribers.add(ssub);
+            if (!ssub.eventsLoaded()) {
+                loadExistingEventsSubscribed(webhook);
+            }
         }
     }
 

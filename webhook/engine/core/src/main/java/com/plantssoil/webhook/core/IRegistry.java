@@ -45,7 +45,7 @@ public interface IRegistry extends IConfigurable {
      * @param organization Existing organization to update
      * @see IOrganization
      */
-    public void updateOrganizationId(IOrganization organization);
+    public void updateOrganization(IOrganization organization);
 
     /**
      * Add new publisher into the webhook engine<br/>
@@ -260,6 +260,25 @@ public interface IRegistry extends IConfigurable {
      * @see IDataGroup
      */
     public void unsubscribeDataGroup(IWebhook webhook, List<IDataGroup> dataGroups);
+
+    /**
+     * Find existing organization by organization id
+     * 
+     * @param organizationId The organization id to find
+     * @return The organization object
+     * @see IOrganization
+     */
+    public IOrganization findOrganization(String organizationId);
+
+    /**
+     * Find all existing organizations, support pagination
+     * 
+     * @param page     Page index
+     * @param pageSize Maximum organizations on current page
+     * @return Organizations on current page
+     * @see IOrganization
+     */
+    public List<IOrganization> findAllOrganizations(int page, int pageSize);
 
     /**
      * Find existing publisher by publisher id

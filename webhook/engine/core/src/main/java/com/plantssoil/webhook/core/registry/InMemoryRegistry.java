@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.IDataGroup;
 import com.plantssoil.webhook.core.IEvent;
 import com.plantssoil.webhook.core.IOrganization;
@@ -49,6 +50,11 @@ public class InMemoryRegistry extends AbstractRegistry {
      * key - The ISubscriber.getSubscriberId(), value - ISubscriber
      */
     private Map<String, InMemorySubscriber> subscribers = new ConcurrentHashMap<>();
+
+    /**
+     * key - The organizationId, value - The subscriber id
+     */
+    private Map<String, String> organizationsBySubscriber = new ConcurrentHashMap<>();
 
     /**
      * key - The IEvent.getEventId(), value - IEvent
@@ -120,11 +126,17 @@ public class InMemoryRegistry extends AbstractRegistry {
 
     @Override
     public void addOrganization(IOrganization organization) {
+        super.addOrganization(organization);
+        if (this.organizations.containsKey(organization.getOrganizationId())) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                    String.format("The organization (organizationId: %s) arealdy exists!", organization.getOrganizationId()));
+        }
         this.organizations.put(organization.getOrganizationId(), (InMemoryOrganization) organization);
     }
 
     @Override
-    public void updateOrganizationId(IOrganization organization) {
+    public void updateOrganization(IOrganization organization) {
+        super.updateOrganization(organization);
         InMemoryOrganization old = this.organizations.get(organization.getOrganizationId());
         if (old == null) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
@@ -179,12 +191,16 @@ public class InMemoryRegistry extends AbstractRegistry {
 
     @Override
     protected void saveNewEvent(String publisherId, List<IEvent> es) {
+        if (!this.publishers.containsKey(publisherId)) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                    String.format("The publisher (publisherId: %s) does not exist!", publisherId));
+        }
         List<InMemoryEvent> existingEvents = getList(this.publisherEvents, publisherId);
-        Set<String> eventTypes = new HashSet<>();
         Set<String> existingEventTypes = new HashSet<>();
         for (InMemoryEvent existingEvent : existingEvents) {
-            existingEventTypes.add(existingEvent.getContentType());
+            existingEventTypes.add(existingEvent.getEventType());
         }
+        Set<String> eventTypes = new HashSet<>();
         for (IEvent e : es) {
             if (this.events.containsKey(e.getEventId())) {
                 throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
@@ -194,21 +210,28 @@ public class InMemoryRegistry extends AbstractRegistry {
                 throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
                         String.format("The event type shoule be unique, however (%s) is duplicated!", e.getEventType()));
             }
+            eventTypes.add(e.getEventType());
+        }
+
+        for (IEvent e : es) {
             InMemoryEvent ie = (InMemoryEvent) e;
             this.events.put(ie.getEventId(), ie);
-            eventTypes.add(ie.getEventType());
             existingEvents.add(ie);
         }
     }
 
     @Override
     protected void saveNewDataGroup(String publisherId, List<IDataGroup> dgs) {
+        if (!this.publishers.containsKey(publisherId)) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                    String.format("The publisher (publisherId: %s) does not exist!", publisherId));
+        }
         List<InMemoryDataGroup> existingDataGroups = getList(this.publisherDataGroups, publisherId);
-        Set<String> dataGroupNames = new HashSet<>();
         Set<String> existingDataGroupNames = new HashSet<>();
         for (InMemoryDataGroup existingDataGroup : existingDataGroups) {
             existingDataGroupNames.add(existingDataGroup.getDataGroup());
         }
+        Set<String> dataGroupNames = new HashSet<>();
         for (IDataGroup dg : dgs) {
             if (this.dataGroups.containsKey(dg.getDataGroupId())) {
                 throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
@@ -218,9 +241,11 @@ public class InMemoryRegistry extends AbstractRegistry {
                 throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
                         String.format("The data group shoule be unique, however (%s) is duplicated!", dg.getDataGroup()));
             }
+            dataGroupNames.add(dg.getDataGroup());
+        }
+        for (IDataGroup dg : dgs) {
             InMemoryDataGroup idg = (InMemoryDataGroup) dg;
             this.dataGroups.put(idg.getDataGroupId(), idg);
-            dataGroupNames.add(idg.getDataGroup());
             existingDataGroups.add(idg);
         }
     }
@@ -231,15 +256,31 @@ public class InMemoryRegistry extends AbstractRegistry {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
                     String.format("The subscriber (subscriberId: %s) arealdy exists!", subscriber.getSubscriberId()));
         }
+        if (!this.organizations.containsKey(subscriber.getOrganizationId())) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                    String.format("The organization (organizationId: %s) does not exists!", subscriber.getOrganizationId()));
+        }
+        String organizationBoundSubscriber = this.organizationsBySubscriber.get(subscriber.getOrganizationId());
+        if (organizationBoundSubscriber != null) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                    String.format("The organization (organizationId: %s) already bound to subscriber (subscriberId: %s)!", subscriber.getOrganizationId(),
+                            organizationBoundSubscriber));
+        }
         // add subscriber into map
         this.subscribers.put(subscriber.getSubscriberId(), (InMemorySubscriber) subscriber);
+        this.organizationsBySubscriber.put(subscriber.getOrganizationId(), subscriber.getSubscriberId());
     }
 
     @Override
     protected void saveUpdatedSubscriber(ISubscriber subscriber) {
-        if (!this.subscribers.containsKey(subscriber.getSubscriberId())) {
+        InMemorySubscriber old = this.subscribers.get(subscriber.getSubscriberId());
+        if (old == null) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
                     String.format("The subscriber (subscriberId: %s) to be update does not exists!", subscriber.getSubscriberId()));
+        }
+        if (!Objects.equals(old.getOrganizationId(), subscriber.getOrganizationId())) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008, String.format(
+                    "The property (organizationId, old: %s, updated: %s) could not be changed!", old.getOrganizationId(), subscriber.getOrganizationId()));
         }
         this.subscribers.put(subscriber.getSubscriberId(), (InMemorySubscriber) subscriber);
     }
@@ -252,6 +293,7 @@ public class InMemoryRegistry extends AbstractRegistry {
                     String.format("The subscriber (subscriberId: %s) to be delete does not exists!", subscriberId));
         }
         this.subscribers.remove(subscriberId);
+        this.organizationsBySubscriber.remove(subscriber.getOrganizationId());
         List<InMemoryWebhook> whs = getList(this.subscriberWebhooks, subscriberId);
         for (InMemoryWebhook wh : whs) {
             this.webhooks.remove(wh.getWebhookId());
@@ -270,7 +312,7 @@ public class InMemoryRegistry extends AbstractRegistry {
         }
         if (!this.subscribers.containsKey(webhook.getSubscriberId())) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
-                    String.format("The subscriber (subscriber: %s) does not exists!", webhook.getSubscriberId()));
+                    String.format("The subscriber (subscriberId: %s) does not exists!", webhook.getSubscriberId()));
         }
         if (!this.publishers.containsKey(webhook.getPublisherId())) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
@@ -291,17 +333,16 @@ public class InMemoryRegistry extends AbstractRegistry {
                     String.format("The webhook (webhookId: %s) to be update does not exists!", webhookId));
         }
         if (!Objects.equals(webhook.getPublisherId(), old.getPublisherId())) {
-            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008, String
-                    .format("The publisher id (old publisherId: %s, new publisherId: %s) can't be changed!", old.getPublisherId(), webhook.getPublisherId()));
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                    String.format("The publisher id (old: %s, new: %s) can't be changed!", old.getPublisherId(), webhook.getPublisherId()));
         }
         if (!Objects.equals(webhook.getPublisherVersion(), old.getPublisherVersion())) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
-                    String.format("The publisher version (old publisher version: %s, new publisher vewsion: %s) can't be changed!", old.getPublisherVersion(),
-                            webhook.getPublisherVersion()));
+                    String.format("The publisher version (old: %s, new: %s) can't be changed!", old.getPublisherVersion(), webhook.getPublisherVersion()));
         }
         if (!Objects.equals(webhook.getSubscriberId(), old.getSubscriberId())) {
-            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008, String.format(
-                    "The subscriber id (old subscriber id: %s, new subscriber id: %s) can't be changed!", old.getSubscriberId(), webhook.getSubscriberId()));
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                    String.format("The subscriber id (old: %s, new: %s) can't be changed!", old.getSubscriberId(), webhook.getSubscriberId()));
         }
 
         InMemoryWebhook wh = (InMemoryWebhook) webhook;
@@ -443,8 +484,21 @@ public class InMemoryRegistry extends AbstractRegistry {
     }
 
     @Override
+    public IOrganization findOrganization(String organizationId) {
+        InMemoryOrganization o = this.organizations.get(organizationId);
+        return (IOrganization) cloneObject(o);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<IOrganization> findAllOrganizations(int page, int pageSize) {
+        return getPagedList(this.organizations.values(), page, pageSize);
+    }
+
+    @Override
     public IPublisher findPublisher(String publisherId) {
-        return this.publishers.get(publisherId);
+        InMemoryPublisher o = this.publishers.get(publisherId);
+        return (IPublisher) cloneObject(o);
     }
 
     @SuppressWarnings("unchecked")
@@ -455,7 +509,8 @@ public class InMemoryRegistry extends AbstractRegistry {
 
     @Override
     public IEvent findEvent(String eventId) {
-        return this.events.get(eventId);
+        InMemoryEvent o = this.events.get(eventId);
+        return (IEvent) cloneObject(o);
     }
 
     @SuppressWarnings("unchecked")
@@ -474,7 +529,8 @@ public class InMemoryRegistry extends AbstractRegistry {
 
     @Override
     public IDataGroup findDataGroup(String dataGroupId) {
-        return this.dataGroups.get(dataGroupId);
+        InMemoryDataGroup o = this.dataGroups.get(dataGroupId);
+        return (IDataGroup) cloneObject(o);
     }
 
     @Override
@@ -482,7 +538,7 @@ public class InMemoryRegistry extends AbstractRegistry {
         List<InMemoryDataGroup> pdgl = getList(this.publisherDataGroups, publisherId);
         for (InMemoryDataGroup pdg : pdgl) {
             if (pdg.getDataGroup().equals(dataGroup)) {
-                return pdg;
+                return (IDataGroup) cloneObject(pdg);
             }
         }
         return null;
@@ -490,7 +546,8 @@ public class InMemoryRegistry extends AbstractRegistry {
 
     @Override
     public ISubscriber findSubscriber(String subscriberId) {
-        return this.subscribers.get(subscriberId);
+        InMemorySubscriber o = this.subscribers.get(subscriberId);
+        return (ISubscriber) cloneObject(o);
     }
 
     @SuppressWarnings("unchecked")
@@ -501,7 +558,8 @@ public class InMemoryRegistry extends AbstractRegistry {
 
     @Override
     public IWebhook findWebhook(String webhookId) {
-        return this.webhooks.get(webhookId);
+        InMemoryWebhook o = this.webhooks.get(webhookId);
+        return (IWebhook) cloneObject(o);
     }
 
     @SuppressWarnings("unchecked")
@@ -525,6 +583,25 @@ public class InMemoryRegistry extends AbstractRegistry {
         return getPagedList(wdgs, page, pageSize);
     }
 
+    @Override
+    public IDataGroup findSubscribedDataGroup(String webhookId, String dataGroup) {
+        List<InMemoryDataGroup> wdgs = getList(this.dataGroupsSubscribed, webhookId);
+        for (InMemoryDataGroup wdg : wdgs) {
+            if (wdg.getDataGroup().equals(dataGroup)) {
+                return (IDataGroup) cloneObject(wdg);
+            }
+        }
+        return null;
+    }
+
+    private ClonableBean cloneObject(ClonableBean o) {
+        try {
+            return o == null ? null : (ClonableBean) o.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private List getPagedList(List sourceList, int page, int pageSize) {
         List list = new ArrayList();
@@ -545,7 +622,8 @@ public class InMemoryRegistry extends AbstractRegistry {
         }
 
         for (int i = startIndex; i < endIndex; i++) {
-            list.add(sourceList.get(i));
+            ClonableBean o = (ClonableBean) sourceList.get(i);
+            list.add(cloneObject(o));
         }
         return list;
     }
@@ -570,23 +648,13 @@ public class InMemoryRegistry extends AbstractRegistry {
         }
 
         int i = 0;
-        for (Object o : collection) {
+        for (Object obj : collection) {
             if (i >= startIndex && i < endIndex) {
-                list.add(o);
+                ClonableBean o = (ClonableBean) obj;
+                list.add(cloneObject(o));
             }
             i++;
         }
         return list;
-    }
-
-    @Override
-    public IDataGroup findSubscribedDataGroup(String webhookId, String dataGroup) {
-        List<InMemoryDataGroup> wdgs = getList(this.dataGroupsSubscribed, webhookId);
-        for (InMemoryDataGroup wdg : wdgs) {
-            if (wdg.getDataGroup().equals(dataGroup)) {
-                return wdg;
-            }
-        }
-        return null;
     }
 }

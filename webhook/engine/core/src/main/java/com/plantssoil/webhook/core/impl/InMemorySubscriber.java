@@ -45,22 +45,54 @@ class InMemorySubscriber implements Subscriber<Message> {
         return this.webhook;
     }
 
+    /**
+     * Get the data group of current subscriber
+     * 
+     * @return Data group
+     */
     String getDataGroupSubscribed() {
         return dataGroupSubscribed;
     }
 
+    /**
+     * Set the data group of current subscriber
+     * 
+     * @param dataGroupSubscribed The data group subscribed
+     */
     void setDataGroupSubscribed(String dataGroupSubscribed) {
         this.dataGroupSubscribed = dataGroupSubscribed;
     }
 
+    /**
+     * Add subscribed event into current subscriber
+     * 
+     * @param eventType The subscribed event
+     */
     void addEventSubscribed(String eventType) {
         getEventsSubscribed().add(eventType);
     }
 
+    /**
+     * Remove subscribed event from current subscriber
+     * 
+     * @param eventType The subscribed event
+     */
     void removeEventSubscribed(String eventType) {
         getEventsSubscribed().remove(eventType);
     }
 
+    /**
+     * Check the events loaded or not
+     * 
+     * @return true - events loaded, false - events not loaded
+     */
+    boolean eventsLoaded() {
+        return getEventsSubscribed().size() > 0;
+    }
+
+    /**
+     * Stop the subscription on the publisher
+     */
     void unsubscribe() {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("Webhook subscriber (publisherId: %s, version: %s) unsubscribed.", this.webhook.getPublisherId(),
