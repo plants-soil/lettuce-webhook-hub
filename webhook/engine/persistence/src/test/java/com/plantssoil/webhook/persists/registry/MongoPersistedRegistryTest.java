@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import com.plantssoil.common.config.ConfigFactory;
+import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
@@ -62,6 +63,7 @@ public class MongoPersistedRegistryTest extends PersistedRegistryTestParent {
         }
         System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getTempDir());
         ConfigFactory.reload();
+        ConfigurableLoader.reload();
     }
 
     @AfterClass

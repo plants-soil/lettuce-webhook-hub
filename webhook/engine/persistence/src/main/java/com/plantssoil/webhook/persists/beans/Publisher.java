@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.IPublisher;
 
 /**
@@ -17,7 +18,7 @@ import com.plantssoil.webhook.core.IPublisher;
  */
 @Entity
 @Table(name = "LETTUCE_PUBLISHER", indexes = { @Index(name = "idx_publisher_orgid", columnList = "organizationId") })
-public class Publisher implements IPublisher, Serializable {
+public class Publisher extends ClonableBean implements IPublisher, Serializable {
     private static final long serialVersionUID = -1820991401679378737L;
     @Id
     private String publisherId;
@@ -41,10 +42,12 @@ public class Publisher implements IPublisher, Serializable {
         this.publisherId = publisherId;
     }
 
+    @Override
     public String getOrganizationId() {
         return organizationId;
     }
 
+    @Override
     public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }

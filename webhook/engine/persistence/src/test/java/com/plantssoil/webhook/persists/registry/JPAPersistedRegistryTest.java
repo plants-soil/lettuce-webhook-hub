@@ -1,6 +1,7 @@
 package com.plantssoil.webhook.persists.registry;
 
 import java.io.FileOutputStream;
+import java.util.List;
 import java.util.Properties;
 
 import org.junit.AfterClass;
@@ -10,9 +11,20 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import com.plantssoil.common.config.ConfigFactory;
+import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.LettuceConfiguration;
+import com.plantssoil.common.persistence.IPersistence;
+import com.plantssoil.common.persistence.IPersistenceFactory;
 import com.plantssoil.common.persistence.rdbms.JPAPersistenceFactory;
 import com.plantssoil.common.test.TempDirectoryUtility;
+import com.plantssoil.webhook.persists.beans.DataGroup;
+import com.plantssoil.webhook.persists.beans.DataGroupSubscribed;
+import com.plantssoil.webhook.persists.beans.Event;
+import com.plantssoil.webhook.persists.beans.EventSubscribed;
+import com.plantssoil.webhook.persists.beans.Organization;
+import com.plantssoil.webhook.persists.beans.Publisher;
+import com.plantssoil.webhook.persists.beans.Subscriber;
+import com.plantssoil.webhook.persists.beans.Webhook;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JPAPersistedRegistryTest extends PersistedRegistryTestParent {
@@ -54,10 +66,29 @@ public class JPAPersistedRegistryTest extends PersistedRegistryTestParent {
         }
         System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getTempDir());
         ConfigFactory.reload();
+        ConfigurableLoader.reload();
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
+        try (IPersistence p = IPersistenceFactory.getFactoryInstance().create()) {
+            List<DataGroupSubscribed> dgss = p.createQuery(DataGroupSubscribed.class).maxResults(10000).resultList().get();
+            List<EventSubscribed> sss = p.createQuery(EventSubscribed.class).maxResults(10000).resultList().get();
+            List<Webhook> ws = p.createQuery(Webhook.class).maxResults(10000).resultList().get();
+            List<Subscriber> ss = p.createQuery(Subscriber.class).maxResults(10000).resultList().get();
+            List<DataGroup> dgs = p.createQuery(DataGroup.class).maxResults(10000).resultList().get();
+            List<Event> es = p.createQuery(Event.class).maxResults(10000).resultList().get();
+            List<Publisher> ps = p.createQuery(Publisher.class).maxResults(10000).resultList().get();
+            List<Organization> os = p.createQuery(Organization.class).maxResults(10000).resultList().get();
+            p.remove(dgss);
+            p.remove(sss);
+            p.remove(ws);
+            p.remove(dgs);
+            p.remove(es);
+            p.remove(ps);
+            p.remove(ss);
+            p.remove(os);
+        }
         util.removeTempDirectory();
     }
 

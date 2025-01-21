@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import com.plantssoil.common.config.ConfigFactory;
+import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.test.TempDirectoryUtility;
 
@@ -43,6 +44,7 @@ public class InMemoryEngineTest extends IEngineTestParent {
         }
         System.setProperty(LettuceConfiguration.CONF_DIRECTORY_PROPERTY_NAME, util.getTempDir());
         ConfigFactory.reload();
+        ConfigurableLoader.reload();
     }
 
     @AfterClass

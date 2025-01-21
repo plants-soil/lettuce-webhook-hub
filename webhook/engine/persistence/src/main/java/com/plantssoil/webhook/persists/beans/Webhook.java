@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 
 import com.plantssoil.common.persistence.converter.ArrayStringConverter;
 import com.plantssoil.common.persistence.converter.MapStringConverter;
+import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.IWebhook;
 
 /**
@@ -29,7 +30,7 @@ import com.plantssoil.webhook.core.IWebhook;
 @Entity
 @Table(name = "LETTUCE_WEBHOOK", indexes = { @Index(name = "idx_webhook_subid", columnList = "subscriberId"),
         @Index(name = "idx_webhook_pubid", columnList = "publisherId") })
-public class Webhook implements IWebhook, Serializable {
+public class Webhook extends ClonableBean implements IWebhook, Serializable {
     private static final long serialVersionUID = -9107067549692351256L;
 
     @Id

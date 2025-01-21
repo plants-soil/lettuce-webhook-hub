@@ -121,11 +121,11 @@ public abstract class AbstractEngine {
         while (webhooks.size() > 0) {
             for (IWebhook webhook : webhooks) {
                 loadWebhook(webhook);
-                loadExistingEventsSubscribed(webhook);
                 IPublisher publisher = r.findPublisher(webhook.getPublisherId());
                 if (publisher != null && publisher.isSupportDataGroup()) {
                     loadExistingDataGroupsSubscribed(webhook);
                 }
+                loadExistingEventsSubscribed(webhook);
             }
             if (webhooks.size() < PAGE_SIZE) {
                 break;

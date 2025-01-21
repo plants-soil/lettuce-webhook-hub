@@ -1,5 +1,7 @@
 package com.plantssoil.webhook.core;
 
+import com.plantssoil.common.io.ObjectJsonSerializer;
+
 /**
  * The message used to publish & consume by message service
  * 
@@ -243,17 +245,7 @@ public class Message {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\"publisherId\" = \"").append(publisherId).append("\", ");
-        sb.append("\"version\" = \"").append(version).append("\", ");
-        sb.append("\"eventType\" = \"").append(eventType).append("\", ");
-        sb.append("\"eventTag\" = \"").append(eventTag).append("\", ");
-        sb.append("\"contentType\" = \"").append(contentType).append("\", ");
-        sb.append("\"charset\" = \"").append(charset).append("\", ");
-        sb.append("\"dataGroup\" = \"").append(dataGroup).append("\", ");
-        sb.append("\"requestId\" = \"").append(requestId).append("\", ");
-        sb.append("\"payload\" = \"").append(payload).append("\"}");
-        return sb.toString();
+        return ObjectJsonSerializer.getInstance().serialize(this);
     }
 
 }

@@ -10,6 +10,7 @@ import com.plantssoil.common.mq.IMessagePublisher;
 import com.plantssoil.common.mq.IMessageServiceFactory;
 import com.plantssoil.webhook.core.IDataGroup;
 import com.plantssoil.webhook.core.IEvent;
+import com.plantssoil.webhook.core.IOrganization;
 import com.plantssoil.webhook.core.IPublisher;
 import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.ISubscriber;
@@ -33,6 +34,23 @@ import com.plantssoil.webhook.core.exception.EngineException;
  */
 public abstract class AbstractRegistry implements IRegistry {
     protected final static int PAGE_SIZE = 20;
+
+    @Override
+    public void addOrganization(IOrganization organization) {
+        checkRequiredAttribute(organization);
+    }
+
+    @Override
+    public void updateOrganization(IOrganization organization) {
+        checkRequiredAttribute(organization);
+    }
+
+    private void checkRequiredAttribute(IOrganization organization) {
+        if (organization == null || organization.getOrganizationId() == null) {
+            String msg = String.format("The organization and it's attributes (%s) are required!", "organization id");
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20009, msg);
+        }
+    }
 
     /**
      * Save new created publisher into persistence (in-memory, JPA, or other)
@@ -195,7 +213,7 @@ public abstract class AbstractRegistry implements IRegistry {
     public void updateSubscriber(ISubscriber subscriber) {
         checkRequiredAttribute(subscriber);
         String subscriberId = subscriber.getSubscriberId();
-        synchronized (subscriberId) {
+        synchronized (subscriberId.intern()) {
             // persist subscriber
             saveUpdatedSubscriber(subscriber);
             // notify webhook engine
@@ -223,7 +241,7 @@ public abstract class AbstractRegistry implements IRegistry {
     @Override
     public void removeSubscriber(ISubscriber subscriber) {
         String subscriberId = subscriber.getSubscriberId();
-        synchronized (subscriberId) {
+        synchronized (subscriberId.intern()) {
             // notify webhook engine
             RegistryChangeMessage message = new RegistryChangeMessage(RegistryChangeMessage.RegistryType.SUBSCRIBER, RegistryChangeMessage.ChangeType.REMOVE);
             message.setSubscriberId(subscriberId);
@@ -264,7 +282,7 @@ public abstract class AbstractRegistry implements IRegistry {
     public void updateWebhook(IWebhook webhook) {
         checkRequiredAttribute(webhook);
         String webhookId = webhook.getWebhookId();
-        synchronized (webhookId) {
+        synchronized (webhookId.intern()) {
             // persist webhook
             saveUpdatedWebhook(webhook);
             // notify webhook engine
@@ -295,8 +313,9 @@ public abstract class AbstractRegistry implements IRegistry {
 
     @Override
     public void activateWebhook(IWebhook webhook) {
+        checkRequiredAttribute(webhook);
         String webhookId = webhook.getWebhookId();
-        synchronized (webhookId) {
+        synchronized (webhookId.intern()) {
             // persist webhook
             saveActivatedWebhook(webhook);
             // notify webhook engine
@@ -318,8 +337,9 @@ public abstract class AbstractRegistry implements IRegistry {
 
     @Override
     public void deactivateWebhook(IWebhook webhook) {
+        checkRequiredAttribute(webhook);
         String webhookId = webhook.getWebhookId();
-        synchronized (webhookId) {
+        synchronized (webhookId.intern()) {
             // persist webhook
             saveDeactivatedWebhook(webhook);
             // notify webhook engine
@@ -357,7 +377,7 @@ public abstract class AbstractRegistry implements IRegistry {
     @Override
     public void subscribeEvent(IWebhook webhook, List<IEvent> events) {
         String webhookId = webhook.getWebhookId();
-        synchronized (webhookId) {
+        synchronized (webhookId.intern()) {
             // persist events subscribed
             saveEventSubscribed(webhook, events);
             // notify webhook engine
@@ -387,7 +407,7 @@ public abstract class AbstractRegistry implements IRegistry {
     @Override
     public void unsubscribeEvent(IWebhook webhook, List<IEvent> events) {
         String webhookId = webhook.getWebhookId();
-        synchronized (webhookId) {
+        synchronized (webhookId.intern()) {
             // persist events subscribed
             saveEventUnsubscribed(webhook, events);
             // notify webhook engine
@@ -424,7 +444,7 @@ public abstract class AbstractRegistry implements IRegistry {
     @Override
     public void subscribeDataGroup(IWebhook webhook, List<IDataGroup> dataGroups) {
         String webhookId = webhook.getWebhookId();
-        synchronized (webhookId) {
+        synchronized (webhookId.intern()) {
             // persist data groups subscribed
             saveDataGroupSubscribed(webhook, dataGroups);
             // notify webhook engine
@@ -461,7 +481,7 @@ public abstract class AbstractRegistry implements IRegistry {
     @Override
     public void unsubscribeDataGroup(IWebhook webhook, List<IDataGroup> dataGroups) {
         String webhookId = webhook.getWebhookId();
-        synchronized (webhookId) {
+        synchronized (webhookId.intern()) {
             // persist data groups subscribed
             saveDataGroupUnsubscribed(webhook, dataGroups);
             // notify webhook engine

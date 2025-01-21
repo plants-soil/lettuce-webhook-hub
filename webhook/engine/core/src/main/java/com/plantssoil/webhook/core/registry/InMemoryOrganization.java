@@ -1,5 +1,6 @@
 package com.plantssoil.webhook.core.registry;
 
+import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.IOrganization;
 
 /**
@@ -11,7 +12,7 @@ import com.plantssoil.webhook.core.IOrganization;
  * @author danialdy
  * @Date 17 Jan 2025 4:35:28 pm
  */
-public class InMemoryOrganization implements IOrganization {
+public class InMemoryOrganization extends ClonableBean implements IOrganization {
     private String organizationId;
 
     @Override
