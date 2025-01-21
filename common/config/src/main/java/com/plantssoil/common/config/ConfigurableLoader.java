@@ -22,6 +22,11 @@ public class ConfigurableLoader {
         configurables = new ConcurrentHashMap<>();
     }
 
+    /**
+     * Get the singleton instance of {@link ConfigurableLoader}
+     * 
+     * @return the singleton instance
+     */
     public static ConfigurableLoader getInstance() {
         if (instance == null) {
             synchronized (ConfigurableLoader.class) {
@@ -29,6 +34,13 @@ public class ConfigurableLoader {
                     instance = new ConfigurableLoader();
                 }
             }
+        }
+        return instance;
+    }
+
+    public static ConfigurableLoader reload() {
+        synchronized (ConfigurableLoader.class) {
+            instance = new ConfigurableLoader();
         }
         return instance;
     }
@@ -107,29 +119,6 @@ public class ConfigurableLoader {
             }
         }
         return singleton;
-    }
-
-    /**
-     * Remove the configurable singleton instance (if it is and exists)<br/>
-     * The method {@link AutoCloseable#close()} will be called if the singleton
-     * implements {@link AutoCloseable} interface <br/>
-     * 
-     * @param <T>   IConfigurable implementation
-     * @param clazz class which implements IConfigurable
-     * @return clazz singleton instance
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends IConfigurable> T removeSingleton(Class<T> clazz) {
-        String clazzName = "<CLASS>-" + clazz.getName();
-        IConfigurable singleton = configurables.remove(clazzName);
-        if (singleton != null && singleton instanceof AutoCloseable) {
-            try {
-                ((AutoCloseable) singleton).close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return (T) singleton;
     }
 
     /**

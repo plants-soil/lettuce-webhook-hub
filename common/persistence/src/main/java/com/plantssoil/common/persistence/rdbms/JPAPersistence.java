@@ -45,6 +45,7 @@ class JPAPersistence implements IPersistence {
             return;
         } else if (entities.size() == 1) {
             this.create(entities.get(0));
+            return;
         }
 
         EntityManager em = this.getEntityManager();
@@ -92,6 +93,7 @@ class JPAPersistence implements IPersistence {
             return;
         } else if (entities.size() == 1) {
             this.remove(entities.get(0));
+            return;
         }
         EntityManager em = this.getEntityManager();
         for (Object entity : entities) {
