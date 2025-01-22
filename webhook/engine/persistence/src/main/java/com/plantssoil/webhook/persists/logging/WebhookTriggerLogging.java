@@ -8,7 +8,7 @@ import com.plantssoil.common.persistence.IEntityQuery;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
 import com.plantssoil.webhook.core.Message;
-import com.plantssoil.webhook.persists.beans.WebhookEventLog;
+import com.plantssoil.webhook.persists.beans.WebhookLog;
 
 /**
  * Webhook Publish Logging
@@ -29,10 +29,10 @@ public class WebhookTriggerLogging implements IWebhookLogging {
         CompletableFuture.runAsync(() -> {
             Message event = (Message) args[0];
             try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
-                IEntityQuery<WebhookEventLog> query = persists.createQuery(WebhookEventLog.class);
-                WebhookEventLog log = query.singleResult(event.getRequestId()).get();
+                IEntityQuery<WebhookLog> query = persists.createQuery(WebhookLog.class);
+                WebhookLog log = query.singleResult(event.getRequestId()).get();
                 if (log == null) {
-                    log = new WebhookEventLog();
+                    log = new WebhookLog();
                     log.setPublisherId(event.getPublisherId());
                     log.setVersion(event.getVersion());
                     log.setDataGroup(event.getDataGroup());

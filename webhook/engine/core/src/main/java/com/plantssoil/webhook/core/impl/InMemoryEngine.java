@@ -53,7 +53,7 @@ class InMemoryEngine extends AbstractEngine implements IEngine {
     }
 
     @Override
-    public void trigger(Message message) {
+    public void triggerMessage(Message message) {
         PublisherKey key = new PublisherKey(message.getPublisherId(), message.getVersion(), message.getDataGroup());
         SubmissionPublisher<Message> publisher = this.submissionPublishers.get(key);
         if (publisher == null) {

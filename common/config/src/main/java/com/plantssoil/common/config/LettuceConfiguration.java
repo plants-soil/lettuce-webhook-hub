@@ -68,6 +68,12 @@ public class LettuceConfiguration {
     public final static String WEBHOOK_ENGINE_REGISTRY_CONFIGURABLE = "webhook.engine.registry.configurable";
 
     /**
+     * Lettuce Webhook Engine Logging implementation configuration, will ignore
+     * logging if this configure is blank
+     */
+    public final static String WEBHOOK_ENGINE_LOGGING_CONFIGURABLE = "webhook.engine.logging.configurable";
+
+    /**
      * Lettuce Webhook Engine max idle http connection pool, defaults to 5
      */
     public final static String WEBHOOK_ENGINE_CONNECTION_POOL_SIZE = "webhook.engine.connection.pool.size";

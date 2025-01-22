@@ -14,10 +14,12 @@ import com.plantssoil.common.mq.IMessageConsumer;
 import com.plantssoil.common.mq.IMessageServiceFactory;
 import com.plantssoil.webhook.core.IDataGroup;
 import com.plantssoil.webhook.core.IEvent;
+import com.plantssoil.webhook.core.ILogging;
 import com.plantssoil.webhook.core.IPublisher;
 import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.ISubscriber;
 import com.plantssoil.webhook.core.IWebhook;
+import com.plantssoil.webhook.core.Message;
 import com.plantssoil.webhook.core.registry.InMemoryRegistry;
 
 /**
@@ -32,6 +34,7 @@ public abstract class AbstractEngine {
     final static int PAGE_SIZE = 20;
     private IRegistry registry;
     private RegistryChangeListener registryChangeListener = new RegistryChangeListener(this);
+    private ILogging logging = ILogging.getInstance();
 
     public AbstractEngine() {
         super();
@@ -174,6 +177,25 @@ public abstract class AbstractEngine {
                 .channelName(REGISTRY_CHANGE_MESSAGE_QUEUE_NAME).channelType(ChannelType.TOPIC).addMessageListener(this.registryChangeListener);
         // consume message from message service
         consumer.consume(RegistryChangeMessage.class);
+    }
+
+    /**
+     * Trigger message from the publisher
+     * 
+     * @param message The message to trigger
+     */
+    protected abstract void triggerMessage(Message message);
+
+    /**
+     * Trigger message (will logging the message if necessary)
+     * 
+     * @param message The message to trigger
+     */
+    public void trigger(Message message) {
+        if (this.logging != null) {
+            this.logging.triggerMessage(message);
+        }
+        triggerMessage(message);
     }
 
     public String getVersion() {

@@ -55,7 +55,7 @@ class SingleMessageQueueEngine extends AbstractEngine implements IEngine {
     }
 
     @Override
-    public void trigger(Message message) {
+    public void triggerMessage(Message message) {
         // message service factory
         IMessageServiceFactory<Message> f = IMessageServiceFactory.getFactoryInstance();
         // message publisher
