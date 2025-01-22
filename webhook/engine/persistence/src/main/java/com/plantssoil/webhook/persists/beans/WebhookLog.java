@@ -10,9 +10,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "LETTUCE_WEBHOOKEVENTLOG", indexes = { @Index(name = "idx_we_pubid", columnList = "publisherId"),
-        @Index(name = "idx_we_eventType", columnList = "eventType"), @Index(name = "idx_we_requestId", columnList = "requestId") })
-public class WebhookEventLog implements java.io.Serializable {
+@Table(name = "LETTUCE_WEBHOOKLOG", indexes = { @Index(name = "idx_wl_pubid", columnList = "publisherId"),
+        @Index(name = "idx_wl_eventType", columnList = "eventType") })
+public class WebhookLog implements java.io.Serializable {
     private static final long serialVersionUID = 4036647805497080463L;
     private String publisherId;
     private String version;
@@ -28,7 +28,7 @@ public class WebhookEventLog implements java.io.Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date triggerTime;
 
-    public WebhookEventLog() {
+    public WebhookLog() {
     }
 
     public String getPublisherId() {

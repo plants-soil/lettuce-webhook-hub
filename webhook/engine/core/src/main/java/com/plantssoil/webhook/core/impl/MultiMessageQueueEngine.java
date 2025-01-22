@@ -50,7 +50,7 @@ class MultiMessageQueueEngine extends AbstractEngine implements IEngine {
     }
 
     @Override
-    public void trigger(Message message) {
+    public void triggerMessage(Message message) {
         if (!this.publishersLoaded.containsKey(message.getPublisherId())) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20004,
                     String.format("The publisher (%s) does not register yet!", message.getPublisherId()));

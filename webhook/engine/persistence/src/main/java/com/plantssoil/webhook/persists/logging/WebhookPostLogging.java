@@ -10,8 +10,8 @@ import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
 import com.plantssoil.webhook.core.IWebhook;
 import com.plantssoil.webhook.core.Message;
-import com.plantssoil.webhook.persists.beans.WebhookEventLog;
-import com.plantssoil.webhook.persists.beans.WebhookEventLogLine;
+import com.plantssoil.webhook.persists.beans.WebhookLog;
+import com.plantssoil.webhook.persists.beans.WebhookLogLine;
 
 /**
  * Webhook HTTP Post Logging
@@ -36,15 +36,14 @@ public class WebhookPostLogging implements IWebhookLogging {
             Message message = (Message) args[0];
             IWebhook subscriber = (IWebhook) args[1];
             try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
-                IEntityQuery<WebhookEventLog> query = persists.createQuery(WebhookEventLog.class);
-                WebhookEventLog log = query.singleResult(message.getRequestId()).get();
+                IEntityQuery<WebhookLog> query = persists.createQuery(WebhookLog.class);
+                WebhookLog log = query.singleResult(message.getRequestId()).get();
                 if (log != null) {
-                    WebhookEventLogLine line = new WebhookEventLogLine();
+                    WebhookLogLine line = new WebhookLogLine();
                     line.setLogLineId(EntityUtils.getInstance().createUniqueObjectId());
                     line.setRequestId(message.getRequestId());
                     line.setSubscriberId(subscriber.getWebhookId());
-                    line.setExecuteMillseconds(System.currentTimeMillis());
-                    line.setPostTime(new Date());
+                    line.setLogTime(new Date());
                     persists.create(line);
                 }
             } catch (Exception e) {

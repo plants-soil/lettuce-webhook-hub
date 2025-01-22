@@ -12,8 +12,8 @@
         <class>com.plantssoil.webhook.persists.beans.Webhook</class>
         <class>com.plantssoil.webhook.persists.beans.DataGroupSubscribed</class>
         <class>com.plantssoil.webhook.persists.beans.EventSubscribed</class>
-        <class>com.plantssoil.webhook.persists.beans.WebhookEventLog</class>
-        <class>com.plantssoil.webhook.persists.beans.WebhookEventLogLine</class>
+        <class>com.plantssoil.webhook.persists.beans.WebhookLog</class>
+        <class>com.plantssoil.webhook.persists.beans.WebhookLogLine</class>
         
         <!-- Need delete this configuration in runtime -->
         <properties>

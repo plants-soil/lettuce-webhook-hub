@@ -22,15 +22,15 @@ import com.plantssoil.webhook.core.ISubscriber;
 import com.plantssoil.webhook.core.IWebhook;
 import com.plantssoil.webhook.core.IWebhook.SecurityStrategy;
 import com.plantssoil.webhook.core.IWebhook.WebhookStatus;
+import com.plantssoil.webhook.core.Message;
 import com.plantssoil.webhook.persists.beans.DataGroup;
 import com.plantssoil.webhook.persists.beans.Event;
+import com.plantssoil.webhook.persists.beans.Event.EventStatus;
 import com.plantssoil.webhook.persists.beans.Organization;
+import com.plantssoil.webhook.persists.beans.Organization.OrganizationStatus;
 import com.plantssoil.webhook.persists.beans.Publisher;
 import com.plantssoil.webhook.persists.beans.Subscriber;
 import com.plantssoil.webhook.persists.beans.Webhook;
-import com.plantssoil.webhook.persists.beans.Event.EventStatus;
-import com.plantssoil.webhook.persists.beans.Organization.OrganizationStatus;
-import com.plantssoil.webhook.core.Message;
 
 import io.netty.util.internal.ThreadLocalRandom;
 
@@ -305,7 +305,6 @@ public class PersistedRegistryTestParent {
                         "UTF-8", null, "MESSAGE-" + this.startTimeMilliseconds + "-" + id,
                         "{\"data\": \"This is the test payload-" + this.startTimeMilliseconds + "-" + id + "\"}");
                 engine.trigger(message);
-//                System.out.println(message);
                 count++;
             }
         }
