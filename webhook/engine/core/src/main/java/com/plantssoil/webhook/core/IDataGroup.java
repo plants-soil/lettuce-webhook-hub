@@ -1,12 +1,14 @@
 package com.plantssoil.webhook.core;
 
+import java.io.Serializable;
+
 /**
  * Data group, if publisher supports data group
  * 
  * @author danialdy
  * @Date 29 Nov 2024 7:21:42 pm
  */
-public interface IDataGroup {
+public interface IDataGroup extends Serializable {
     /**
      * Set the data group id
      * 

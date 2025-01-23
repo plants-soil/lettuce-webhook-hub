@@ -1,6 +1,5 @@
 package com.plantssoil.webhook.persists.beans;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -18,7 +17,7 @@ import com.plantssoil.webhook.core.IPublisher;
  */
 @Entity
 @Table(name = "LETTUCE_PUBLISHER", indexes = { @Index(name = "idx_publisher_orgid", columnList = "organizationId") })
-public class Publisher extends ClonableBean implements IPublisher, Serializable {
+public class Publisher extends ClonableBean implements IPublisher {
     private static final long serialVersionUID = -1820991401679378737L;
     @Id
     private String publisherId;

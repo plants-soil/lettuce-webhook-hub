@@ -1,5 +1,7 @@
 package com.plantssoil.webhook.core.registry;
 
+import java.util.Date;
+
 import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.IEvent;
 
@@ -13,11 +15,20 @@ import com.plantssoil.webhook.core.IEvent;
  * @Date 2 Jan 2025 5:08:29 pm
  */
 public class InMemoryEvent extends ClonableBean implements IEvent {
+    private static final long serialVersionUID = 2311945316634892414L;
+
+    public enum EventStatus {
+        SUBMITTED, PUBLISHED, RETIRED
+    }
+
     private String eventId;
     private String eventType;
     private String eventTag;
     private String contentType;
     private String charset;
+    private EventStatus eventStatus;
+    private String createdBy;
+    private Date creationTime;
 
     @Override
     public String getEventId() {
@@ -67,6 +78,30 @@ public class InMemoryEvent extends ClonableBean implements IEvent {
     @Override
     public void setCharset(String charset) {
         this.charset = charset;
+    }
+
+    public EventStatus getEventStatus() {
+        return eventStatus;
+    }
+
+    public void setEventStatus(EventStatus eventStatus) {
+        this.eventStatus = eventStatus;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
     }
 
 }

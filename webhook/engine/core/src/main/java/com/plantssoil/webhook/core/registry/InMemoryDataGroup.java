@@ -13,6 +13,8 @@ import com.plantssoil.webhook.core.IDataGroup;
  * @Date 2 Jan 2025 5:07:28 pm
  */
 public class InMemoryDataGroup extends ClonableBean implements IDataGroup {
+    private static final long serialVersionUID = -7836745692972021937L;
+
     private String dataGroupId;
     private String dataGroup;
     private String accessToken;

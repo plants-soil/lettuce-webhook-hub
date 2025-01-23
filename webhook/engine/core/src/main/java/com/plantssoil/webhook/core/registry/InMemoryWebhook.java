@@ -1,5 +1,6 @@
 package com.plantssoil.webhook.core.registry;
 
+import java.util.Date;
 import java.util.Map;
 
 import com.plantssoil.webhook.core.ClonableBean;
@@ -15,8 +16,13 @@ import com.plantssoil.webhook.core.IWebhook;
  * @Date 2 Jan 2025 5:10:09 pm
  */
 public class InMemoryWebhook extends ClonableBean implements IWebhook {
+    private static final long serialVersionUID = 4304298570867180416L;
+
     private String webhookId;
     private String subscriberId;
+    private String appName;
+    private String appTag;
+    private String description;
     private String webhookSecret;
     private SecurityStrategy securityStrategy;
     private String webhookUrl;
@@ -27,6 +33,8 @@ public class InMemoryWebhook extends ClonableBean implements IWebhook {
     private String publisherVersion;
     private String accessToken;
     private String refreshToken;
+    private String createdBy;
+    private Date creationTime;
 
     @Override
     public void setWebhookId(String webhookId) {
@@ -36,6 +44,30 @@ public class InMemoryWebhook extends ClonableBean implements IWebhook {
     @Override
     public void setSubscriberId(String subscriberId) {
         this.subscriberId = subscriberId;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public String getAppTag() {
+        return appTag;
+    }
+
+    public void setAppTag(String appTag) {
+        this.appTag = appTag;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -147,4 +179,21 @@ public class InMemoryWebhook extends ClonableBean implements IWebhook {
     public String getRefreshToken() {
         return this.refreshToken;
     }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
+    }
+
 }

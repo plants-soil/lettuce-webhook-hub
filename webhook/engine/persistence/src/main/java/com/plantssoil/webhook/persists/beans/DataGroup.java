@@ -1,7 +1,5 @@
 package com.plantssoil.webhook.persists.beans;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Index;
@@ -22,7 +20,7 @@ import com.plantssoil.webhook.core.IDataGroup;
 @Entity
 @Table(name = "LETTUCE_DATAGROUP", uniqueConstraints = @UniqueConstraint(columnNames = { "publisherId", "dataGroup" }), indexes = {
         @Index(name = "idx_datagroup_pubid", columnList = "publisherId") })
-public class DataGroup extends ClonableBean implements IDataGroup, Serializable {
+public class DataGroup extends ClonableBean implements IDataGroup {
     private static final long serialVersionUID = 114811278647950932L;
     @Id
     private String dataGroupId;

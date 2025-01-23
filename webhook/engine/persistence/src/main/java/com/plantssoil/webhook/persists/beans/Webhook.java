@@ -1,6 +1,5 @@
 package com.plantssoil.webhook.persists.beans;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ import com.plantssoil.webhook.core.IWebhook;
 @Entity
 @Table(name = "LETTUCE_WEBHOOK", indexes = { @Index(name = "idx_webhook_subid", columnList = "subscriberId"),
         @Index(name = "idx_webhook_pubid", columnList = "publisherId") })
-public class Webhook extends ClonableBean implements IWebhook, Serializable {
+public class Webhook extends ClonableBean implements IWebhook {
     private static final long serialVersionUID = -9107067549692351256L;
 
     @Id
@@ -51,7 +50,7 @@ public class Webhook extends ClonableBean implements IWebhook, Serializable {
     @Convert(converter = ArrayStringConverter.class)
     private String[] trustedIps;
     @Enumerated(EnumType.STRING)
-    private WebhookStatus webhookStatus;
+    private WebhookStatus webhookStatus = WebhookStatus.TEST;
     private String accessToken;
     private String refreshToken;
     private String createdBy;

@@ -1,7 +1,5 @@
 package com.plantssoil.webhook.persists.beans;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -19,7 +17,7 @@ import com.plantssoil.webhook.core.ISubscriber;
  */
 @Entity
 @Table(name = "LETTUCE_SUBSCRIBER", indexes = { @Index(name = "idx_subscriber_orgid", columnList = "organizationId") })
-public class Subscriber extends ClonableBean implements ISubscriber, Serializable {
+public class Subscriber extends ClonableBean implements ISubscriber {
     private static final long serialVersionUID = 1848865673559702879L;
     @Id
     private String subscriberId;

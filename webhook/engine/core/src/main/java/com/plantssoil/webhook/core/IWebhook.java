@@ -1,5 +1,6 @@
 package com.plantssoil.webhook.core;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Map;
  * @Date 29 Nov 2024 2:52:09 pm
  * @see ISubscriber
  */
-public interface IWebhook {
+public interface IWebhook extends Serializable {
     /**
      * The security strategy<br/>
      * This strategy determines how to signature the webhook request<br/>

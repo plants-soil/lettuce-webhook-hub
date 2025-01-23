@@ -1,6 +1,5 @@
 package com.plantssoil.webhook.persists.beans;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -25,7 +24,7 @@ import com.plantssoil.webhook.core.IOrganization;
  */
 @Entity
 @Table(name = "LETTUCE_ORGANIZATION", indexes = { @Index(name = "idx_organization_email", columnList = "email") })
-public class Organization extends ClonableBean implements IOrganization, Serializable {
+public class Organization extends ClonableBean implements IOrganization {
     private static final long serialVersionUID = -1431122765874295449L;
 
     public enum OrganizationStatus {
@@ -35,7 +34,7 @@ public class Organization extends ClonableBean implements IOrganization, Seriali
     @Id
     private String organizationId;
     private String organizationName;
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
     private String website;
     private String logoLink;

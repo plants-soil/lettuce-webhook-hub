@@ -1,5 +1,7 @@
 package com.plantssoil.webhook.core;
 
+import java.io.Serializable;
+
 /**
  * The publisher event
  * <p>
@@ -19,7 +21,7 @@ package com.plantssoil.webhook.core;
  * @author danialdy
  * @Date 29 Nov 2024 2:30:50 pm
  */
-public interface IEvent {
+public interface IEvent extends Serializable {
     /**
      * set the event id
      * 

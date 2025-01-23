@@ -127,20 +127,44 @@ public class InMemoryRegistry extends AbstractRegistry {
     @Override
     public void addOrganization(IOrganization organization) {
         super.addOrganization(organization);
-        if (this.organizations.containsKey(organization.getOrganizationId())) {
+        InMemoryOrganization newOrg = (InMemoryOrganization) organization;
+        if (newOrg.getEmail() == null || newOrg.getEmail().strip().length() == 0) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                    String.format("The email of organization (organizationId: %s) is required!", organization.getOrganizationId()));
+        }
+        if (this.organizations.containsKey(newOrg.getOrganizationId())) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
                     String.format("The organization (organizationId: %s) arealdy exists!", organization.getOrganizationId()));
         }
-        this.organizations.put(organization.getOrganizationId(), (InMemoryOrganization) organization);
+        for (InMemoryOrganization org : this.organizations.values()) {
+            if (Objects.equals(newOrg.getEmail(), org.getEmail())) {
+                throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                        String.format("The email (%s) can't be same with an existing organization (organizationId: %s)!", newOrg.getEmail(),
+                                organization.getOrganizationId()));
+            }
+        }
+        this.organizations.put(newOrg.getOrganizationId(), newOrg);
     }
 
     @Override
     public void updateOrganization(IOrganization organization) {
         super.updateOrganization(organization);
+        InMemoryOrganization newOrg = (InMemoryOrganization) organization;
+        if (newOrg.getEmail() == null || newOrg.getEmail().strip().length() == 0) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                    String.format("The email of organization (organizationId: %s) is required!", organization.getOrganizationId()));
+        }
         InMemoryOrganization old = this.organizations.get(organization.getOrganizationId());
         if (old == null) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
                     String.format("The organization (organizationId: %s) to be update does not exists!", organization.getOrganizationId()));
+        }
+        for (InMemoryOrganization org : this.organizations.values()) {
+            if (!newOrg.getOrganizationId().equals(org.getOrganizationId()) && Objects.equals(newOrg.getEmail(), org.getEmail())) {
+                throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                        String.format("The email (%s) can't be same with an existing organization (organizationId: %s)!", newOrg.getEmail(),
+                                organization.getOrganizationId()));
+            }
         }
         this.organizations.put(organization.getOrganizationId(), (InMemoryOrganization) organization);
     }

@@ -119,7 +119,9 @@ public class InMemoryRegistryTest {
         // add 15 organizations, should success
         for (int i = 0; i < 15; i++) {
             InMemoryOrganization o = new InMemoryOrganization();
-            o.setOrganizationId(getEntityId(ORGANIZATION_PREFIX));
+            String id = getEntityId(ORGANIZATION_PREFIX);
+            o.setOrganizationId(id);
+            o.setEmail(id + "@e-yunyi.com");
             r.addOrganization(o);
         }
         List<IOrganization> os = r.findAllOrganizations(0, 100);
