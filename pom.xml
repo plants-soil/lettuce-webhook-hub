@@ -66,6 +66,9 @@
 		<version.rabbitmq-client>5.22.0</version.rabbitmq-client>
 		<version.activemq-client>5.18.6</version.activemq-client>
 		<version.redis-lettuce>6.5.0.RELEASE</version.redis-lettuce>
+		<version.swagger-core>2.0.9</version.swagger-core>
+		<version.javaee-api>7.0</version.javaee-api>
+
 		<!-- Testing -->
 		<version.junit>4.13.2</version.junit>
 		<version.commons-dbcp>1.4</version.commons-dbcp>
@@ -121,7 +124,6 @@
 				<artifactId>lettuce-common-mq</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
-			
 			<dependency>
 				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-webhook-engine-core</artifactId>
@@ -135,6 +137,11 @@
 			<dependency>
 				<groupId>com.plantssoil</groupId>
 				<artifactId>lettuce-webhook-engine-persistence</artifactId>
+				<version>${version.parent}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.plantssoil</groupId>
+				<artifactId>lettuce-webhook-api-rest</artifactId>
 				<version>${version.parent}</version>
 			</dependency>
 
@@ -281,6 +288,12 @@
 
 			<!-- Restful API -->
 			<dependency>
+				<groupId>javax</groupId>
+				<artifactId>javaee-api</artifactId>
+				<version>${version.javaee-api}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>resteasy-core</artifactId>
 				<version>${version.resteasy}</version>
@@ -294,6 +307,11 @@
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>resteasy-servlet-initializer</artifactId>
 				<version>${version.resteasy}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.swagger.core.v3</groupId>
+				<artifactId>swagger-jaxrs2</artifactId>
+				<version>${version.swagger-core}</version>
 			</dependency>
 
 			<!-- Testing -->
