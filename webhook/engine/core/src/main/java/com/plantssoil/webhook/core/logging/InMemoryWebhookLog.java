@@ -1,10 +1,11 @@
-package com.plantssoil.webhook.core.registry;
+package com.plantssoil.webhook.core.logging;
 
 import java.util.Date;
 
 import com.plantssoil.webhook.core.ClonableBean;
+import com.plantssoil.webhook.core.IWebhookLog;
 
-public class InMemoryWebhookLog extends ClonableBean implements java.io.Serializable {
+public class InMemoryWebhookLog extends ClonableBean implements IWebhookLog, java.io.Serializable {
     private static final long serialVersionUID = 4036647805497080463L;
 
     private String publisherId;
@@ -46,6 +47,7 @@ public class InMemoryWebhookLog extends ClonableBean implements java.io.Serializ
         this.dataGroup = dataGroup;
     }
 
+    @Override
     public String getEventType() {
         return eventType;
     }
@@ -54,6 +56,7 @@ public class InMemoryWebhookLog extends ClonableBean implements java.io.Serializ
         this.eventType = eventType;
     }
 
+    @Override
     public String getEventTag() {
         return eventTag;
     }
@@ -62,6 +65,7 @@ public class InMemoryWebhookLog extends ClonableBean implements java.io.Serializ
         this.eventTag = eventTag;
     }
 
+    @Override
     public String getContentType() {
         return contentType;
     }
@@ -70,6 +74,7 @@ public class InMemoryWebhookLog extends ClonableBean implements java.io.Serializ
         this.contentType = contentType;
     }
 
+    @Override
     public String getCharset() {
         return charset;
     }
@@ -78,6 +83,7 @@ public class InMemoryWebhookLog extends ClonableBean implements java.io.Serializ
         this.charset = charset;
     }
 
+    @Override
     public String getRequestId() {
         return requestId;
     }
@@ -86,6 +92,7 @@ public class InMemoryWebhookLog extends ClonableBean implements java.io.Serializ
         this.requestId = requestId;
     }
 
+    @Override
     public String getPayload() {
         return payload;
     }
@@ -94,6 +101,7 @@ public class InMemoryWebhookLog extends ClonableBean implements java.io.Serializ
         this.payload = payload;
     }
 
+    @Override
     public String getWebhookStatus() {
         return webhookStatus;
     }
@@ -102,6 +110,7 @@ public class InMemoryWebhookLog extends ClonableBean implements java.io.Serializ
         this.webhookStatus = webhookStatus;
     }
 
+    @Override
     public Date getTriggerTime() {
         return triggerTime;
     }

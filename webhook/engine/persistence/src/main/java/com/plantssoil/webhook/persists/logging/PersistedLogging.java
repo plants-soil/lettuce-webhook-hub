@@ -1,6 +1,7 @@
 package com.plantssoil.webhook.persists.logging;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -10,13 +11,17 @@ import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.httpclient.impl.NamedThreadFactory;
 import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.common.persistence.IEntityQuery;
+import com.plantssoil.common.persistence.IEntityQuery.FilterOperator;
 import com.plantssoil.common.persistence.IPersistence;
 import com.plantssoil.common.persistence.IPersistenceFactory;
 import com.plantssoil.webhook.core.ILogging;
 import com.plantssoil.webhook.core.IWebhook;
+import com.plantssoil.webhook.core.IWebhookLog;
+import com.plantssoil.webhook.core.IWebhookLogLine;
 import com.plantssoil.webhook.core.Message;
 import com.plantssoil.webhook.persists.beans.WebhookLog;
 import com.plantssoil.webhook.persists.beans.WebhookLogLine;
+import com.plantssoil.webhook.persists.exception.EnginePersistenceException;
 
 /**
  * The persistence logging implementation which will persists logging
@@ -27,10 +32,8 @@ import com.plantssoil.webhook.persists.beans.WebhookLogLine;
  */
 public class PersistedLogging implements ILogging, IConfigurable {
     private ExecutorService loggingExecutor = Executors.newCachedThreadPool(new NamedThreadFactory("Persisted-Logging-Executor"));
-    private static String PERSISTENCE_FACTORY_CONFIGURABLE;
-    static {
-        PERSISTENCE_FACTORY_CONFIGURABLE = ConfigFactory.getInstance().getConfiguration().getString(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE);
-    }
+    private static String PERSISTENCE_FACTORY_CONFIGURABLE = ConfigFactory.getInstance().getConfiguration()
+            .getString(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE);
 
     @Override
     public void triggerMessage(Message message) {
@@ -113,6 +116,63 @@ public class PersistedLogging implements ILogging, IConfigurable {
                 e.printStackTrace();
             }
         });
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public List<IWebhookLog> findAllWebhookLogs(String publisherId, String dataGroup, int page, int pageSize) {
+        if (publisherId == null) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21018,
+                    "Publisher id should not be null when query webhook logs!");
+        }
+        IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
+        try (IPersistence p = f.create()) {
+            IEntityQuery q = p.createQuery(WebhookLog.class).firstResult(page * pageSize).maxResults(pageSize);
+            q.filter("publisherId", FilterOperator.equals, publisherId);
+            if (dataGroup != null) {
+                q.filter("dataGroup", FilterOperator.equals, dataGroup);
+            }
+            return (List<IWebhookLog>) q.resultList().get();
+        } catch (Exception e) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21018, e);
+        }
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
+    public List<IWebhookLog> findAllWebhookLogs(String webhookId, int page, int pageSize) {
+        if (webhookId == null) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21018,
+                    "Webhook id should not be null when query webhook logs!");
+        }
+        IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
+        try (IPersistence p = f.create()) {
+            IEntityQuery<WebhookLogLine> q = p.createQuery(WebhookLogLine.class).firstResult(page * pageSize).maxResults(pageSize);
+            q.filter("webhookId", FilterOperator.equals, webhookId);
+            List<String> rids = q.distinct(String.class, "requestId");
+            IEntityQuery ql = p.createQuery(WebhookLog.class).filter("requestId", FilterOperator.in, rids).firstResult(page * pageSize).maxResults(pageSize);
+            return (List<IWebhookLog>) ql.resultList().get();
+        } catch (Exception e) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21018, e);
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public List<IWebhookLogLine> findWebhookLogLines(String requestId, String webhookId) {
+        if (requestId == null || webhookId == null) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21018,
+                    "Request id or webhook id should not be null when query webhook log lines!");
+        }
+        IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
+        try (IPersistence p = f.create()) {
+            IEntityQuery q = p.createQuery(WebhookLogLine.class).maxResults(200);
+            q.filter("requestId", FilterOperator.equals, requestId);
+            q.filter("webhookId", FilterOperator.equals, webhookId);
+            return (List<IWebhookLogLine>) q.resultList().get();
+        } catch (Exception e) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21018, e);
+        }
     }
 
 }

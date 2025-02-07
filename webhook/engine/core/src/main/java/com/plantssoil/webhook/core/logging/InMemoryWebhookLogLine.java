@@ -1,10 +1,11 @@
-package com.plantssoil.webhook.core.registry;
+package com.plantssoil.webhook.core.logging;
 
 import java.util.Date;
 
 import com.plantssoil.webhook.core.ClonableBean;
+import com.plantssoil.webhook.core.IWebhookLogLine;
 
-public class InMemoryWebhookLogLine extends ClonableBean implements java.io.Serializable {
+public class InMemoryWebhookLogLine extends ClonableBean implements IWebhookLogLine, java.io.Serializable {
     private static final long serialVersionUID = 5368565382734058399L;
 
     private String logLineId;
@@ -51,6 +52,7 @@ public class InMemoryWebhookLogLine extends ClonableBean implements java.io.Seri
         this.requestId = requestId;
     }
 
+    @Override
     public String getLogType() {
         return logType;
     }
@@ -59,6 +61,7 @@ public class InMemoryWebhookLogLine extends ClonableBean implements java.io.Seri
         this.logType = logType;
     }
 
+    @Override
     public String getInformation() {
         return information;
     }
@@ -67,6 +70,7 @@ public class InMemoryWebhookLogLine extends ClonableBean implements java.io.Seri
         this.information = information;
     }
 
+    @Override
     public Date getLogTime() {
         return logTime;
     }
@@ -75,6 +79,7 @@ public class InMemoryWebhookLogLine extends ClonableBean implements java.io.Seri
         this.logTime = logTime;
     }
 
+    @Override
     public int getTryTime() {
         return tryTime;
     }

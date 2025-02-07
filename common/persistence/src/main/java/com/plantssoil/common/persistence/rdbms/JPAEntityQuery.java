@@ -95,6 +95,44 @@ class JPAEntityQuery<T> implements IEntityQuery<T> {
         return future;
     }
 
+    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public <D> List<D> distinct(Class<D> clazz, String fieldName) {
+        CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<D> q = cb.createQuery(clazz);
+        Root<T> r = (Root<T>) q.from(this.entityClass);
+        Predicate predicateAll = null;
+        for (int i = 0; i < this.filters.size(); i++) {
+            SimpleFilter filter = this.filters.get(i);
+            Path<Object> path = r.get(filter.getAttributeName());
+            ParameterExpression<?> param = cb.parameter(filter.getFilterValue().getClass(), filter.getAttributeName());
+            Predicate predicate = null;
+            if (filter.getOperator() == FilterOperator.equals) {
+                predicate = cb.equal(path, param);
+            } else if (filter.getOperator() == FilterOperator.like) {
+                predicate = cb.like((Expression) path, (Expression) param);
+            } else if (filter.getOperator() == FilterOperator.in) {
+                predicate = path.in(param);
+            }
+            if (i == 0) {
+                predicateAll = predicate;
+            } else {
+                predicateAll = cb.and(predicateAll, predicate);
+            }
+        }
+        if (predicateAll != null) {
+            q.where(predicateAll);
+        }
+        q.select(r.get(fieldName)).distinct(true);
+        TypedQuery<D> query = this.entityManager.createQuery(q);
+        for (int i = 0; i < this.filters.size(); i++) {
+            SimpleFilter filter = this.filters.get(i);
+            query.setParameter(filter.getAttributeName(), filter.getFilterValue());
+        }
+        query.setFirstResult(this.startPosition).setMaxResults(this.maxResult);
+        return query.getResultList();
+    }
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private TypedQuery<T> getTypedQuery() {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
@@ -110,6 +148,8 @@ class JPAEntityQuery<T> implements IEntityQuery<T> {
                 predicate = cb.equal(path, param);
             } else if (filter.getOperator() == FilterOperator.like) {
                 predicate = cb.like((Expression) path, (Expression) param);
+            } else if (filter.getOperator() == FilterOperator.in) {
+                predicate = path.in(param);
             }
             if (i == 0) {
                 predicateAll = predicate;
@@ -117,10 +157,11 @@ class JPAEntityQuery<T> implements IEntityQuery<T> {
                 predicateAll = cb.and(predicateAll, predicate);
             }
         }
-        q.select(r);
         if (predicateAll != null) {
             q.where(predicateAll);
         }
+
+        q.select(r);
         TypedQuery<T> query = this.entityManager.createQuery(q);
         for (int i = 0; i < this.filters.size(); i++) {
             SimpleFilter filter = this.filters.get(i);

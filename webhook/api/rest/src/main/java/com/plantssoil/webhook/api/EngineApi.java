@@ -30,11 +30,65 @@ import javax.validation.constraints.*;
 @Path("/engine")
 
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-05T11:58:30.837020300+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-07T18:18:51.966634600+08:00[Asia/Shanghai]")
 public class EngineApi  {
 
     @Inject EngineApiService service;
 
+    @GET
+    @Path("/allPublisherWebhookLogs")
+    
+    @Produces({ "application/json", "application/xml" })
+    @Operation(summary = "Find all webhook logs which triggered by specific publisher with pagination", description = "Will find the webhook logs on the page specified (page, pageSize)", security = {
+        @SecurityRequirement(name = "webhook_auth", scopes = {
+            "write:organizations",
+"read:organizations"
+        })
+    }, tags={ "engine" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = com.plantssoil.webhook.core.logging.InMemoryWebhookLog.class)))),
+        
+        @ApiResponse(responseCode = "400", description = "Validation exception") })
+    public Response findAllPublisherWebhookLogs( @NotNull  @QueryParam("publisherId") String publisherId, @NotNull  @QueryParam("page") Integer page, @NotNull  @QueryParam("pageSize") Integer pageSize,  @QueryParam("dataGroup") String dataGroup,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return service.findAllPublisherWebhookLogs(publisherId,page,pageSize,dataGroup,securityContext);
+    }
+    @GET
+    @Path("/allSubscriberWebhookLogs")
+    
+    @Produces({ "application/json", "application/xml" })
+    @Operation(summary = "Find all webhook logs which dispatched to specific subscriber with pagination", description = "Will find the webhook logs on the page specified (page, pageSize)", security = {
+        @SecurityRequirement(name = "webhook_auth", scopes = {
+            "write:organizations",
+"read:organizations"
+        })
+    }, tags={ "engine" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = com.plantssoil.webhook.core.logging.InMemoryWebhookLog.class)))),
+        
+        @ApiResponse(responseCode = "400", description = "Validation exception") })
+    public Response findAllSubscriberWebhookLogs( @NotNull  @QueryParam("webhookId") String webhookId, @NotNull  @QueryParam("page") Integer page, @NotNull  @QueryParam("pageSize") Integer pageSize,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return service.findAllSubscriberWebhookLogs(webhookId,page,pageSize,securityContext);
+    }
+    @GET
+    @Path("/webhookLines")
+    
+    @Produces({ "application/json", "application/xml" })
+    @Operation(summary = "Find all webhook log lines which belong to specific request & webhook", description = "Will find the webhook log lines", security = {
+        @SecurityRequirement(name = "webhook_auth", scopes = {
+            "write:organizations",
+"read:organizations"
+        })
+    }, tags={ "engine" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = com.plantssoil.webhook.core.logging.InMemoryWebhookLogLine.class)))),
+        
+        @ApiResponse(responseCode = "400", description = "Validation exception") })
+    public Response findWebhookLogLines( @NotNull  @QueryParam("requestId") String requestId, @NotNull  @QueryParam("webhookId") String webhookId,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return service.findWebhookLogLines(requestId,webhookId,securityContext);
+    }
     @GET
     @Path("/version")
     

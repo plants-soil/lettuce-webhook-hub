@@ -9,10 +9,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.plantssoil.webhook.core.IWebhookLogLine;
+
 @Entity
 @Table(name = "LETTUCE_WEBHOOKLOGLINE", indexes = { @Index(name = "idx_wll_requestid", columnList = "requestId"),
         @Index(name = "idx_wll_subscriberId", columnList = "subscriberId"), @Index(name = "idx_wll_webhookId", columnList = "webhookId") })
-public class WebhookLogLine implements java.io.Serializable {
+public class WebhookLogLine implements IWebhookLogLine, java.io.Serializable {
     private static final long serialVersionUID = 5368565382734058399L;
     @Id
     private String logLineId;
@@ -60,6 +62,7 @@ public class WebhookLogLine implements java.io.Serializable {
         this.requestId = requestId;
     }
 
+    @Override
     public String getLogType() {
         return logType;
     }
@@ -68,6 +71,7 @@ public class WebhookLogLine implements java.io.Serializable {
         this.logType = logType;
     }
 
+    @Override
     public String getInformation() {
         return information;
     }
@@ -76,6 +80,7 @@ public class WebhookLogLine implements java.io.Serializable {
         this.information = information;
     }
 
+    @Override
     public Date getLogTime() {
         return logTime;
     }
@@ -84,6 +89,7 @@ public class WebhookLogLine implements java.io.Serializable {
         this.logTime = logTime;
     }
 
+    @Override
     public int getTryTime() {
         return tryTime;
     }

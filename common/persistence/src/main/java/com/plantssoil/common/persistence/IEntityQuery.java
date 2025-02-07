@@ -20,7 +20,7 @@ public interface IEntityQuery<T> {
      * @Date 31 Oct 2024 7:00:09 pm
      */
     public enum FilterOperator {
-        equals, like
+        equals, like, in
     }
 
     /**
@@ -78,4 +78,14 @@ public interface IEntityQuery<T> {
      * @return CompletableFuture<List<T>>, could get entities list in future
      */
     public CompletableFuture<List<T>> resultList();
+
+    /**
+     * Return the distinct field values
+     * 
+     * @param <D>       The field type which will return
+     * @param clazz     The class type of return values
+     * @param fieldName The field which will be distinct & returned
+     * @return List of distinct field values
+     */
+    public <D> List<D> distinct(Class<D> clazz, String fieldName);
 }

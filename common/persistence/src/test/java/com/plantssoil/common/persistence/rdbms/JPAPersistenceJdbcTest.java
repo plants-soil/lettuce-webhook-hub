@@ -20,6 +20,20 @@ public class JPAPersistenceJdbcTest {
     private static TempDirectoryUtility util = new TempDirectoryUtility();
     private JPAPersistenceTestUtil test = new JPAPersistenceTestUtil();
 
+    public static void main(String[] args) throws Exception {
+        JPAPersistenceJdbcTest test = new JPAPersistenceJdbcTest();
+        JPAPersistenceJdbcTest.clearPersistenceFactory();
+        test.test1CreateObject();
+        test.test2CreateListOfQ();
+        test.test3UpdateT();
+        test.test4UpdateListOfT();
+        test.test5RemoveObject();
+        test.test6RemoveListOfQ();
+        test.test7QueryStudent();
+        test.test8DistinctQuery();
+        JPAPersistenceJdbcTest.tearDownAfterClass();
+    }
+
     @BeforeClass
     public static void clearPersistenceFactory() throws Exception {
         Thread.sleep(1000);
@@ -83,6 +97,11 @@ public class JPAPersistenceJdbcTest {
     @Test
     public void test7QueryStudent() {
         test.testEntityQuery(IPersistenceFactory.getFactoryInstance());
+    }
+
+    @Test
+    public void test8DistinctQuery() {
+        test.testDistinctQuery(IPersistenceFactory.getFactoryInstance());
     }
 
 }

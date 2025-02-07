@@ -1745,6 +1745,151 @@ paths:
         - webhook_auth:
             - write:engine
             - read:engine
+  /engine/allPublisherWebhookLogs:
+    get:
+      tags:
+        - engine
+      summary: Find all webhook logs which triggered by specific publisher with pagination
+      description: Will find the webhook logs on the page specified (page, pageSize)
+      operationId: findAllPublisherWebhookLogs
+      parameters:
+        - name: publisherId
+          in: query
+          description: ID of publisher which triggered webhooks
+          required: true
+          schema:
+            type: string
+        - name: dataGroup
+          in: query
+          description: Data group (name) which triggered webhooks
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number of webhook logs query result
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          description: Maximum webhook logs on current page
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLog'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLog'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:webhooklogs
+            - read:webhooklogs
+  /engine/allSubscriberWebhookLogs:
+    get:
+      tags:
+        - engine
+      summary: Find all webhook logs which dispatched to specific subscriber with pagination
+      description: Will find the webhook logs on the page specified (page, pageSize)
+      operationId: findAllSubscriberWebhookLogs
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook which receive events & messages
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number of webhook logs query result
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          description: Maximum webhook logs on current page
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLog'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLog'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:webhooklogs
+            - read:webhooklogs
+  /engine/webhookLines:
+    get:
+      tags:
+        - engine
+      summary: Find all webhook log lines which belong to specific request & webhook
+      description: Will find the webhook log lines
+      operationId: findWebhookLogLines
+      parameters:
+        - name: requestId
+          in: query
+          description: ID of request
+          required: true
+          schema:
+            type: string
+        - name: webhookId
+          in: query
+          description: ID of webhook
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLogLine'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLogLine'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:webhooklogs
+            - read:webhooklogs
 components:
   schemas:
     Organization:
@@ -1948,12 +2093,6 @@ components:
     WebhookLog:
       type: object
       properties:
-        publisherId:
-          type: string
-        version:
-          type: string
-        dataGroup:
-          type: string
         eventType:
           type: string
         eventTag:
@@ -1977,14 +2116,6 @@ components:
     WebhookLogLine:
       type: object
       properties:
-        logLineId:
-          type: string
-        subscriberId:
-          type: string
-        webhookId:
-          type: string
-        requestId:
-          type: string
         logType:
           type: string
         information:

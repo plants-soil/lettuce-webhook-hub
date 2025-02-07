@@ -54,14 +54,16 @@
 		<version.org.liquibase>4.16.1</version.org.liquibase>
 		<!-- DDL -->
 		<version.liquibase>4.16.1</version.liquibase>
+		<!-- Logging -->
+		<version.slf4j-api>2.0.16</version.slf4j-api>
+		<version.slf4j-reload4j>2.0.16</version.slf4j-reload4j>
+		<version.jcl-over-slf4j>1.7.28</version.jcl-over-slf4j>
 		<!-- Dependencies -->
-		<version.slf4j-api>2.0.13</version.slf4j-api>
 		<version.okhttp3>3.14.9</version.okhttp3>
 		<version.hibernate>5.3.36.Final</version.hibernate>
 		<version.resteasy>4.7.9.Final</version.resteasy>
 		<version.commons-configuration>1.10</version.commons-configuration>
 		<version.commons-codec>1.15</version.commons-codec>
-		<version.commons-logging>1.2</version.commons-logging>
 		<version.commons-pool2>2.12.0</version.commons-pool2>
 		<version.rabbitmq-client>5.22.0</version.rabbitmq-client>
 		<version.activemq-client>5.18.6</version.activemq-client>
@@ -145,7 +147,24 @@
 				<version>${version.parent}</version>
 			</dependency>
 
-			<!-- External Projects -->
+			<!-- External Dependencies -->
+			<!-- Logging -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${version.slf4j-api}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-reload4j</artifactId>
+				<version>${version.slf4j-reload4j}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${version.jcl-over-slf4j}</version>
+			</dependency>
+
 			<!-- JMS -->
 			<dependency>
 				<groupId>javax.jms</groupId>
@@ -194,11 +213,6 @@
 
 			<!-- Apache commons configuration -->
 			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>${version.slf4j-api}</version>
-			</dependency>
-			<dependency>
 				<groupId>commons-configuration</groupId>
 				<artifactId>commons-configuration</artifactId>
 				<exclusions>
@@ -221,11 +235,6 @@
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
 				<version>${version.commons-codec}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging</artifactId>
-				<version>${version.commons-logging}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>

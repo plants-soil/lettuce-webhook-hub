@@ -38,6 +38,15 @@ public interface IEngine {
     public IRegistry getRegistry();
 
     /**
+     * Get the logging of current webhook engine<br/>
+     * 
+     * @return Logging of webhook engine, by which could log message triggered,
+     *         dispatched, and response from webhook, and query logs
+     * @see ILogging
+     */
+    public ILogging getLogging();
+
+    /**
      * Publisher trigger event with payload, the subscribers who subscribed will
      * receive this event via webhook URL post method.
      * 
