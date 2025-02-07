@@ -49,7 +49,7 @@ public class WebhookPoster implements IWebhookPoster {
     private RetryWebhookQueue retryWebhooks5; // retry webhook queue 5 seconds delay
     private RetryWebhookQueue retryWebhooks30; // retry webhook queue 30 seconds delay
     private ThreadFactory retrySchedulerThreadFactory = new NamedThreadFactory("Webhook-Retry-Scheduler"); // create the ThreadFactory to name threads for Retry
-    private ILogging logging = ILogging.getInstance();
+    private ILogging logging;
 
     class HttpCallback implements IHttpCallback {
         private Message message;
@@ -75,9 +75,7 @@ public class WebhookPoster implements IWebhookPoster {
                 return;
             }
 
-            if (logging != null) {
-                logging.responseMessage(message, webhook, "Exception", e.getMessage());
-            }
+            getLogging().responseMessage(message, webhook, "Exception", e.getMessage());
 
             this.retryQueue.add(this.message, this.webhook, this.executeMilliseconds);
         }
@@ -96,17 +94,13 @@ public class WebhookPoster implements IWebhookPoster {
             // the response code should be 20x, indicates call webhook url successfully
             // otherwise, put the message into retry queue
             if (!(response.getStatusCode() >= 200 && response.getStatusCode() < 210)) {
-                if (logging != null) {
-                    String msg = String.format("Respone Code: %d, Response Message: %s", response.getStatusCode(), response.getBody());
-                    logging.responseMessage(message, webhook, "Fail", msg);
-                }
+                String msg = String.format("Respone Code: %d, Response Message: %s", response.getStatusCode(), response.getBody());
+                getLogging().responseMessage(message, webhook, "Fail", msg);
                 this.retryQueue.add(this.message, this.webhook, this.executeMilliseconds);
                 return;
             }
-            if (logging != null) {
-                String msg = String.format("Respone Code: %d, Response Message: %s", response.getStatusCode(), response.getBody());
-                logging.responseMessage(message, webhook, "Success", msg);
-            }
+            String msg = String.format("Respone Code: %d, Response Message: %s", response.getStatusCode(), response.getBody());
+            getLogging().responseMessage(message, webhook, "Success", msg);
         }
 
     }
@@ -120,6 +114,13 @@ public class WebhookPoster implements IWebhookPoster {
         // because ScheduledExecutorService will start threads when the schedule start.
         // 5 seconds & 30 seconds retry queue will be checked every 5 seconds
         initialRetryScheduler();
+    }
+
+    private ILogging getLogging() {
+        if (this.logging == null) {
+            this.logging = IEngineFactory.getFactoryInstance().getEngine().getLogging();
+        }
+        return this.logging;
     }
 
     private void initialConfiguration() {
@@ -148,15 +149,11 @@ public class WebhookPoster implements IWebhookPoster {
         List<RetryWebhookTask> list = this.retryWebhooks5.webhookTasksTimeUp();
         for (RetryWebhookTask task : list) {
             try {
-                if (this.logging != null) {
-                    this.logging.dispatchMessage(task.getMessage(), task.getWebhook(), 2);
-                }
+                getLogging().dispatchMessage(task.getMessage(), task.getWebhook(), 2);
                 post(task.getMessage(), task.getWebhook(),
                         new HttpCallback(task.getMessage(), task.getWebhook(), this.retryWebhooks30, System.currentTimeMillis() + 30 * 1000));
             } catch (Exception e) {
-                if (this.logging != null) {
-                    this.logging.responseMessage(task.getMessage(), task.getWebhook(), "Exception", e.getMessage());
-                }
+                getLogging().responseMessage(task.getMessage(), task.getWebhook(), "Exception", e.getMessage());
                 // retry after 30 seconds if exception happens
                 this.retryWebhooks30.add(task.getMessage(), task.getWebhook(), System.currentTimeMillis() + 30 * 1000);
             }
@@ -169,14 +166,10 @@ public class WebhookPoster implements IWebhookPoster {
             try {
                 // this is the last try, just post webhook url
                 // no more further process, no matter success or not
-                if (this.logging != null) {
-                    this.logging.dispatchMessage(task.getMessage(), task.getWebhook(), 3);
-                }
+                getLogging().dispatchMessage(task.getMessage(), task.getWebhook(), 3);
                 post(task.getMessage(), task.getWebhook(), new HttpCallback(null, null, null, 0));
             } catch (Exception e) {
-                if (this.logging != null) {
-                    this.logging.responseMessage(task.getMessage(), task.getWebhook(), "Exception", e.getMessage());
-                }
+                getLogging().responseMessage(task.getMessage(), task.getWebhook(), "Exception", e.getMessage());
                 // discard the exception and the failed task, no need retry any more
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info(String.format("Call webhook %s with message: %s failed 3 times, exception: %s", task.getWebhook().getWebhookUrl(),
@@ -207,9 +200,7 @@ public class WebhookPoster implements IWebhookPoster {
     @Override
     public void postWebhook(final Message message, final IWebhook webhook) {
         try {
-            if (this.logging != null) {
-                this.logging.dispatchMessage(message, webhook, 1);
-            }
+            getLogging().dispatchMessage(message, webhook, 1);
             post(message, webhook, new HttpCallback(message, webhook, this.retryWebhooks5, System.currentTimeMillis() + 5 * 1000));
         } catch (Exception e) {
             this.retryWebhooks5.add(message, webhook, System.currentTimeMillis() + 5 * 1000);

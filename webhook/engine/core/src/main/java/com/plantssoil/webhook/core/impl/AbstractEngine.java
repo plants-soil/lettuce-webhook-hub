@@ -20,6 +20,7 @@ import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.ISubscriber;
 import com.plantssoil.webhook.core.IWebhook;
 import com.plantssoil.webhook.core.Message;
+import com.plantssoil.webhook.core.logging.InMemoryLogging;
 import com.plantssoil.webhook.core.registry.InMemoryRegistry;
 
 /**
@@ -34,7 +35,7 @@ public abstract class AbstractEngine {
     final static int PAGE_SIZE = 20;
     private IRegistry registry;
     private RegistryChangeListener registryChangeListener = new RegistryChangeListener(this);
-    private ILogging logging = ILogging.getInstance();
+    private ILogging logging;
 
     public AbstractEngine() {
         super();
@@ -192,9 +193,7 @@ public abstract class AbstractEngine {
      * @param message The message to trigger
      */
     public void trigger(Message message) {
-        if (this.logging != null) {
-            this.logging.triggerMessage(message);
-        }
+        getLogging().triggerMessage(message);
         triggerMessage(message);
     }
 
@@ -208,20 +207,26 @@ public abstract class AbstractEngine {
 
     public IRegistry getRegistry() {
         if (this.registry == null) {
-            synchronized (this) {
+            synchronized (IRegistry.class) {
                 if (this.registry == null) {
-                    String registryImpl = ConfigFactory.getInstance().getConfiguration().getString(LettuceConfiguration.WEBHOOK_ENGINE_REGISTRY_CONFIGURABLE,
+                    this.registry = (IRegistry) ConfigurableLoader.getInstance().createConfigurable(LettuceConfiguration.WEBHOOK_ENGINE_REGISTRY_CONFIGURABLE,
                             InMemoryRegistry.class.getName());
-                    if (registryImpl.equals(InMemoryRegistry.class.getName())) {
-                        this.registry = new InMemoryRegistry();
-                    } else {
-                        this.registry = (IRegistry) ConfigurableLoader.getInstance()
-                                .createConfigurable(LettuceConfiguration.WEBHOOK_ENGINE_REGISTRY_CONFIGURABLE);
-                    }
                 }
             }
         }
         return this.registry;
+    }
+
+    public ILogging getLogging() {
+        if (this.logging == null) {
+            synchronized (ILogging.class) {
+                if (this.logging == null) {
+                    this.logging = (ILogging) ConfigurableLoader.getInstance().createSingleton(LettuceConfiguration.WEBHOOK_ENGINE_LOGGING_CONFIGURABLE,
+                            InMemoryLogging.class.getName());
+                }
+            }
+        }
+        return this.logging;
     }
 
     /**

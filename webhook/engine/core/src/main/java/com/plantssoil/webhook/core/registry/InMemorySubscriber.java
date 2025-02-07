@@ -13,6 +13,8 @@ import com.plantssoil.webhook.core.ISubscriber;
  * @Date 2 Jan 2025 5:09:49 pm
  */
 public class InMemorySubscriber extends ClonableBean implements ISubscriber {
+    private static final long serialVersionUID = 3791881991898699931L;
+
     private String subscriberId;
     private String organizationId;
 

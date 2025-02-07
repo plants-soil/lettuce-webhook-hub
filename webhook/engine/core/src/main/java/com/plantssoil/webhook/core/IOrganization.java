@@ -1,5 +1,7 @@
 package com.plantssoil.webhook.core;
 
+import java.io.Serializable;
+
 /**
  * The organization, could be company, business unit, or any kinds of
  * organizations.<br/>
@@ -10,7 +12,7 @@ package com.plantssoil.webhook.core;
  * @author danialdy
  * @Date 17 Jan 2025 4:24:14 pm
  */
-public interface IOrganization {
+public interface IOrganization extends Serializable {
     /**
      * Get the organization id
      * 

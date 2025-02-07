@@ -1,10 +1,6 @@
 package com.plantssoil.webhook.core;
 
-import com.plantssoil.common.config.ConfigFactory;
-import com.plantssoil.common.config.ConfigurableLoader;
-import com.plantssoil.common.config.IConfigurable;
-import com.plantssoil.common.config.LettuceConfiguration;
-import com.plantssoil.webhook.core.exception.EngineException;
+import java.util.List;
 
 /**
  * The logger for webhook trigger, and consumer dispatcher
@@ -40,23 +36,37 @@ public interface ILogging {
     public void responseMessage(Message message, IWebhook webhook, String responseType, String information);
 
     /**
-     * Get the implementation singleton logging instance base on the lettuce
-     * configuration, will be null if not configured, means no need logging
+     * Find all webhook logs which belong to the specific publisher & dataGroup,
+     * support pagination
      * 
-     * @return The implementation singleton loggin instance
+     * @param publisherId ID of publisher which triggered events
+     * @param dataGroup   Data group of publisher which triggered events (OPTIONAL)
+     * @param page        The page index
+     * @param pageSize    Maximum webhook logs on current page
+     * @return Webhook Logs on current page
+     * @see IWebhookLog
      */
-    public static ILogging getInstance() {
-        String loggingConfigurable = ConfigFactory.getInstance().getConfiguration().getString(LettuceConfiguration.WEBHOOK_ENGINE_LOGGING_CONFIGURABLE);
-        if (loggingConfigurable == null) {
-            return null;
-        }
+    public List<IWebhookLog> findAllWebhookLogs(String publisherId, String dataGroup, int page, int pageSize);
 
-        IConfigurable configurable = ConfigurableLoader.getInstance().createSingleton(LettuceConfiguration.WEBHOOK_ENGINE_LOGGING_CONFIGURABLE);
-        if (configurable instanceof ILogging) {
-            return (ILogging) configurable;
-        } else {
-            String err = String.format("The class %s don't implements %s!", configurable.getClass().getName(), ILogging.class.getName());
-            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20001, err);
-        }
-    }
+    /**
+     * Find all webhook logs which belong to the specific webhook, support
+     * pagination
+     * 
+     * @param webhookId ID of webhook which received events
+     * @param page      The page index
+     * @param pageSize  Maximum webhook logs on current page
+     * @return Webhook Logs on current page
+     * @see IWebhookLog
+     */
+    public List<IWebhookLog> findAllWebhookLogs(String webhookId, int page, int pageSize);
+
+    /**
+     * Find all webhook log lines which belong to the specific request
+     * 
+     * @param requestId ID of request
+     * @param webhookId ID of webhook
+     * @return Webhook Log Lines
+     * @see IWebhookLogLine
+     */
+    public List<IWebhookLogLine> findWebhookLogLines(String requestId, String webhookId);
 }

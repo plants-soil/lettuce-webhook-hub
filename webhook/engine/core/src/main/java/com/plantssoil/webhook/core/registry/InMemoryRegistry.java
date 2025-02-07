@@ -1,7 +1,6 @@
 package com.plantssoil.webhook.core.registry;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.plantssoil.webhook.core.ClonableBean;
+import com.plantssoil.webhook.core.ClonableBeanUtils;
 import com.plantssoil.webhook.core.IDataGroup;
 import com.plantssoil.webhook.core.IEvent;
 import com.plantssoil.webhook.core.IOrganization;
@@ -127,20 +126,44 @@ public class InMemoryRegistry extends AbstractRegistry {
     @Override
     public void addOrganization(IOrganization organization) {
         super.addOrganization(organization);
-        if (this.organizations.containsKey(organization.getOrganizationId())) {
+        InMemoryOrganization newOrg = (InMemoryOrganization) organization;
+        if (newOrg.getEmail() == null || newOrg.getEmail().strip().length() == 0) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                    String.format("The email of organization (organizationId: %s) is required!", organization.getOrganizationId()));
+        }
+        if (this.organizations.containsKey(newOrg.getOrganizationId())) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
                     String.format("The organization (organizationId: %s) arealdy exists!", organization.getOrganizationId()));
         }
-        this.organizations.put(organization.getOrganizationId(), (InMemoryOrganization) organization);
+        for (InMemoryOrganization org : this.organizations.values()) {
+            if (Objects.equals(newOrg.getEmail(), org.getEmail())) {
+                throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                        String.format("The email (%s) can't be same with an existing organization (organizationId: %s)!", newOrg.getEmail(),
+                                organization.getOrganizationId()));
+            }
+        }
+        this.organizations.put(newOrg.getOrganizationId(), newOrg);
     }
 
     @Override
     public void updateOrganization(IOrganization organization) {
         super.updateOrganization(organization);
+        InMemoryOrganization newOrg = (InMemoryOrganization) organization;
+        if (newOrg.getEmail() == null || newOrg.getEmail().strip().length() == 0) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                    String.format("The email of organization (organizationId: %s) is required!", organization.getOrganizationId()));
+        }
         InMemoryOrganization old = this.organizations.get(organization.getOrganizationId());
         if (old == null) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
                     String.format("The organization (organizationId: %s) to be update does not exists!", organization.getOrganizationId()));
+        }
+        for (InMemoryOrganization org : this.organizations.values()) {
+            if (!newOrg.getOrganizationId().equals(org.getOrganizationId()) && Objects.equals(newOrg.getEmail(), org.getEmail())) {
+                throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                        String.format("The email (%s) can't be same with an existing organization (organizationId: %s)!", newOrg.getEmail(),
+                                organization.getOrganizationId()));
+            }
         }
         this.organizations.put(organization.getOrganizationId(), (InMemoryOrganization) organization);
     }
@@ -486,51 +509,51 @@ public class InMemoryRegistry extends AbstractRegistry {
     @Override
     public IOrganization findOrganization(String organizationId) {
         InMemoryOrganization o = this.organizations.get(organizationId);
-        return (IOrganization) cloneObject(o);
+        return (IOrganization) ClonableBeanUtils.cloneObject(o);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<IOrganization> findAllOrganizations(int page, int pageSize) {
-        return getPagedList(this.organizations.values(), page, pageSize);
+        return ClonableBeanUtils.getPagedList(this.organizations.values(), page, pageSize);
     }
 
     @Override
     public IPublisher findPublisher(String publisherId) {
         InMemoryPublisher o = this.publishers.get(publisherId);
-        return (IPublisher) cloneObject(o);
+        return (IPublisher) ClonableBeanUtils.cloneObject(o);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<IPublisher> findAllPublishers(int page, int pageSize) {
-        return getPagedList(this.publishers.values(), page, pageSize);
+        return ClonableBeanUtils.getPagedList(this.publishers.values(), page, pageSize);
     }
 
     @Override
     public IEvent findEvent(String eventId) {
         InMemoryEvent o = this.events.get(eventId);
-        return (IEvent) cloneObject(o);
+        return (IEvent) ClonableBeanUtils.cloneObject(o);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<IEvent> findEvents(String publisherId, int page, int pageSize) {
         List<InMemoryEvent> pel = getList(this.publisherEvents, publisherId);
-        return getPagedList(pel, page, pageSize);
+        return ClonableBeanUtils.getPagedList(pel, page, pageSize);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<IDataGroup> findDataGroups(String publisherId, int page, int pageSize) {
         List<InMemoryDataGroup> pdgl = getList(this.publisherDataGroups, publisherId);
-        return getPagedList(pdgl, page, pageSize);
+        return ClonableBeanUtils.getPagedList(pdgl, page, pageSize);
     }
 
     @Override
     public IDataGroup findDataGroup(String dataGroupId) {
         InMemoryDataGroup o = this.dataGroups.get(dataGroupId);
-        return (IDataGroup) cloneObject(o);
+        return (IDataGroup) ClonableBeanUtils.cloneObject(o);
     }
 
     @Override
@@ -538,7 +561,7 @@ public class InMemoryRegistry extends AbstractRegistry {
         List<InMemoryDataGroup> pdgl = getList(this.publisherDataGroups, publisherId);
         for (InMemoryDataGroup pdg : pdgl) {
             if (pdg.getDataGroup().equals(dataGroup)) {
-                return (IDataGroup) cloneObject(pdg);
+                return (IDataGroup) ClonableBeanUtils.cloneObject(pdg);
             }
         }
         return null;
@@ -547,40 +570,40 @@ public class InMemoryRegistry extends AbstractRegistry {
     @Override
     public ISubscriber findSubscriber(String subscriberId) {
         InMemorySubscriber o = this.subscribers.get(subscriberId);
-        return (ISubscriber) cloneObject(o);
+        return (ISubscriber) ClonableBeanUtils.cloneObject(o);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<ISubscriber> findAllSubscribers(int page, int pageSize) {
-        return getPagedList(this.subscribers.values(), page, pageSize);
+        return ClonableBeanUtils.getPagedList(this.subscribers.values(), page, pageSize);
     }
 
     @Override
     public IWebhook findWebhook(String webhookId) {
         InMemoryWebhook o = this.webhooks.get(webhookId);
-        return (IWebhook) cloneObject(o);
+        return (IWebhook) ClonableBeanUtils.cloneObject(o);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<IWebhook> findWebhooks(String subscriberId, int page, int pageSize) {
         List<InMemoryWebhook> swhs = getList(this.subscriberWebhooks, subscriberId);
-        return getPagedList(swhs, page, pageSize);
+        return ClonableBeanUtils.getPagedList(swhs, page, pageSize);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<IEvent> findSubscribedEvents(String webhookId, int page, int pageSize) {
         List<InMemoryEvent> wes = getList(this.eventsSubscribed, webhookId);
-        return getPagedList(wes, page, pageSize);
+        return ClonableBeanUtils.getPagedList(wes, page, pageSize);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<IDataGroup> findSubscribedDataGroups(String webhookId, int page, int pageSize) {
         List<InMemoryDataGroup> wdgs = getList(this.dataGroupsSubscribed, webhookId);
-        return getPagedList(wdgs, page, pageSize);
+        return ClonableBeanUtils.getPagedList(wdgs, page, pageSize);
     }
 
     @Override
@@ -588,73 +611,10 @@ public class InMemoryRegistry extends AbstractRegistry {
         List<InMemoryDataGroup> wdgs = getList(this.dataGroupsSubscribed, webhookId);
         for (InMemoryDataGroup wdg : wdgs) {
             if (wdg.getDataGroup().equals(dataGroup)) {
-                return (IDataGroup) cloneObject(wdg);
+                return (IDataGroup) ClonableBeanUtils.cloneObject(wdg);
             }
         }
         return null;
     }
 
-    private ClonableBean cloneObject(ClonableBean o) {
-        try {
-            return o == null ? null : (ClonableBean) o.clone();
-        } catch (CloneNotSupportedException e) {
-            return null;
-        }
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private List getPagedList(List sourceList, int page, int pageSize) {
-        List list = new ArrayList();
-        int startIndex = page * pageSize;
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-        if (startIndex >= sourceList.size()) {
-            return list;
-        }
-
-        int endIndex = startIndex + pageSize;
-        if (endIndex < 0) {
-            return list;
-        }
-        if (endIndex > sourceList.size()) {
-            endIndex = sourceList.size();
-        }
-
-        for (int i = startIndex; i < endIndex; i++) {
-            ClonableBean o = (ClonableBean) sourceList.get(i);
-            list.add(cloneObject(o));
-        }
-        return list;
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private List getPagedList(Collection collection, int page, int pageSize) {
-        List list = new ArrayList();
-        int startIndex = page * pageSize;
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-        if (startIndex >= collection.size()) {
-            return list;
-        }
-
-        int endIndex = startIndex + pageSize;
-        if (endIndex < 0) {
-            return list;
-        }
-        if (endIndex > collection.size()) {
-            endIndex = collection.size();
-        }
-
-        int i = 0;
-        for (Object obj : collection) {
-            if (i >= startIndex && i < endIndex) {
-                ClonableBean o = (ClonableBean) obj;
-                list.add(cloneObject(o));
-            }
-            i++;
-        }
-        return list;
-    }
 }

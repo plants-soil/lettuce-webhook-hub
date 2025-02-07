@@ -58,13 +58,24 @@ public class PersistedRegistry extends AbstractRegistry {
         super.addOrganization(organization);
         if (!(organization instanceof Organization)) {
             String msg = String.format("Only the instance of %s could be persisted!", Organization.class.getName());
-            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21005, msg);
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21001, msg);
+        }
+        Organization newOrg = (Organization) organization;
+        if (newOrg.getEmail() == null || newOrg.getEmail().strip().length() == 0) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21001,
+                    String.format("The email of organization (organizationId: %s) is required!", organization.getOrganizationId()));
         }
         IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
         try (IPersistence p = f.create()) {
             if (p.createQuery(Organization.class).singleResult(organization.getOrganizationId()).get() != null) {
                 throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21001,
                         String.format("The organization (organizationId: %s) arealdy exists!", organization.getOrganizationId()));
+            }
+            Organization existingOrg = p.createQuery(Organization.class).filter("email", FilterOperator.equals, newOrg.getEmail()).singleResult().get();
+            if (existingOrg != null) {
+                throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21001,
+                        String.format("The email (%s) can't be same with an existing organization (organizationId: %s)!", newOrg.getEmail(),
+                                existingOrg.getOrganizationId()));
             }
             // save
             p.create(organization);
@@ -78,13 +89,26 @@ public class PersistedRegistry extends AbstractRegistry {
         super.updateOrganization(organization);
         if (!(organization instanceof Organization)) {
             String msg = String.format("Only the instance of %s could be persisted!", Organization.class.getName());
-            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21005, msg);
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21001, msg);
+        }
+        Organization newOrg = (Organization) organization;
+        if (newOrg.getEmail() == null || newOrg.getEmail().strip().length() == 0) {
+            throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21001,
+                    String.format("The email of organization (organizationId: %s) is required!", organization.getOrganizationId()));
         }
         IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
         try (IPersistence p = f.create()) {
             if (p.createQuery(Organization.class).singleResult(organization.getOrganizationId()).get() == null) {
                 throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21001,
                         String.format("The organization (organizationId: %s) does not exists!", organization.getOrganizationId()));
+            }
+            List<Organization> existingOrgs = p.createQuery(Organization.class).filter("email", FilterOperator.equals, newOrg.getEmail()).resultList().get();
+            for (Organization existingOrg : existingOrgs) {
+                if (!newOrg.getOrganizationId().equals(existingOrg.getOrganizationId()) && Objects.equals(newOrg.getEmail(), existingOrg.getEmail())) {
+                    throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21001,
+                            String.format("The email (%s) can't be same with an existing organization (organizationId: %s)!", newOrg.getEmail(),
+                                    existingOrg.getOrganizationId()));
+                }
             }
             // save
             p.update(organization);

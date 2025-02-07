@@ -1,5 +1,7 @@
 package com.plantssoil.webhook.core;
 
+import java.io.Serializable;
+
 /**
  * The subscriber, each instance of the ISubscriber presents one subscriber<br/>
  * <p>
@@ -16,7 +18,7 @@ package com.plantssoil.webhook.core;
  * @author danialdy
  * @Date 29 Nov 2024 1:41:54 pm
  */
-public interface ISubscriber {
+public interface ISubscriber extends Serializable {
     /**
      * Set the subscriber id
      * 

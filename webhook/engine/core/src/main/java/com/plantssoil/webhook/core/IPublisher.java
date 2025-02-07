@@ -1,5 +1,7 @@
 package com.plantssoil.webhook.core;
 
+import java.io.Serializable;
+
 /**
  * The publisher, each instance of the IPublisher presents one publisher
  * <ul>
@@ -12,7 +14,7 @@ package com.plantssoil.webhook.core;
  * @author danialdy
  * @Date 29 Nov 2024 11:10:53 am
  */
-public interface IPublisher {
+public interface IPublisher extends Serializable {
     /**
      * Get the organization id which current publisher belongs to
      * 

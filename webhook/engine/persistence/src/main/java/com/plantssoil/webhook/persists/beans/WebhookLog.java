@@ -9,10 +9,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.plantssoil.webhook.core.IWebhookLog;
+
 @Entity
 @Table(name = "LETTUCE_WEBHOOKLOG", indexes = { @Index(name = "idx_wl_pubid", columnList = "publisherId"),
         @Index(name = "idx_wl_eventType", columnList = "eventType") })
-public class WebhookLog implements java.io.Serializable {
+public class WebhookLog implements IWebhookLog, java.io.Serializable {
     private static final long serialVersionUID = 4036647805497080463L;
     private String publisherId;
     private String version;
@@ -55,6 +57,7 @@ public class WebhookLog implements java.io.Serializable {
         this.dataGroup = dataGroup;
     }
 
+    @Override
     public String getEventType() {
         return eventType;
     }
@@ -63,6 +66,7 @@ public class WebhookLog implements java.io.Serializable {
         this.eventType = eventType;
     }
 
+    @Override
     public String getEventTag() {
         return eventTag;
     }
@@ -71,6 +75,7 @@ public class WebhookLog implements java.io.Serializable {
         this.eventTag = eventTag;
     }
 
+    @Override
     public String getContentType() {
         return contentType;
     }
@@ -79,6 +84,7 @@ public class WebhookLog implements java.io.Serializable {
         this.contentType = contentType;
     }
 
+    @Override
     public String getCharset() {
         return charset;
     }
@@ -87,6 +93,7 @@ public class WebhookLog implements java.io.Serializable {
         this.charset = charset;
     }
 
+    @Override
     public String getRequestId() {
         return requestId;
     }
@@ -95,6 +102,7 @@ public class WebhookLog implements java.io.Serializable {
         this.requestId = requestId;
     }
 
+    @Override
     public String getPayload() {
         return payload;
     }
@@ -103,6 +111,7 @@ public class WebhookLog implements java.io.Serializable {
         this.payload = payload;
     }
 
+    @Override
     public String getWebhookStatus() {
         return webhookStatus;
     }
@@ -111,6 +120,7 @@ public class WebhookLog implements java.io.Serializable {
         this.webhookStatus = webhookStatus;
     }
 
+    @Override
     public Date getTriggerTime() {
         return triggerTime;
     }

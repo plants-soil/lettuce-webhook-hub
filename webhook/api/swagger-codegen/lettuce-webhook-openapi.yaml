@@ -1,0 +1,2171 @@
+openapi: 3.0.3
+info:
+  title: Plants Soil Lettuce (Webhook Engine)  - OpenAPI 3.0
+  description: |-
+    This is a Webhook Engine Core API based on the OpenAPI 3.0 specification.
+    You can register as publisher and trigger (publish) events (message carried) as needed, all subscribers could receive the events instantly.
+    You can register as subscriber with webhooks to listen on and receive events (messages carried) from publishers you subscribed.
+
+    Some useful links:
+    - [The Lettuce Webhook Engine repository](https://github.com/plants-soil/lettuce-webhook-hub)
+  contact:
+    email: danialdy@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: https://lettuce.plantssoil.com/api/v1
+tags:
+  - name: organization
+    description: All APIs for organization registry
+  - name: publisher
+    description: All APIs for publisher registry
+  - name: subscriber
+    description: All APIs for subscriber registry
+  - name: webhook
+    description: All APIs for webhook registry
+  - name: engine
+    description: All APIs for webhook engine functions
+paths:
+  /organization:
+    put:
+      tags:
+        - organization
+      summary: Update an existing organization
+      description: Update an existing organization by organizationId
+      operationId: updateOrganization
+      requestBody:
+        description: Update an existent organization
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organization'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          description: Required attributes cant't be null!
+        '404':
+          description: Organization not found
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:organizations
+            - read:organizations
+    post:
+      tags:
+        - organization
+      summary: Add a new organization
+      description: Add a new organization
+      operationId: addOrganization
+      requestBody:
+        description: Create a new organization
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organization'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:organizations
+            - read:organizations
+  /organization/all:
+    get:
+      tags:
+        - organization
+      summary: Find all organizations with pagination
+      description: Will find the organizations on the page specified (page, pageSize)
+      operationId: findAllOrganizations
+      parameters:
+        - name: page
+          in: query
+          description: The page number of organization query result
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          description: Maximum organizations on current page
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:organizations
+            - read:organizations
+  /organization/{organizationId}:
+    get:
+      tags:
+        - organization
+      summary: Find organization by ID
+      description: Returns a single organization
+      operationId: findOrganizationById
+      parameters:
+        - name: organizationId
+          in: path
+          description: ID of organization to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Organization not found
+      security:
+        - webhook_auth:
+            - write:organizations
+            - read:organizations
+    put:
+      tags:
+        - organization
+      summary: Update an existing organization
+      description: Update an existing organization by organizationId
+      operationId: updateOrganizationById
+      parameters:
+        - name: organizationId
+          in: path
+          description: ID of organization that needs to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent organization
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organization'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          description: Required attributes cant't be null!
+        '404':
+          description: Organization not found
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:organizations
+            - read:organizations
+  /publisher:
+    post:
+      tags:
+        - publisher
+      summary: Add a new publisher
+      description: Add a new publisher
+      operationId: addPublisher
+      requestBody:
+        description: Create a new publisher
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Publisher'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Publisher'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Publisher'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publisher'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Publisher'
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:publishers
+            - read:publishers
+  /publisher/all:
+    get:
+      tags:
+        - publisher
+      summary: Find all publishers with pagination
+      description: Will find the publishers on the page specified (page, pageSize)
+      operationId: findAllPublishers
+      parameters:
+        - name: page
+          in: query
+          description: The page number of publishers query result
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          description: Maximum publishers on current page
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Publisher'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Publisher'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:publishers
+            - read:publishers
+  /publisher/{publisherId}:
+    get:
+      tags:
+        - publisher
+      summary: Find publisher by ID
+      description: Returns a single publisher
+      operationId: findPublisherById
+      parameters:
+        - name: publisherId
+          in: path
+          description: ID of publisher to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publisher'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Publisher'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Publisher not found
+      security:
+        - webhook_auth:
+            - write:publishers
+            - read:publishers
+    put:
+      tags:
+        - publisher
+      summary: Update an existing publisher
+      description: Update an existing publisher by publisherId
+      operationId: updatePublisherById
+      parameters:
+        - name: publisherId
+          in: path
+          description: ID of publisher that needs to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent publisher
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Publisher'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Publisher'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Publisher'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publisher'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Publisher'
+        '400':
+          description: Required attributes cant't be null!
+        '404':
+          description: Publisher not found
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:publishers
+            - read:publishers
+  /publisher/{publisherId}/event:
+    post:
+      tags:
+        - publisher
+      summary: Add an event to an existing publisher
+      description: add an event to an existing publisher by publisherId
+      operationId: addEvent
+      parameters:
+        - name: publisherId
+          in: path
+          description: ID of publisher that to add event
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: add an event to an existing publisher
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Event'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Required attributes cant't be null!
+        '404':
+          description: Publisher not found
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:events
+            - read:events
+  /publisher/{publisherId}/events:
+    post:
+      tags:
+        - publisher
+      summary: Add events to an existing publisher
+      description: add events to an existing publisher by publisherId
+      operationId: addEvents
+      parameters:
+        - name: publisherId
+          in: path
+          description: ID of publisher that to add events
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: add events to an existing publisher
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Event'          
+          application/xml:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Event'          
+          application/x-www-form-urlencoded:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Event'          
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'          
+        '400':
+          description: Required attributes cant't be null!
+        '404':
+          description: Publisher not found
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:events
+            - read:events
+  /publisher/{publisherId}/allEvents:
+    get:
+      tags:
+        - publisher
+      summary: Find all events which belong to the specific publisher
+      description: Find all events which belong to the specific publisher with pagination
+      operationId: findEvents
+      parameters:
+        - name: publisherId
+          in: path
+          description: ID of publisher that to add event
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number of events query result
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          description: Maximum events on current page
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:events
+            - read:events
+  /publisher/event/{eventId}:
+    get:
+      tags:
+        - publisher
+      summary: Find event by ID
+      description: Returns a single event
+      operationId: findEventById
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Event not found
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:events
+            - read:events
+  /publisher/{publisherId}/datagroup:
+    post:
+      tags:
+        - publisher
+      summary: Add a data group to an existing publisher
+      description: add a data group to an existing publisher by publisherId
+      operationId: addDataGroup
+      parameters:
+        - name: publisherId
+          in: path
+          description: ID of publisher that to add data group
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: add a data group to an existing publisher
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataGroup'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/DataGroup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DataGroup'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataGroup'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DataGroup'
+        '400':
+          description: Required attributes cant't be null!
+        '404':
+          description: Publisher not found
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:datagroups
+            - read:datagroups
+    get:
+      tags:
+        - publisher
+      summary: Find data group which belong to the specific publisher
+      description: Find data group which belong to the specific publisher with data group name
+      operationId: findDataGroupByName
+      parameters:
+        - name: publisherId
+          in: path
+          description: ID of publisher that data groups belong to
+          required: true
+          schema:
+            type: string
+        - name: dataGroup
+          in: query
+          description: The data group name to find
+          required: true
+          explode: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataGroup'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DataGroup'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:datagroups
+            - read:datagroups
+  /publisher/{publisherId}/datagroups:
+    post:
+      tags:
+        - publisher
+      summary: Add data groups to an existing publisher
+      description: add data groups to an existing publisher by publisherId
+      operationId: addDataGroups
+      parameters:
+        - name: publisherId
+          in: path
+          description: ID of publisher that to add data groups
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: add data groups to an existing publisher
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DataGroup'          
+          application/xml:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DataGroup'          
+          application/x-www-form-urlencoded:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DataGroup'          
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataGroup'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataGroup'          
+        '400':
+          description: Required attributes cant't be null!
+        '404':
+          description: Publisher not found
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:datagroups
+            - read:datagroups
+  /publisher/{publisherId}/allDataGroups:
+    get:
+      tags:
+        - publisher
+      summary: Find all data groups which belong to the specific publisher
+      description: Find all data groups which belong to the specific publisher with pagination
+      operationId: findDataGroups
+      parameters:
+        - name: publisherId
+          in: path
+          description: ID of publisher that data groups belong to
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number of data groups query result
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          description: Maximum data groups on current page
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataGroup'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataGroup'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:datagroups
+            - read:datagroups
+  /publisher/datagroup/{dataGroupId}:
+    get:
+      tags:
+        - publisher
+      summary: Find data group by ID
+      description: Returns a single data group
+      operationId: findDataGroupById
+      parameters:
+        - name: dataGroupId
+          in: path
+          description: ID of data group to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataGroup'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DataGroup'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Data Group not found
+      security:
+        - webhook_auth:
+            - write:datagroups
+            - read:datagroups
+  /subscriber:
+    post:
+      tags:
+        - subscriber
+      summary: Add a new subscriber
+      description: Add a new subscriber
+      operationId: addSubscriber
+      requestBody:
+        description: Create a new subscriber
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscriber'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Subscriber'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Subscriber'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscriber'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Subscriber'
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:subscribers
+            - read:subscribers
+  /subscriber/all:
+    get:
+      tags:
+        - subscriber
+      summary: Find all subscribers with pagination
+      description: Will find the subscribers on the page specified (page, pageSize)
+      operationId: findAllSubscribers
+      parameters:
+        - name: page
+          in: query
+          description: The page number of subscribers query result
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          description: Maximum subscribers on current page
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscriber'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscriber'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:subscribers
+            - read:subscribers
+  /subscriber/{subscriberId}:
+    get:
+      tags:
+        - subscriber
+      summary: Find subscriber by ID
+      description: Returns a single subscriber
+      operationId: findSubscriberById
+      parameters:
+        - name: subscriberId
+          in: path
+          description: ID of subscriber to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscriber'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Subscriber'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Subscriber not found
+      security:
+        - webhook_auth:
+            - write:subscribers
+            - read:subscribers
+    put:
+      tags:
+        - subscriber
+      summary: Update an existing subscriber
+      description: Update an existing subscriber by subscriberId
+      operationId: updateSubscriberById
+      parameters:
+        - name: subscriberId
+          in: path
+          description: ID of subscriber that needs to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent subscriber
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscriber'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Subscriber'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Subscriber'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscriber'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Subscriber'
+        '400':
+          description: Required attributes cant't be null!
+        '404':
+          description: Subscriber not found
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:subscribers
+            - read:subscribers
+    delete:
+      tags:
+        - subscriber
+      summary: Deletes a subscriber
+      description: delete a subscriber
+      operationId: deleteSubscriber
+      parameters:
+        - name: api_key
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+        - name: subscriberId
+          in: path
+          description: ID of subscriber to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid subscriber value
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:subscribers
+            - read:subscribers
+  /webhook:
+    post:
+      tags:
+        - webhook
+      summary: Add a new webhook
+      description: Add a new webhook
+      operationId: addWebhook
+      requestBody:
+        description: Create a new webhook
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/all:
+    get:
+      tags:
+        - webhook
+      summary: Find all webhooks which belong to specific subscriber with pagination
+      description: Will find the webhooks on the page specified (page, pageSize)
+      operationId: findAllWebhooks
+      parameters:
+        - name: subscriberId
+          in: query
+          description: ID of subscriber which webhooks belong to
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number of webhooks query result
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          description: Maximum webhooks on current page
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/{webhookId}:
+    get:
+      tags:
+        - webhook
+      summary: Find webhook by ID
+      description: Returns a single webhook
+      operationId: findWebhookById
+      parameters:
+        - name: webhookId
+          in: path
+          description: ID of webhook to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Webhook not found
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+    put:
+      tags:
+        - webhook
+      summary: Update an existing webhook
+      description: Update an existing webhook by webhookId
+      operationId: updateWebhookById
+      parameters:
+        - name: webhookId
+          in: path
+          description: ID of webhook to return
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent webhook
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          description: Required attributes cant't be null!
+        '404':
+          description: Webhook not found
+        '422':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/activate:
+    post:
+      tags:
+        - webhook
+      summary: Activate webhook
+      description: Activate webhook and change webhook status to production
+      operationId: activateWebhook
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook to activate
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Webhook not found
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/deactivate:
+    post:
+      tags:
+        - webhook
+      summary: Deactivate webhook
+      description: Deactivate webhook and change webhook status to inactive
+      operationId: deactivateWebhook
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook to deactivate
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Webhook not found
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/subscribeEvent:
+    post:
+      tags:
+        - webhook
+      summary: Subscribe a publisher event for webhook
+      description: Subscribe a publisher event for webhook
+      operationId: subscribeEvent
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook
+          required: true
+          schema:
+            type: string
+        - name: eventId
+          in: query
+          description: ID of publisher event to subscribe
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Webhook or event not found
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/unsubscribeEvent:
+    post:
+      tags:
+        - webhook
+      summary: Unsubscribe a publisher event for webhook
+      description: Unsubscribe a publisher event for webhook
+      operationId: unsubscribeEvent
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook
+          required: true
+          schema:
+            type: string
+        - name: eventId
+          in: query
+          description: ID of publisher event to unsubscribe
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Webhook or event not found
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/subscribeEvents:
+    post:
+      tags:
+        - webhook
+      summary: Subscribe publisher events for webhook
+      description: Subscribe publisher events for webhook
+      operationId: subscribeEvents
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook
+          required: true
+          schema:
+            type: string
+        - name: eventIds
+          in: query
+          description: ID array of publisher events to subscribe
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Webhook or event not found
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/unsubscribeEvents:
+    post:
+      tags:
+        - webhook
+      summary: Unsubscribe publisher events for webhook
+      description: Unsubscribe publisher events for webhook
+      operationId: unsubscribeEvents
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook
+          required: true
+          schema:
+            type: string
+        - name: eventIds
+          in: query
+          description: ID array of publisher events to unsubscribe
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Webhook or event not found
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/subscribeDataGroup:
+    post:
+      tags:
+        - webhook
+      summary: Subscribe a publisher data group for webhook
+      description: Subscribe a publisher data group for webhook
+      operationId: subscribeDataGroup
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook
+          required: true
+          schema:
+            type: string
+        - name: dataGroupId
+          in: query
+          description: ID of publisher data group to subscribe
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Webhook or data group not found
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/unsubscribeDataGroup:
+    post:
+      tags:
+        - webhook
+      summary: Unsubscribe a publisher data group for webhook
+      description: Unsubscribe a publisher data group for webhook
+      operationId: unsubscribeDataGroup
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook
+          required: true
+          schema:
+            type: string
+        - name: dataGroupId
+          in: query
+          description: ID of publisher data group to unsubscribe
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Webhook or data group not found
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/subscribeDataGroups:
+    post:
+      tags:
+        - webhook
+      summary: Subscribe publisher data groups for webhook
+      description: Subscribe publisher data groups for webhook
+      operationId: subscribeDataGroups
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook
+          required: true
+          schema:
+            type: string
+        - name: dataGroupIds
+          in: query
+          description: ID array of publisher data groups to subscribe
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Webhook or data group not found
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/unsubscribeDataGroups:
+    post:
+      tags:
+        - webhook
+      summary: Unsubscribe publisher events for webhook
+      description: Unsubscribe publisher events for webhook
+      operationId: unsubscribeDataGroups
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook
+          required: true
+          schema:
+            type: string
+        - name: dataGroupIds
+          in: query
+          description: ID array of publisher data groups to unsubscribe
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Webhook or data group not found
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/allSubscribedEvents:
+    get:
+      tags:
+        - webhook
+      summary: Find all subscribed events which belong to specific webhook with pagination
+      description: Will find the subscribed events on the page specified (page, pageSize)
+      operationId: findSubscribedEvents
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook which subscribed events belong to
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number of subscribed events query result
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          description: Maximum subscribed events on current page
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/allSubscribedDataGroups:
+    get:
+      tags:
+        - webhook
+      summary: Find all subscribed data groups which belong to specific webhook with pagination
+      description: Will find the subscribed data groups on the page specified (page, pageSize)
+      operationId: findSubscribedDataGroups
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook which subscribed data groups belong to
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number of subscribed data groups query result
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          description: Maximum subscribed data groups on current page
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataGroup'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataGroup'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /webhook/subscribedDataGroup:
+    get:
+      tags:
+        - webhook
+      summary: Find the subscribed data group which belong to specific webhook with data group name
+      description: Will find the subscribed data group which belong to specific webhook with data group name
+      operationId: findSubscribedDataGroup
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook which subscribed data group belong to
+          required: true
+          schema:
+            type: string
+        - name: dataGroup
+          in: query
+          description: name of data group to find
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataGroup'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DataGroup'          
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:webhooks
+            - read:webhooks
+  /engine/version:
+    get:
+      tags:
+        - engine
+      summary: Get the webhook engine version
+      description: Get the webhook engine version
+      operationId: getEngineVersion
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:engine
+            - read:engine
+  /engine/trigger:
+    post:
+      tags:
+        - engine
+      summary: Trigger a webhook event and post a message
+      description: Trigger a webhook event and post a message
+      operationId: trigger
+      requestBody:
+        description: Trigger a webhook event and post a message
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookMessage'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/WebhookMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WebhookMessage'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Validation exception
+      security:
+        - api_key: []
+        - webhook_auth:
+            - write:engine
+            - read:engine
+  /engine/allPublisherWebhookLogs:
+    get:
+      tags:
+        - engine
+      summary: Find all webhook logs which triggered by specific publisher with pagination
+      description: Will find the webhook logs on the page specified (page, pageSize)
+      operationId: findAllPublisherWebhookLogs
+      parameters:
+        - name: publisherId
+          in: query
+          description: ID of publisher which triggered webhooks
+          required: true
+          schema:
+            type: string
+        - name: dataGroup
+          in: query
+          description: Data group (name) which triggered webhooks
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number of webhook logs query result
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          description: Maximum webhook logs on current page
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLog'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLog'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:webhooklogs
+            - read:webhooklogs
+  /engine/allSubscriberWebhookLogs:
+    get:
+      tags:
+        - engine
+      summary: Find all webhook logs which dispatched to specific subscriber with pagination
+      description: Will find the webhook logs on the page specified (page, pageSize)
+      operationId: findAllSubscriberWebhookLogs
+      parameters:
+        - name: webhookId
+          in: query
+          description: ID of webhook which receive events & messages
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number of webhook logs query result
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          description: Maximum webhook logs on current page
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLog'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLog'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:webhooklogs
+            - read:webhooklogs
+  /engine/webhookLines:
+    get:
+      tags:
+        - engine
+      summary: Find all webhook log lines which belong to specific request & webhook
+      description: Will find the webhook log lines
+      operationId: findWebhookLogLines
+      parameters:
+        - name: requestId
+          in: query
+          description: ID of request
+          required: true
+          schema:
+            type: string
+        - name: webhookId
+          in: query
+          description: ID of webhook
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLogLine'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookLogLine'
+        '400':
+          description: Validation exception
+      security:
+        - webhook_auth:
+            - write:webhooklogs
+            - read:webhooklogs
+components:
+  schemas:
+    Organization:
+      required:
+        - organizationName
+        - email
+      type: object
+      properties:
+        organizationId:
+          type: string
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+        organizationName:
+          type: string
+          example: Organiztion name
+        email:
+          type: string
+          example: test@email.com, should be unique
+        website:
+          type: string
+          example: https://test.domain.com
+        logoLink:
+          type: string
+          example: https://test.domain.com/images/login.png
+        organizationStatus:
+          type: string
+          description: Organization Status
+          example: ACTIVE
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - LOCKED
+        createdBy:
+          type: string
+          example: danialdy, this is the user name of the creator
+        creationTime:
+          type: string
+          format: date-time
+          example: 2025-01-23T14:56:07Z
+      xml:
+        name: organization
+    Publisher:
+      required:
+        - organizationId
+        - supportDataGroup
+        - version
+      type: object
+      properties:
+        publisherId:
+          type: string
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+        organizationId:
+          type: string
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+        supportDataGroup:
+          type: boolean
+        version:
+          type: string
+          example: 1.0.0
+        createdBy:
+          type: string
+          example: danialdy, this is the user name of the creator
+        creationTime:
+          type: string
+          format: date-time
+          example: 2025-01-23T14:56:07Z
+      xml:
+        name: publisher
+    DataGroup:
+      required:
+        - publisherId
+        - dataGroup
+      type: object
+      properties:
+        dataGroupId:
+          type: string
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+        publisherId:
+          type: string
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+        dataGroup:
+          type: string
+          example: 6791d42ed3d172552ed09459, or other string should be unique within a publisher
+      xml:
+        name: datagroup
+    Event:
+      required:
+        - publisherId
+        - eventType
+      type: object
+      properties:
+        eventId:
+          type: string
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+        publisherId:
+          type: string
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+        eventType:
+          type: string
+          example: order.created, or order.paid, order.delivered, product.created, etc.
+        eventTag:
+          type: string
+          example: order, product, etc.
+        contentType:
+          type: string
+          example: application/json, application/xml, etc.
+        charset:
+          type: string
+          example: utf-8
+        eventStatus:
+          type: string
+          description: Event Status
+          example: PUBLISHED
+          enum:
+            - SUBMITTED
+            - PUBLISHED
+            - RETIRED
+      xml:
+        name: event
+    Subscriber:
+      required:
+        - organizationId
+      type: object
+      properties:
+        subscriberId:
+          type: string
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+        organizationId:
+          type: string
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+      xml:
+        name: subscriber
+    Webhook:
+      required:
+        - subscriberId
+        - publisherId
+        - publisherVersion
+        - securityStrategy
+        - webhookUrl
+      type: object
+      properties:
+        webhookId:
+          type: string
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+        subscriberId:
+          type: string
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+        appName:
+          type: string
+        appTag:
+          type: string
+        description:
+          type: string
+        webhookSecret:
+          type: string
+        publisherId:
+          type: string
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+        publisherVersion:
+          type: string
+          example: 1.0.0
+        securityStrategy:
+          type: string
+          description: Security Strategry
+          example: SIGNATURE
+          enum:
+            - SIGNATURE
+            - TOKEN
+            - NONE 
+        webhookUrl:
+          type: string
+        customizedHeaders:
+          type: string
+          description: Customized Headers
+          example: {"key1": "value1", "key2": "value2", "key3": "value3"}
+        trustedIps:
+          type: array
+          items:
+            type: string
+          example:
+            - "192.168.0.1"
+            - "192.168.0.2"
+            - "192.168.0.3"
+        webhookStatus:
+          type: string
+          description: Webhook Status
+          example: TEST
+          enum:
+            - TEST
+            - AWAITING_FOR_APPROVEL
+            - PRODUCTION
+            - INACTIVE
+        createdBy:
+          type: string
+          example: danialdy, this is the user name of the creator
+        creationTime:
+          type: string
+          format: date-time
+          example: 2025-01-23T14:56:07Z
+      xml:
+        name: webhook
+    WebhookLog:
+      type: object
+      properties:
+        eventType:
+          type: string
+        eventTag:
+          type: string
+        contentType:
+          type: string
+        charset:
+          type: string
+        requestId:
+          type: string
+        payload:
+          type: string
+        webhookStatus:
+          type: string
+        triggerTime:
+          type: string
+          format: date-time
+          example: 2025-01-23T14:56:07Z
+      xml:
+        name: webhookLog
+    WebhookLogLine:
+      type: object
+      properties:
+        logType:
+          type: string
+        information:
+          type: string
+        logTime:
+          type: string
+          format: date-time
+          example: 2025-01-23T14:56:07Z
+        tryTime:
+          type: integer
+          format: int32
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    WebhookMessage:
+      type: object
+      properties:
+        publisherId:
+          type: string
+        version:
+          type: string
+        eventType:
+          type: string
+        eventTag:
+          type: string
+        contentType:
+          type: string
+        charset:
+          type: string
+        dataGroup:
+          type: string
+        requestId:
+          type: string
+        payload:
+          type: string
+  securitySchemes:
+    webhook_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:organizations: modify organizations in your account
+            read:organizations: read your organizations
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header

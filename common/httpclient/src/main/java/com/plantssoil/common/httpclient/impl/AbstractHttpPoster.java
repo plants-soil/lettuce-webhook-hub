@@ -111,13 +111,13 @@ public abstract class AbstractHttpPoster implements IHttpPoster {
     public IHttpResponse post(String url, Map<String, String> headers, String requestId, String payload) {
         // call the preparation
         beforePost(url, headers, requestId, payload);
-        if (LOGGER.isInfoEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             String info = String.format("beforePost(url[%s], headers, requestId[%s], payload[%s]) completed.", url, requestId, payload);
-            LOGGER.info(info);
+            LOGGER.debug(info);
         }
         IHttpResponse r = getHttpClient().post(url, headers, requestId, payload, getMediaType(), getCharset());
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Sent request requestId[%s] to url[%s].", requestId, url);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Sent request requestId[%s] to url[%s].", requestId, url);
         }
         return r;
     }
@@ -126,13 +126,13 @@ public abstract class AbstractHttpPoster implements IHttpPoster {
     public void post(String url, Map<String, String> headers, String requestId, String payload, IHttpCallback callback) {
         // call the preparation
         beforePost(url, headers, requestId, payload);
-        if (LOGGER.isInfoEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             String info = String.format("beforePost(url[%s], headers, requestId[%s], payload[%s]) completed.", url, requestId, payload);
-            LOGGER.info(info);
+            LOGGER.debug(info);
         }
         getHttpClient().post(url, headers, requestId, payload, getMediaType(), getCharset(), callback);
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Sent request requestId[%s] to url[%s].", requestId, url);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Sent request requestId[%s] to url[%s].", requestId, url);
         }
     }
 

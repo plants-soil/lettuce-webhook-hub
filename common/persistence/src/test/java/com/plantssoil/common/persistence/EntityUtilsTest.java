@@ -22,6 +22,10 @@ import com.plantssoil.common.persistence.beans.Teacher;
 public class EntityUtilsTest {
     private Map<String, Set<String>> ids = new ConcurrentHashMap<>();
 
+    public static void main(String[] args) {
+        System.out.println(EntityUtils.getInstance().createUniqueObjectId());
+    }
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
     }

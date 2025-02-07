@@ -34,6 +34,7 @@ public class EnginePersistenceException extends BusinessException {
     public final static int BUSINESS_EXCEPTION_CODE_21015 = 21015;
     public final static int BUSINESS_EXCEPTION_CODE_21016 = 21016;
     public final static int BUSINESS_EXCEPTION_CODE_21017 = 21017;
+    public final static int BUSINESS_EXCEPTION_CODE_21018 = 21018;
 
     public EnginePersistenceException(String message, Throwable cause) {
         super(message, cause);

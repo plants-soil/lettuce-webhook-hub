@@ -1,5 +1,7 @@
 package com.plantssoil.webhook.core;
 
+import java.io.Serializable;
+
 import com.plantssoil.common.io.ObjectJsonSerializer;
 
 /**
@@ -8,7 +10,9 @@ import com.plantssoil.common.io.ObjectJsonSerializer;
  * @author danialdy
  * @Date 25 Nov 2024 12:04:11 pm
  */
-public class Message {
+public class Message implements Serializable {
+    private static final long serialVersionUID = 3315775804931641215L;
+
     private String publisherId;
     private String version;
     private String eventType;

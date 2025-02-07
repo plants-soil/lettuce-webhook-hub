@@ -51,8 +51,10 @@ public class IEngineTestParent {
     }
 
     private IOrganization createOrganizationInstance(IRegistry registry) {
-        IOrganization o = new InMemoryOrganization();
-        o.setOrganizationId("ORGANIZATION-" + startTimeMilliseconds + "-" + entitySequence.getAndIncrement());
+        InMemoryOrganization o = new InMemoryOrganization();
+        int id = entitySequence.getAndIncrement();
+        o.setOrganizationId("ORGANIZATION-" + startTimeMilliseconds + "-" + id);
+        o.setEmail("email" + startTimeMilliseconds + id + "@e-yunyi.com");
         registry.addOrganization(o);
         return o;
     }

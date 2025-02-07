@@ -28,6 +28,11 @@
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okhttp</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-reload4j</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- Test dependencies -->
 		<dependency>

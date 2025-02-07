@@ -95,4 +95,9 @@ public class JPAPersistenceDatasourceTest {
     public void test7QueryStudent() {
         test.testEntityQuery(IPersistenceFactory.getFactoryInstance());
     }
+
+    @Test
+    public void test8DistinctQuery() {
+        test.testDistinctQuery(IPersistenceFactory.getFactoryInstance());
+    }
 }

@@ -11,11 +11,6 @@
 	<name>Plants Soil common functions - exception</name>
 
 	<dependencies>
-		<!-- Logging -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
 		<!-- Testing Dependencies -->
 		<dependency>
 			<groupId>junit</groupId>

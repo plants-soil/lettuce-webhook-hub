@@ -1,0 +1,7 @@
+{
+    "groupId":"com.plantssoil",
+    "artifactId":"lettuce-webhook-api-rest",
+    "artifactVersion":"1.0.0-SNAPSHOT",
+    "apiPackage" : "com.plantssoil.webhook.api",
+    "modelPackage": "com.plantssoil.webhook.beans"
+}

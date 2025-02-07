@@ -1,6 +1,5 @@
 package com.plantssoil.webhook.persists.beans;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -28,7 +27,7 @@ import com.plantssoil.webhook.core.IEvent;
 @Entity
 @Table(name = "LETTUCE_EVENT", uniqueConstraints = @UniqueConstraint(columnNames = { "publisherId", "eventType" }), indexes = {
         @Index(name = "idx_event_pubid", columnList = "publisherId") })
-public class Event extends ClonableBean implements IEvent, Serializable {
+public class Event extends ClonableBean implements IEvent {
     private static final long serialVersionUID = 5996607146075281389L;
 
     /**

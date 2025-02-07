@@ -1,19 +1,24 @@
 package com.plantssoil.common.persistence.mongodb;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.ConfigurableLoader;
@@ -28,13 +33,21 @@ import com.plantssoil.common.persistence.beans.Student;
 import com.plantssoil.common.persistence.beans.Teacher;
 import com.plantssoil.common.test.TempDirectoryUtility;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MongodbPersistenceTest {
     private static TempDirectoryUtility util = new TempDirectoryUtility();
 
     public static void main(String[] args) throws Exception {
         MongodbPersistenceTest.setUpBeforeClass();
         MongodbPersistenceTest test = new MongodbPersistenceTest();
-        test.testCreateQuery();
+        test.test1CreateObject();
+        test.test2CreateListOfQ();
+        test.test3UpdateT();
+        test.test4UpdateListOfQ();
+        test.test5RemoveObject();
+        test.test6RemoveListOfQ();
+        test.test7CreateQuery();
+        test.test8DistinctQuery();
         MongodbPersistenceTest.tearDownAfterClass();
         System.out.println(EntityUtils.getInstance().createUniqueObjectId());
     }
@@ -60,7 +73,22 @@ public class MongodbPersistenceTest {
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
+        try {
+            Thread.sleep(30 * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
+        try (IPersistence p = f.create()) {
+            deleteAllData(p, Student.class);
+            deleteAllData(p, Teacher.class);
+        }
         util.removeTempDirectory();
+    }
+
+    private static <T> void deleteAllData(IPersistence p, Class<T> entityClass) throws InterruptedException, ExecutionException {
+        List<T> list = p.createQuery(entityClass).maxResults(1000).resultList().get();
+        p.remove(list);
     }
 
     private Teacher newTeacherEntity() {
@@ -77,11 +105,11 @@ public class MongodbPersistenceTest {
         return course;
     }
 
-    private Student newStudentEntity() {
+    private Student newStudentEntity(Student.Gender gender) {
         Student student = new Student();
         student.setStudentId(EntityUtils.getInstance().createUniqueObjectId());
         student.setStudentName("Student" + ThreadLocalRandom.current().nextInt());
-        student.setGender(Student.Gender.Female);
+        student.setGender(gender);
         student.setAddress(new Address("Address No " + ThreadLocalRandom.current().nextInt(), "Street " + ThreadLocalRandom.current().nextInt(),
                 "City " + ThreadLocalRandom.current().nextInt(), "Province " + ThreadLocalRandom.current().nextInt()));
         student.setCreationTime(new Date());
@@ -92,7 +120,7 @@ public class MongodbPersistenceTest {
     }
 
     @Test
-    public void testCreateObject() {
+    public void test1CreateObject() {
         List<String> successful = new ArrayList<String>();
         for (int i = 0; i < 25; i++) {
             Teacher teacher = newTeacherEntity();
@@ -108,10 +136,13 @@ public class MongodbPersistenceTest {
     }
 
     @Test
-    public void testCreateListOfQ() {
+    public void test2CreateListOfQ() {
         List<Student> students = new ArrayList<Student>();
         for (int i = 0; i < 25; i++) {
-            students.add(newStudentEntity());
+            students.add(newStudentEntity(Student.Gender.Female));
+        }
+        for (int i = 0; i < 25; i++) {
+            students.add(newStudentEntity(Student.Gender.Male));
         }
 
         try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
@@ -124,7 +155,7 @@ public class MongodbPersistenceTest {
     }
 
     @Test
-    public void testUpdateT() {
+    public void test3UpdateT() {
         List<Teacher> ts = null;
         try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
             IEntityQuery<Teacher> q = persists.createQuery(Teacher.class).firstResult(0).maxResults(5);
@@ -152,7 +183,7 @@ public class MongodbPersistenceTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testUpdateListOfQ() {
+    public void test4UpdateListOfQ() {
         List<Student> ts = null;
         try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
             IEntityQuery<Student> q = persists.createQuery(Student.class).firstResult(0).maxResults(5);
@@ -177,7 +208,7 @@ public class MongodbPersistenceTest {
     }
 
     @Test
-    public void testRemoveObject() {
+    public void test5RemoveObject() {
         List<Teacher> ts = null;
         try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
             IEntityQuery<Teacher> q = persists.createQuery(Teacher.class).firstResult(0).maxResults(5);
@@ -201,7 +232,7 @@ public class MongodbPersistenceTest {
     }
 
     @Test
-    public void testRemoveListOfQ() {
+    public void test6RemoveListOfQ() {
         List<Student> ts = null;
         try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
             IEntityQuery<Student> q = persists.createQuery(Student.class).firstResult(0).maxResults(5);
@@ -221,15 +252,45 @@ public class MongodbPersistenceTest {
     }
 
     @Test
-    public void testCreateQuery() {
+    public void test7CreateQuery() {
         try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
             IEntityQuery<Student> query = persists.createQuery(Student.class);
             CompletableFuture<List<Student>> students = query.filter("studentName", IEntityQuery.FilterOperator.like, "Student-1.")
-                    .filter("gender", IEntityQuery.FilterOperator.equals, Student.Gender.Female).firstResult(0).maxResults(5).resultList();
+                    .filter("gender", IEntityQuery.FilterOperator.equals, Student.Gender.Male).firstResult(0).maxResults(5).resultList();
+            for (Student s : students.get()) {
+                System.out.println(s);
+            }
+            query = persists.createQuery(Student.class);
+            students = query.filter("studentName", IEntityQuery.FilterOperator.like, "Student-1%")
+                    .filter("gender", IEntityQuery.FilterOperator.in, Arrays.asList(Student.Gender.Female, Student.Gender.Male)).firstResult(0).maxResults(5)
+                    .resultList();
             for (Student s : students.get()) {
                 System.out.println(s);
             }
             assertTrue(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void test8DistinctQuery() {
+        try (IPersistence persists = IPersistenceFactory.getFactoryInstance().create()) {
+            IEntityQuery<Student> query = persists.createQuery(Student.class);
+            query.filter("studentName", IEntityQuery.FilterOperator.like, "Student-1.")
+                    .filter("gender", IEntityQuery.FilterOperator.equals, Student.Gender.Male).firstResult(0).maxResults(5);
+            List<Student.Gender> gender = query.distinct(Student.Gender.class, "gender");
+            assertTrue(gender.size() == 1);
+            assertEquals(gender.get(0), Student.Gender.Male);
+            System.out.println(gender.get(0));
+            query = persists.createQuery(Student.class);
+            query/* .filter("studentName", IEntityQuery.FilterOperator.like, "Student-1%") */
+                    .filter("gender", IEntityQuery.FilterOperator.in, Arrays.asList(Student.Gender.Female, Student.Gender.Male)).firstResult(0).maxResults(5);
+            gender = query.distinct(Student.Gender.class, "gender");
+//            assertTrue(gender.size() == 2);
+//            System.out.println(gender.get(0));
+//            System.out.println(gender.get(1));
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());

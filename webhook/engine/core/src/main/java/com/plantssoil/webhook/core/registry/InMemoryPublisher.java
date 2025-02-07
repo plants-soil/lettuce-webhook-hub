@@ -1,5 +1,7 @@
 package com.plantssoil.webhook.core.registry;
 
+import java.util.Date;
+
 import com.plantssoil.webhook.core.ClonableBean;
 import com.plantssoil.webhook.core.IPublisher;
 
@@ -13,10 +15,14 @@ import com.plantssoil.webhook.core.IPublisher;
  * @Date 2 Jan 2025 5:09:23 pm
  */
 public class InMemoryPublisher extends ClonableBean implements IPublisher {
+    private static final long serialVersionUID = 5562109321658487714L;
+
     private String publisherId;
     private String organizationId;
     private boolean supportDataGroup;
     private String version;
+    private String createdBy;
+    private Date creationTime;
 
     @Override
     public String getOrganizationId() {
@@ -57,4 +63,21 @@ public class InMemoryPublisher extends ClonableBean implements IPublisher {
     public String getVersion() {
         return this.version;
     }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
+    }
+
 }

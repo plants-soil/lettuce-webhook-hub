@@ -1,5 +1,6 @@
 package com.plantssoil.common.persistence.rdbms;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -33,11 +34,11 @@ public class JPAPersistenceTestUtil {
         return course;
     }
 
-    private Student newStudentEntity() {
+    private Student newStudentEntity(Student.Gender gender) {
         Student student = new Student();
         student.setStudentId(EntityUtils.getInstance().createUniqueObjectId());
         student.setStudentName("Student" + ThreadLocalRandom.current().nextInt());
-        student.setGender(Student.Gender.Female);
+        student.setGender(gender);
         student.setAddress(new Address("Address No " + ThreadLocalRandom.current().nextInt(), "Street " + ThreadLocalRandom.current().nextInt(),
                 "City " + ThreadLocalRandom.current().nextInt(), "Province " + ThreadLocalRandom.current().nextInt()));
         student.setCreationTime(new Date());
@@ -65,7 +66,10 @@ public class JPAPersistenceTestUtil {
     protected void testCreateList(IPersistenceFactory factory) {
         List<Student> students = new ArrayList<Student>();
         for (int i = 0; i < 25; i++) {
-            students.add(newStudentEntity());
+            students.add(newStudentEntity(Student.Gender.Male));
+        }
+        for (int i = 0; i < 25; i++) {
+            students.add(newStudentEntity(Student.Gender.Female));
         }
 
         try (IPersistence persists = factory.create()) {
@@ -179,12 +183,46 @@ public class JPAPersistenceTestUtil {
             for (Student s : students.get()) {
                 System.out.println(s);
             }
+            List<Student.Gender> g = new ArrayList<>();
+            g.add(Student.Gender.Female);
+            g.add(Student.Gender.Male);
+            query = persists.createQuery(Student.class);
+            students = query.filter("studentName", IEntityQuery.FilterOperator.like, "Student-1%").filter("gender", IEntityQuery.FilterOperator.in, g)
+                    .firstResult(0).maxResults(5).resultList();
+            for (Student s : students.get()) {
+                System.out.println(s);
+            }
             assertTrue(true);
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
 
+    }
+
+    protected void testDistinctQuery(IPersistenceFactory factory) {
+        try (IPersistence persists = factory.create()) {
+            IEntityQuery<Student> query = persists.createQuery(Student.class);
+            query.filter("studentName", IEntityQuery.FilterOperator.like, "Student-1%")
+                    .filter("gender", IEntityQuery.FilterOperator.equals, Student.Gender.Female).firstResult(0).maxResults(5);
+            List<Student.Gender> gender = query.distinct(Student.Gender.class, "gender");
+            assertTrue(gender.size() == 1);
+            assertEquals(gender.get(0), Student.Gender.Female);
+            System.out.println(gender.get(0));
+            query = persists.createQuery(Student.class);
+            List<Student.Gender> g = new ArrayList<>();
+            g.add(Student.Gender.Female);
+            g.add(Student.Gender.Male);
+            query.filter("studentName", IEntityQuery.FilterOperator.like, "Student-1%").filter("gender", IEntityQuery.FilterOperator.in, g).firstResult(0)
+                    .maxResults(5);
+            gender = query.distinct(Student.Gender.class, "gender");
+            assertTrue(gender.size() == 2);
+            System.out.println(gender.get(0));
+            System.out.println(gender.get(1));
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
     }
 
 }
