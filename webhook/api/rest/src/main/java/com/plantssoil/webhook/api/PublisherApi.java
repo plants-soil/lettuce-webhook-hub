@@ -1,6 +1,6 @@
 package com.plantssoil.webhook.api;
 
-import com.plantssoil.webhook.beans.*;
+
 import com.plantssoil.webhook.api.PublisherApiService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +30,7 @@ import javax.validation.constraints.*;
 @Path("/publisher")
 
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-07T18:18:51.966634600+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-08T22:55:59.560416600+08:00[Asia/Shanghai]")
 public class PublisherApi  {
 
     @Inject PublisherApiService service;
@@ -41,9 +41,9 @@ public class PublisherApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Add a data group to an existing publisher", description = "add a data group to an existing publisher by publisherId", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "datagroup_auth", scopes = {
+            "write:datagroups",
+"read:datagroups"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -66,9 +66,9 @@ public class PublisherApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Add a data group to an existing publisher", description = "add a data group to an existing publisher by publisherId", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "datagroup_auth", scopes = {
+            "write:datagroups",
+"read:datagroups"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -89,9 +89,9 @@ public class PublisherApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Add data groups to an existing publisher", description = "add data groups to an existing publisher by publisherId", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "datagroup_auth", scopes = {
+            "write:datagroups",
+"read:datagroups"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -114,9 +114,9 @@ public class PublisherApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Add an event to an existing publisher", description = "add an event to an existing publisher by publisherId", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "event_auth", scopes = {
+            "write:events",
+"read:events"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -139,9 +139,9 @@ public class PublisherApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Add an event to an existing publisher", description = "add an event to an existing publisher by publisherId", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "event_auth", scopes = {
+            "write:events",
+"read:events"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -163,9 +163,9 @@ public class PublisherApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Add events to an existing publisher", description = "add events to an existing publisher by publisherId", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "event_auth", scopes = {
+            "write:events",
+"read:events"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -188,9 +188,9 @@ public class PublisherApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Add a new publisher", description = "Add a new publisher", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "publisher_auth", scopes = {
+            "write:publishers",
+"read:publishers"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -211,9 +211,9 @@ public class PublisherApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Add a new publisher", description = "Add a new publisher", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "publisher_auth", scopes = {
+            "write:publishers",
+"read:publishers"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -231,9 +231,9 @@ public class PublisherApi  {
     
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find all publishers with pagination", description = "Will find the publishers on the page specified (page, pageSize)", security = {
-        @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+        @SecurityRequirement(name = "publisher_auth", scopes = {
+            "write:publishers",
+"read:publishers"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -249,9 +249,9 @@ public class PublisherApi  {
     
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find data group by ID", description = "Returns a single data group", security = {
-        @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+        @SecurityRequirement(name = "datagroup_auth", scopes = {
+            "write:datagroups",
+"read:datagroups"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -269,9 +269,9 @@ public class PublisherApi  {
     
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find data group which belong to the specific publisher", description = "Find data group which belong to the specific publisher with data group name", security = {
-        @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+        @SecurityRequirement(name = "datagroup_auth", scopes = {
+            "write:datagroups",
+"read:datagroups"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -287,9 +287,9 @@ public class PublisherApi  {
     
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find all data groups which belong to the specific publisher", description = "Find all data groups which belong to the specific publisher with pagination", security = {
-        @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+        @SecurityRequirement(name = "datagroup_auth", scopes = {
+            "write:datagroups",
+"read:datagroups"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -306,9 +306,9 @@ public class PublisherApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find event by ID", description = "Returns a single event", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "event_auth", scopes = {
+            "write:events",
+"read:events"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -326,9 +326,9 @@ public class PublisherApi  {
     
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find all events which belong to the specific publisher", description = "Find all events which belong to the specific publisher with pagination", security = {
-        @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+        @SecurityRequirement(name = "event_auth", scopes = {
+            "write:events",
+"read:events"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -344,9 +344,9 @@ public class PublisherApi  {
     
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find publisher by ID", description = "Returns a single publisher", security = {
-        @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+        @SecurityRequirement(name = "publisher_auth", scopes = {
+            "write:publishers",
+"read:publishers"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -365,9 +365,9 @@ public class PublisherApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Update an existing publisher", description = "Update an existing publisher by publisherId", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "publisher_auth", scopes = {
+            "write:publishers",
+"read:publishers"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 
@@ -390,9 +390,9 @@ public class PublisherApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Update an existing publisher", description = "Update an existing publisher by publisherId", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "publisher_auth", scopes = {
+            "write:publishers",
+"read:publishers"
         })
     }, tags={ "publisher" })
     @ApiResponses(value = { 

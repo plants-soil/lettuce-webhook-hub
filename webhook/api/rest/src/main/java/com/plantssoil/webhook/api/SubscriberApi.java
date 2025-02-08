@@ -1,6 +1,6 @@
 package com.plantssoil.webhook.api;
 
-import com.plantssoil.webhook.beans.*;
+
 import com.plantssoil.webhook.api.SubscriberApiService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +29,7 @@ import javax.validation.constraints.*;
 @Path("/subscriber")
 
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-07T18:18:51.966634600+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-08T22:55:59.560416600+08:00[Asia/Shanghai]")
 public class SubscriberApi  {
 
     @Inject SubscriberApiService service;
@@ -40,9 +40,9 @@ public class SubscriberApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Add a new subscriber", description = "Add a new subscriber", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "subscriber_auth", scopes = {
+            "write:subscribers",
+"read:subscribers"
         })
     }, tags={ "subscriber" })
     @ApiResponses(value = { 
@@ -63,9 +63,9 @@ public class SubscriberApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Add a new subscriber", description = "Add a new subscriber", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "subscriber_auth", scopes = {
+            "write:subscribers",
+"read:subscribers"
         })
     }, tags={ "subscriber" })
     @ApiResponses(value = { 
@@ -84,9 +84,9 @@ public class SubscriberApi  {
     
     @Operation(summary = "Deletes a subscriber", description = "delete a subscriber", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "subscriber_auth", scopes = {
+            "write:subscribers",
+"read:subscribers"
         })
     }, tags={ "subscriber" })
     @ApiResponses(value = { 
@@ -100,9 +100,9 @@ public class SubscriberApi  {
     
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find all subscribers with pagination", description = "Will find the subscribers on the page specified (page, pageSize)", security = {
-        @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+        @SecurityRequirement(name = "subscriber_auth", scopes = {
+            "write:subscribers",
+"read:subscribers"
         })
     }, tags={ "subscriber" })
     @ApiResponses(value = { 
@@ -118,9 +118,9 @@ public class SubscriberApi  {
     
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find subscriber by ID", description = "Returns a single subscriber", security = {
-        @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+        @SecurityRequirement(name = "subscriber_auth", scopes = {
+            "write:subscribers",
+"read:subscribers"
         })
     }, tags={ "subscriber" })
     @ApiResponses(value = { 
@@ -139,9 +139,9 @@ public class SubscriberApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Update an existing subscriber", description = "Update an existing subscriber by subscriberId", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "subscriber_auth", scopes = {
+            "write:subscribers",
+"read:subscribers"
         })
     }, tags={ "subscriber" })
     @ApiResponses(value = { 
@@ -164,9 +164,9 @@ public class SubscriberApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Update an existing subscriber", description = "Update an existing subscriber by subscriberId", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "subscriber_auth", scopes = {
+            "write:subscribers",
+"read:subscribers"
         })
     }, tags={ "subscriber" })
     @ApiResponses(value = { 

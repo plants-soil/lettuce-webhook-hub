@@ -1,5 +1,7 @@
 package com.plantssoil.webhook.api.impl;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -7,15 +9,24 @@ import javax.ws.rs.core.SecurityContext;
 import com.plantssoil.webhook.api.ApiResponseMessage;
 import com.plantssoil.webhook.api.EngineApiService;
 import com.plantssoil.webhook.api.NotFoundException;
+import com.plantssoil.webhook.core.IEngineFactory;
+import com.plantssoil.webhook.core.ILogging;
+import com.plantssoil.webhook.core.IWebhookLog;
 
 @RequestScoped
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-07T18:18:51.966634600+08:00[Asia/Shanghai]")
 public class EngineApiServiceImpl implements EngineApiService {
+
     @Override
     public Response findAllPublisherWebhookLogs(String publisherId, Integer page, Integer pageSize, String dataGroup, SecurityContext securityContext)
             throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        try {
+            ILogging logging = IEngineFactory.getFactoryInstance().getEngine().getLogging();
+            List<IWebhookLog> webhookLogs = logging.findAllWebhookLogs(publisherId, dataGroup, page, pageSize);
+            return ResponseBuilder.ok().data(webhookLogs).build();
+        } catch (Exception e) {
+            return ResponseBuilder.exception(e).build();
+        }
     }
 
     @Override

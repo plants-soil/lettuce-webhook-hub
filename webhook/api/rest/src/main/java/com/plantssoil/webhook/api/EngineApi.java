@@ -1,6 +1,6 @@
 package com.plantssoil.webhook.api;
 
-import com.plantssoil.webhook.beans.*;
+
 import com.plantssoil.webhook.api.EngineApiService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-import com.plantssoil.webhook.beans.ModelApiResponse;
 
 import java.util.Map;
 import java.util.List;
@@ -30,7 +29,7 @@ import javax.validation.constraints.*;
 @Path("/engine")
 
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-07T18:18:51.966634600+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-08T22:55:59.560416600+08:00[Asia/Shanghai]")
 public class EngineApi  {
 
     @Inject EngineApiService service;
@@ -40,9 +39,9 @@ public class EngineApi  {
     
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find all webhook logs which triggered by specific publisher with pagination", description = "Will find the webhook logs on the page specified (page, pageSize)", security = {
-        @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+        @SecurityRequirement(name = "webhooklog_auth", scopes = {
+            "write:webhooklogs",
+"read:webhooklogs"
         })
     }, tags={ "engine" })
     @ApiResponses(value = { 
@@ -58,9 +57,9 @@ public class EngineApi  {
     
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find all webhook logs which dispatched to specific subscriber with pagination", description = "Will find the webhook logs on the page specified (page, pageSize)", security = {
-        @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+        @SecurityRequirement(name = "webhooklog_auth", scopes = {
+            "write:webhooklogs",
+"read:webhooklogs"
         })
     }, tags={ "engine" })
     @ApiResponses(value = { 
@@ -76,9 +75,9 @@ public class EngineApi  {
     
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find all webhook log lines which belong to specific request & webhook", description = "Will find the webhook log lines", security = {
-        @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+        @SecurityRequirement(name = "webhooklog_auth", scopes = {
+            "write:webhooklogs",
+"read:webhooklogs"
         })
     }, tags={ "engine" })
     @ApiResponses(value = { 
@@ -94,13 +93,13 @@ public class EngineApi  {
     
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Get the webhook engine version", description = "Get the webhook engine version", security = {
-        @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+        @SecurityRequirement(name = "engine_auth", scopes = {
+            "write:engine",
+"read:engine"
         })
     }, tags={ "engine" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelApiResponse.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.plantssoil.webhook.ApiResponse.class))),
         
         @ApiResponse(responseCode = "400", description = "Validation exception") })
     public Response getEngineVersion(@Context SecurityContext securityContext)
@@ -113,13 +112,13 @@ public class EngineApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Trigger a webhook event and post a message", description = "Trigger a webhook event and post a message", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "engine_auth", scopes = {
+            "write:engine",
+"read:engine"
         })
     }, tags={ "engine" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelApiResponse.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.plantssoil.webhook.ApiResponse.class))),
         
         @ApiResponse(responseCode = "400", description = "Validation exception") })
     public Response trigger(
@@ -134,13 +133,13 @@ public class EngineApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Trigger a webhook event and post a message", description = "Trigger a webhook event and post a message", security = {
         @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+@SecurityRequirement(name = "engine_auth", scopes = {
+            "write:engine",
+"read:engine"
         })
     }, tags={ "engine" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelApiResponse.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.plantssoil.webhook.ApiResponse.class))),
         
         @ApiResponse(responseCode = "400", description = "Validation exception") })
     public Response trigger(@Parameter(description = "", required=true)@FormParam("publisherId")  String publisherId,@Parameter(description = "", required=true)@FormParam("version")  String version,@Parameter(description = "", required=true)@FormParam("eventType")  String eventType,@Parameter(description = "", required=true)@FormParam("eventTag")  String eventTag,@Parameter(description = "", required=true)@FormParam("contentType")  String contentType,@Parameter(description = "", required=true)@FormParam("charset")  String charset,@Parameter(description = "", required=true)@FormParam("dataGroup")  String dataGroup,@Parameter(description = "", required=true)@FormParam("requestId")  String requestId,@Parameter(description = "", required=true)@FormParam("payload")  String payload,@Context SecurityContext securityContext)

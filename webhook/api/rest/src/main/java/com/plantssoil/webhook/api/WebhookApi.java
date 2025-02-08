@@ -1,6 +1,6 @@
 package com.plantssoil.webhook.api;
 
-import com.plantssoil.webhook.beans.*;
+
 import com.plantssoil.webhook.api.WebhookApiService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.Date;
-import com.plantssoil.webhook.beans.ModelApiResponse;
 
 import java.util.Map;
 import java.util.List;
@@ -31,7 +30,7 @@ import javax.validation.constraints.*;
 @Path("/webhook")
 
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-07T18:18:51.966634600+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-08T22:55:59.560416600+08:00[Asia/Shanghai]")
 public class WebhookApi  {
 
     @Inject WebhookApiService service;
@@ -43,8 +42,8 @@ public class WebhookApi  {
     @Operation(summary = "Activate webhook", description = "Activate webhook and change webhook status to production", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
@@ -64,8 +63,8 @@ public class WebhookApi  {
     @Operation(summary = "Add a new webhook", description = "Add a new webhook", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
@@ -87,8 +86,8 @@ public class WebhookApi  {
     @Operation(summary = "Add a new webhook", description = "Add a new webhook", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
@@ -110,8 +109,8 @@ public class WebhookApi  {
     @Operation(summary = "Deactivate webhook", description = "Deactivate webhook and change webhook status to inactive", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
@@ -130,8 +129,8 @@ public class WebhookApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find all webhooks which belong to specific subscriber with pagination", description = "Will find the webhooks on the page specified (page, pageSize)", security = {
         @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
@@ -148,8 +147,8 @@ public class WebhookApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find the subscribed data group which belong to specific webhook with data group name", description = "Will find the subscribed data group which belong to specific webhook with data group name", security = {
         @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
@@ -166,8 +165,8 @@ public class WebhookApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find all subscribed data groups which belong to specific webhook with pagination", description = "Will find the subscribed data groups on the page specified (page, pageSize)", security = {
         @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
@@ -184,8 +183,8 @@ public class WebhookApi  {
     @Produces({ "application/json", "application/xml" })
     @Operation(summary = "Find all subscribed events which belong to specific webhook with pagination", description = "Will find the subscribed events on the page specified (page, pageSize)", security = {
         @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
@@ -203,8 +202,8 @@ public class WebhookApi  {
     @Operation(summary = "Find webhook by ID", description = "Returns a single webhook", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
@@ -224,12 +223,12 @@ public class WebhookApi  {
     @Operation(summary = "Subscribe a publisher data group for webhook", description = "Subscribe a publisher data group for webhook", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelApiResponse.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.plantssoil.webhook.ApiResponse.class))),
         
         @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
         
@@ -245,12 +244,12 @@ public class WebhookApi  {
     @Operation(summary = "Subscribe publisher data groups for webhook", description = "Subscribe publisher data groups for webhook", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelApiResponse.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.plantssoil.webhook.ApiResponse.class))),
         
         @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
         
@@ -266,12 +265,12 @@ public class WebhookApi  {
     @Operation(summary = "Subscribe a publisher event for webhook", description = "Subscribe a publisher event for webhook", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelApiResponse.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.plantssoil.webhook.ApiResponse.class))),
         
         @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
         
@@ -287,12 +286,12 @@ public class WebhookApi  {
     @Operation(summary = "Subscribe publisher events for webhook", description = "Subscribe publisher events for webhook", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelApiResponse.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.plantssoil.webhook.ApiResponse.class))),
         
         @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
         
@@ -308,12 +307,12 @@ public class WebhookApi  {
     @Operation(summary = "Unsubscribe a publisher data group for webhook", description = "Unsubscribe a publisher data group for webhook", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelApiResponse.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.plantssoil.webhook.ApiResponse.class))),
         
         @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
         
@@ -329,12 +328,12 @@ public class WebhookApi  {
     @Operation(summary = "Unsubscribe publisher events for webhook", description = "Unsubscribe publisher events for webhook", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelApiResponse.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.plantssoil.webhook.ApiResponse.class))),
         
         @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
         
@@ -350,12 +349,12 @@ public class WebhookApi  {
     @Operation(summary = "Unsubscribe a publisher event for webhook", description = "Unsubscribe a publisher event for webhook", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelApiResponse.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.plantssoil.webhook.ApiResponse.class))),
         
         @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
         
@@ -371,12 +370,12 @@ public class WebhookApi  {
     @Operation(summary = "Unsubscribe publisher events for webhook", description = "Unsubscribe publisher events for webhook", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelApiResponse.class))),
+        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.plantssoil.webhook.ApiResponse.class))),
         
         @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
         
@@ -392,8 +391,8 @@ public class WebhookApi  {
     @Operation(summary = "Update an existing webhook", description = "Update an existing webhook by webhookId", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 
@@ -417,8 +416,8 @@ public class WebhookApi  {
     @Operation(summary = "Update an existing webhook", description = "Update an existing webhook by webhookId", security = {
         @SecurityRequirement(name = "api_key"),
 @SecurityRequirement(name = "webhook_auth", scopes = {
-            "write:organizations",
-"read:organizations"
+            "write:webhooks",
+"read:webhooks"
         })
     }, tags={ "webhook" })
     @ApiResponses(value = { 

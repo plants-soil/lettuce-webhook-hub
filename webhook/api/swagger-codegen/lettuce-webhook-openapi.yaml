@@ -66,7 +66,7 @@ paths:
           description: Validation exception
       security:
         - api_key: []
-        - webhook_auth:
+        - organization_auth:
             - write:organizations
             - read:organizations
     post:
@@ -104,7 +104,7 @@ paths:
           description: Validation exception
       security:
         - api_key: []
-        - webhook_auth:
+        - organization_auth:
             - write:organizations
             - read:organizations
   /organization/all:
@@ -148,7 +148,7 @@ paths:
         '400':
           description: Validation exception
       security:
-        - webhook_auth:
+        - organization_auth:
             - write:organizations
             - read:organizations
   /organization/{organizationId}:
@@ -180,7 +180,7 @@ paths:
         '404':
           description: Organization not found
       security:
-        - webhook_auth:
+        - organization_auth:
             - write:organizations
             - read:organizations
     put:
@@ -227,7 +227,7 @@ paths:
           description: Validation exception
       security:
         - api_key: []
-        - webhook_auth:
+        - organization_auth:
             - write:organizations
             - read:organizations
   /publisher:
@@ -266,7 +266,7 @@ paths:
           description: Validation exception
       security:
         - api_key: []
-        - webhook_auth:
+        - publisher_auth:
             - write:publishers
             - read:publishers
   /publisher/all:
@@ -310,7 +310,7 @@ paths:
         '400':
           description: Validation exception
       security:
-        - webhook_auth:
+        - publisher_auth:
             - write:publishers
             - read:publishers
   /publisher/{publisherId}:
@@ -342,7 +342,7 @@ paths:
         '404':
           description: Publisher not found
       security:
-        - webhook_auth:
+        - publisher_auth:
             - write:publishers
             - read:publishers
     put:
@@ -389,7 +389,7 @@ paths:
           description: Validation exception
       security:
         - api_key: []
-        - webhook_auth:
+        - publisher_auth:
             - write:publishers
             - read:publishers
   /publisher/{publisherId}/event:
@@ -437,7 +437,7 @@ paths:
           description: Validation exception
       security:
         - api_key: []
-        - webhook_auth:
+        - event_auth:
             - write:events
             - read:events
   /publisher/{publisherId}/events:
@@ -495,7 +495,7 @@ paths:
           description: Validation exception
       security:
         - api_key: []
-        - webhook_auth:
+        - event_auth:
             - write:events
             - read:events
   /publisher/{publisherId}/allEvents:
@@ -545,7 +545,7 @@ paths:
         '400':
           description: Validation exception
       security:
-        - webhook_auth:
+        - event_auth:
             - write:events
             - read:events
   /publisher/event/{eventId}:
@@ -578,7 +578,7 @@ paths:
           description: Event not found
       security:
         - api_key: []
-        - webhook_auth:
+        - event_auth:
             - write:events
             - read:events
   /publisher/{publisherId}/datagroup:
@@ -626,7 +626,7 @@ paths:
           description: Validation exception
       security:
         - api_key: []
-        - webhook_auth:
+        - datagroup_auth:
             - write:datagroups
             - read:datagroups
     get:
@@ -662,7 +662,7 @@ paths:
         '400':
           description: Validation exception
       security:
-        - webhook_auth:
+        - datagroup_auth:
             - write:datagroups
             - read:datagroups
   /publisher/{publisherId}/datagroups:
@@ -720,7 +720,7 @@ paths:
           description: Validation exception
       security:
         - api_key: []
-        - webhook_auth:
+        - datagroup_auth:
             - write:datagroups
             - read:datagroups
   /publisher/{publisherId}/allDataGroups:
@@ -770,7 +770,7 @@ paths:
         '400':
           description: Validation exception
       security:
-        - webhook_auth:
+        - datagroup_auth:
             - write:datagroups
             - read:datagroups
   /publisher/datagroup/{dataGroupId}:
@@ -802,7 +802,7 @@ paths:
         '404':
           description: Data Group not found
       security:
-        - webhook_auth:
+        - datagroup_auth:
             - write:datagroups
             - read:datagroups
   /subscriber:
@@ -841,7 +841,7 @@ paths:
           description: Validation exception
       security:
         - api_key: []
-        - webhook_auth:
+        - subscriber_auth:
             - write:subscribers
             - read:subscribers
   /subscriber/all:
@@ -885,7 +885,7 @@ paths:
         '400':
           description: Validation exception
       security:
-        - webhook_auth:
+        - subscriber_auth:
             - write:subscribers
             - read:subscribers
   /subscriber/{subscriberId}:
@@ -917,7 +917,7 @@ paths:
         '404':
           description: Subscriber not found
       security:
-        - webhook_auth:
+        - subscriber_auth:
             - write:subscribers
             - read:subscribers
     put:
@@ -964,7 +964,7 @@ paths:
           description: Validation exception
       security:
         - api_key: []
-        - webhook_auth:
+        - subscriber_auth:
             - write:subscribers
             - read:subscribers
     delete:
@@ -991,7 +991,7 @@ paths:
           description: Invalid subscriber value
       security:
         - api_key: []
-        - webhook_auth:
+        - subscriber_auth:
             - write:subscribers
             - read:subscribers
   /webhook:
@@ -1705,7 +1705,7 @@ paths:
         '400':
           description: Validation exception
       security:
-        - webhook_auth:
+        - engine_auth:
             - write:engine
             - read:engine
   /engine/trigger:
@@ -1742,7 +1742,7 @@ paths:
           description: Validation exception
       security:
         - api_key: []
-        - webhook_auth:
+        - engine_auth:
             - write:engine
             - read:engine
   /engine/allPublisherWebhookLogs:
@@ -1797,7 +1797,7 @@ paths:
         '400':
           description: Validation exception
       security:
-        - webhook_auth:
+        - webhooklog_auth:
             - write:webhooklogs
             - read:webhooklogs
   /engine/allSubscriberWebhookLogs:
@@ -1847,7 +1847,7 @@ paths:
         '400':
           description: Validation exception
       security:
-        - webhook_auth:
+        - webhooklog_auth:
             - write:webhooklogs
             - read:webhooklogs
   /engine/webhookLines:
@@ -1887,12 +1887,13 @@ paths:
         '400':
           description: Validation exception
       security:
-        - webhook_auth:
+        - webhooklog_auth:
             - write:webhooklogs
             - read:webhooklogs
 components:
   schemas:
     Organization:
+      description: Could be company, business unit, or any other organization type, publisher / subscriber should belongs to one organization
       required:
         - organizationName
         - email
@@ -1900,19 +1901,24 @@ components:
       properties:
         organizationId:
           type: string
+          description: ID of organization, should be unique, system will assign auto-generated ID if it's null
           example: 6791d42ed3d172552ed09459, maximum 24 chars
         organizationName:
           type: string
+          description: Organization name, required
           example: Organiztion name
         email:
           type: string
+          description: Organization official email, required and should be unique
           example: test@email.com, should be unique
         website:
           type: string
+          description: Organization official website URL
           example: https://test.domain.com
         logoLink:
           type: string
-          example: https://test.domain.com/images/login.png
+          description: Organization official logo URL
+          example: https://test.domain.com/images/logo.png
         organizationStatus:
           type: string
           description: Organization Status
@@ -1923,14 +1929,17 @@ components:
             - LOCKED
         createdBy:
           type: string
-          example: danialdy, this is the user name of the creator
+          description: The user name who create current organization
+          example: danialdy
         creationTime:
           type: string
+          description: The time when current organization is created
           format: date-time
           example: 2025-01-23T14:56:07Z
       xml:
         name: organization
     Publisher:
+      description: Could be a version of publisher application. Publisher publishes events (along with messages) which subscribers can subscribe
       required:
         - organizationId
         - supportDataGroup
@@ -1939,25 +1948,32 @@ components:
       properties:
         publisherId:
           type: string
+          description: ID of publisher, should be unique, system will assign auto-generated ID if it's null
           example: 6791d42ed3d172552ed09459, maximum 24 chars
         organizationId:
           type: string
+          description: ID of organization which current publisher should belongs to, required and (organizationId + version) should be unique
           example: 6791d42ed3d172552ed09459, maximum 24 chars
         supportDataGroup:
           type: boolean
+          description: Current publisher support multiple data group (some publisher need to separate data between different business units or merchants) or not
         version:
           type: string
+          description: Publisher version, required and (organizationId + version) should be unique
           example: 1.0.0
         createdBy:
           type: string
-          example: danialdy, this is the user name of the creator
+          description: The user name who create current publisher
+          example: danialdy
         creationTime:
           type: string
+          description: The time when current publisher is created
           format: date-time
           example: 2025-01-23T14:56:07Z
       xml:
         name: publisher
     DataGroup:
+      description: Could be one of business unit / merchant of the publisher, if the 'supportDataGroup' property of publisher is 'true'
       required:
         - publisherId
         - dataGroup
@@ -1965,16 +1981,20 @@ components:
       properties:
         dataGroupId:
           type: string
+          description: ID of data group, should be unique, system will assign auto-generated ID if it's null
           example: 6791d42ed3d172552ed09459, maximum 24 chars
         publisherId:
           type: string
+          description: ID of publisher which current data group belongs to, required and (publisherId + dataGroup) should be unique
           example: 6791d42ed3d172552ed09459, maximum 24 chars
         dataGroup:
           type: string
-          example: 6791d42ed3d172552ed09459, or other string should be unique within a publisher
+          description: Data group (the identity if the data group, means should be unique among the publisher, usally could be business unit ID / merchant ID), required and (publisherId + dataGroup) should be unique
+          example: 6791d42ed3d172552ed09459
       xml:
         name: datagroup
     Event:
+      description: The event which publisher will publish (trigger), could use eventTag to group differnt type of events. e.g., 1. product could have 'product.created' 'product.approved' 'product.outofstock' events, 2. order could have 'order.created' 'order.paid' 'order.packed' 'order.delivered' 'order.refund' 'order.returned' events. Publisher could define as many as events.
       required:
         - publisherId
         - eventType
@@ -1982,25 +2002,31 @@ components:
       properties:
         eventId:
           type: string
+          description: ID of event, should be unique, system will assign auto-generated ID if it's null
           example: 6791d42ed3d172552ed09459, maximum 24 chars
         publisherId:
           type: string
+          description: ID of publisher which current event belongs to, required
           example: 6791d42ed3d172552ed09459, maximum 24 chars
         eventType:
           type: string
+          description: Event type, required and (publisherId + eventType) should be unique
           example: order.created, or order.paid, order.delivered, product.created, etc.
         eventTag:
           type: string
+          description: Event tag, which could be used to group event types
           example: order, product, etc.
         contentType:
           type: string
+          description: Content type (message format) which publisher triggers
           example: application/json, application/xml, etc.
         charset:
           type: string
+          description: Charset (message encoding) which publisher triggers
           example: utf-8
         eventStatus:
           type: string
-          description: Event Status
+          description: Event Status, will be ignored when posting a new event
           example: PUBLISHED
           enum:
             - SUBMITTED
@@ -2009,19 +2035,23 @@ components:
       xml:
         name: event
     Subscriber:
+      description: Could be the subscriber which have multiple webhooks(applications) to subscribe publisher events, one organizaton only have one subscriber
       required:
         - organizationId
       type: object
       properties:
         subscriberId:
           type: string
+          description: ID of subscriber, should be unique, system will assign auto-generated ID if it's null
           example: 6791d42ed3d172552ed09459, maximum 24 chars
         organizationId:
           type: string
+          description: ID of organization which current subscriber should belongs to, required and should be unique
           example: 6791d42ed3d172552ed09459, maximum 24 chars
       xml:
         name: subscriber
     Webhook:
+      description: Could be an application which subscribe and receive events from publisher, one webhook could receive events from one specific (publisher + publisher version)
       required:
         - subscriberId
         - publisherId
@@ -2032,27 +2062,35 @@ components:
       properties:
         webhookId:
           type: string
+          description: ID of webhook, should be unique, system will assign auto-generated ID if it's null
           example: 6791d42ed3d172552ed09459, maximum 24 chars
         subscriberId:
           type: string
+          description: Subscriber ID which current webhook belongs to, required
           example: 6791d42ed3d172552ed09459, maximum 24 chars
         appName:
           type: string
+          description: Webhook name (application name)
         appTag:
           type: string
+          description: Webhook tag (application tag), could used to group differnt webhooks(applications)
         description:
           type: string
+          description: Webhook description
         webhookSecret:
           type: string
+          description: Webhook secret, managed by system and will be ignored when posting new webhook
         publisherId:
           type: string
+          description: Publisher ID which current webhook subscribed, required and (publisherId + publisherVersion) should be unique
           example: 6791d42ed3d172552ed09459, maximum 24 chars
         publisherVersion:
           type: string
+          description: Publisher version which current webhook subscribed, required and (publisherId + publisherVersion) should be unique
           example: 1.0.0
         securityStrategy:
           type: string
-          description: Security Strategry
+          description: Security Strategry, the publisher will use the specified strtegry to signature before dispatching message to current webhook, required
           example: SIGNATURE
           enum:
             - SIGNATURE
@@ -2060,12 +2098,15 @@ components:
             - NONE 
         webhookUrl:
           type: string
+          description: Webhook URL, which used to receive events and messages from subscribed publisher, required
+          example: https://www.example.com/oms/v1/webhook
         customizedHeaders:
           type: string
-          description: Customized Headers
+          description: Customized Headers, could add special headers needed for current webhook
           example: {"key1": "value1", "key2": "value2", "key3": "value3"}
         trustedIps:
           type: array
+          description: Trusted IP addresses, put current webhook website into white list
           items:
             type: string
           example:
@@ -2074,7 +2115,7 @@ components:
             - "192.168.0.3"
         webhookStatus:
           type: string
-          description: Webhook Status
+          description: Webhook Status, will be ignored when posting new webhook
           example: TEST
           enum:
             - TEST
@@ -2083,81 +2124,147 @@ components:
             - INACTIVE
         createdBy:
           type: string
-          example: danialdy, this is the user name of the creator
+          description: The user name who create current webhook
+          example: danialdy
         creationTime:
           type: string
+          description: The time when current webhook is created
           format: date-time
           example: 2025-01-23T14:56:07Z
       xml:
         name: webhook
     WebhookLog:
+      description: The webhook logs, all events (which carries messages) will be logged when publisher trigger events
       type: object
       properties:
         eventType:
           type: string
+          description: The event type publisher triggered
+          example: order.created, or order.paid, order.delivered, product.created, etc.
         eventTag:
           type: string
+          description: The event tag publisher triggered
+          example: product, order, etc.
         contentType:
           type: string
+          description: The content type publisher triggered
+          example: application/json, application/xml, etc.
         charset:
           type: string
+          description: The message charset publisher triggered
+          example: utf-8, etc.
         requestId:
           type: string
+          description: ID of request
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
         payload:
           type: string
+          description: The payload (request body) publisher triggered
+          example: {"orderId": "1", "orderTime": "2025-02-08T18:18:18", "customerId": "6791d42ed3d172552ed09459", "totalAmount": 120, "orderLines": [{"rowno": 1, "sku": "100001", "quantity": 1, "unitPrice": 40}, {"rowno": 1, "sku": "100002", "quantity": 1, "unitPrice": 80}]}
         webhookStatus:
           type: string
+          description: The webhook status
+          example: triggered
         triggerTime:
           type: string
+          description: The time when publisher triggered the event
           format: date-time
           example: 2025-01-23T14:56:07Z
       xml:
         name: webhookLog
     WebhookLogLine:
+      description: The webhook log line, log line will be added when event(message) is dispatched, got response from webhook, or exception happend
       type: object
       properties:
         logType:
           type: string
+          description: The log type
+          example: dispatched, success, fail, etc.
         information:
           type: string
         logTime:
           type: string
+          description: The log time when the log line is added
           format: date-time
           example: 2025-01-23T14:56:07Z
         tryTime:
           type: integer
+          description: How many times the event(with message) is dispatched
           format: int32
+          example: 1, 2, 3
+      xml:
+        name: webhookLogLine
+    WebhookMessage:
+      description: The webhook message which triggered by publisher
+      required:
+        - publisherId
+        - version
+        - eventType
+        - requestId
+        - payload
+      type: object
+      properties:
+        publisherId:
+          type: string
+          description: Valid publisher ID (who trigger the event and message), required
+          example: 6791d42ed3d172552ed09459, maximum 24 chars
+        version:
+          type: string
+          description: Valid publisher version (who trigger the event and message), required
+          example: 1.0.0
+        eventType:
+          type: string
+          description: Valid event type (should already been registered), required
+          example: order.created, or order.paid, order.delivered, product.created, etc.
+        eventTag:
+          type: string
+          description: Valid event tag, should already been registered
+          example: product, order, etc.
+        contentType:
+          type: string
+          description: The content type (format type of payload)
+          example: application/json, application/xml, etc.
+        charset:
+          type: string
+          description: The message charset (encoding of payload)
+          example: utf-8, etc.
+        dataGroup:
+          type: string
+          description: Data group (the identity of the data group if the publisher support multiple data group, usally could be business unit ID / merchant ID), should already been registered
+          example: 6791d42ed3d172552ed09459
+        requestId:
+          type: string
+          description: ID of request, which used to identify one request, required. Webhook could use this requestId to verify duplicated consumption, this verification should be always needed, because webhook engine will try to call webhook multiple times util got response from webhook.
+          example: 6791d42ed3d172552ed09459
+        payload:
+          type: string
+          description: The message (request body) publisher triggered, required
+          example: {"orderId": "1", "orderTime": "2025-02-08T18:18:18", "customerId": "6791d42ed3d172552ed09459", "totalAmount": 120, "orderLines": [{"rowno": 1, "sku": "100001", "quantity": 1, "unitPrice": 40}, {"rowno": 1, "sku": "100002", "quantity": 1, "unitPrice": 80}]}
+      xml:
+        name: webhookMessage
     ApiResponse:
+      description: The API response object which hold the response code and messages
+      required:
+        - code
+        - message
       type: object
       properties:
         code:
           type: integer
           format: int32
+          description: The response code
+          example: 200
         message:
           type: string
-    WebhookMessage:
-      type: object
-      properties:
-        publisherId:
-          type: string
-        version:
-          type: string
-        eventType:
-          type: string
-        eventTag:
-          type: string
-        contentType:
-          type: string
-        charset:
-          type: string
-        dataGroup:
-          type: string
-        requestId:
-          type: string
-        payload:
-          type: string
+          description: The response message
+          example: called successfully
+        data:
+          type: object
+          description: The data attached to the response
+      xml:
+        name: apiResponse
   securitySchemes:
-    webhook_auth:
+    organization_auth:
       type: oauth2
       flows:
         implicit:
@@ -2165,6 +2272,62 @@ components:
           scopes:
             write:organizations: modify organizations in your account
             read:organizations: read your organizations
+    publisher_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:publishers: modify publishers in you account
+            read:publishers: read your publishers
+    event_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:events: modify events in your account
+            read:events: read your events
+    datagroup_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:datagroups: modify data groups in your account
+            read:datagroups: read your data groups
+    subscriber_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:subscribers: modify subscribers in your account
+            read:subscribers: read your subscribers
+    webhook_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:webhooks: modify webhooks in your account
+            read:webhooks: read your webhooks
+    engine_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:engine: modify engine in your account
+            read:engine: read your engine
+    webhooklog_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:webhooklogs: modify webhook logs in your account
+            read:webhooklogs: read your webhook logs
     api_key:
       type: apiKey
       name: api_key

@@ -1,10 +1,9 @@
 package com.plantssoil.webhook.api;
 
 import com.plantssoil.webhook.api.*;
-import com.plantssoil.webhook.beans.*;
+
 
 import java.util.Date;
-import com.plantssoil.webhook.beans.ModelApiResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.io.InputStream;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-07T18:18:51.966634600+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-08T22:55:59.560416600+08:00[Asia/Shanghai]")
 public interface WebhookApiService {
       Response activateWebhook(String webhookId,SecurityContext securityContext) throws NotFoundException;
       Response addWebhook(com.plantssoil.webhook.core.registry.InMemoryWebhook body,SecurityContext securityContext) throws NotFoundException;

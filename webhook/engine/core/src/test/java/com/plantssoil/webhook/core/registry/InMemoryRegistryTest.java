@@ -448,7 +448,7 @@ public class InMemoryRegistryTest {
         // update subscriber attribute "organizationId", should throw exception
         assertThrows(EngineException.class, () -> {
             ISubscriber s = ps.get(3);
-            s.setOrganizationId("ORGANIZATION-" + CURRENT_TIME_MILLIS + "-1");
+            s.setOrganizationId("ORGANIZATION-" + CURRENT_TIME_MILLIS + "-A");
             r.updateSubscriber(s);
         });
         // should success

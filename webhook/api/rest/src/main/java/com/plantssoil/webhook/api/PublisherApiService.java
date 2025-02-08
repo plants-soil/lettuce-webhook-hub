@@ -1,7 +1,7 @@
 package com.plantssoil.webhook.api;
 
 import com.plantssoil.webhook.api.*;
-import com.plantssoil.webhook.beans.*;
+
 
 import java.util.Date;
 
@@ -14,7 +14,7 @@ import java.io.InputStream;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-07T18:18:51.966634600+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-08T22:55:59.560416600+08:00[Asia/Shanghai]")
 public interface PublisherApiService {
       Response addDataGroup(com.plantssoil.webhook.core.registry.InMemoryDataGroup body,String publisherId,SecurityContext securityContext) throws NotFoundException;
       Response addDataGroup(String dataGroupId,String publisherId2,String dataGroup,String publisherId,SecurityContext securityContext) throws NotFoundException;
