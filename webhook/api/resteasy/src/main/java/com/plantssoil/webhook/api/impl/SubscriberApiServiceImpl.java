@@ -1,57 +1,98 @@
 package com.plantssoil.webhook.api.impl;
 
+import java.util.List;
+import java.util.Objects;
+
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import com.plantssoil.webhook.api.ApiResponseMessage;
+import com.plantssoil.common.persistence.EntityUtils;
 import com.plantssoil.webhook.api.NotFoundException;
 import com.plantssoil.webhook.api.SubscriberApiService;
+import com.plantssoil.webhook.core.IEngineFactory;
+import com.plantssoil.webhook.core.IRegistry;
+import com.plantssoil.webhook.core.ISubscriber;
+import com.plantssoil.webhook.core.registry.InMemorySubscriber;
 
 @RequestScoped
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-05T11:58:30.837020300+08:00[Asia/Shanghai]")
 public class SubscriberApiServiceImpl implements SubscriberApiService {
     @Override
-    public Response addSubscriber(com.plantssoil.webhook.core.registry.InMemorySubscriber body, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    public Response addSubscriber(InMemorySubscriber body, SecurityContext securityContext) throws NotFoundException {
+        try {
+            if (body.getSubscriberId() == null) {
+                body.setSubscriberId(EntityUtils.getInstance().createUniqueObjectId());
+            }
+            IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+            r.addSubscriber(body);
+            return ResponseBuilder.ok().data(body).build();
+        } catch (Exception e) {
+            return ResponseBuilder.exception(e).build();
+        }
     }
 
     @Override
     public Response addSubscriber(String subscriberId, String organizationId, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        InMemorySubscriber subscriber = new InMemorySubscriber();
+        subscriber.setSubscriberId(subscriberId);
+        subscriber.setOrganizationId(organizationId);
+        return addSubscriber(subscriber, securityContext);
     }
 
     @Override
     public Response deleteSubscriber(String subscriberId, String apiKey, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        try {
+            IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+            ISubscriber subscriber = r.findSubscriber(subscriberId);
+            r.removeSubscriber(subscriber);
+            return ResponseBuilder.ok().build();
+        } catch (Exception e) {
+            return ResponseBuilder.exception(e).build();
+        }
     }
 
     @Override
     public Response findAllSubscribers(Integer page, Integer pageSize, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        try {
+            IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+            List<ISubscriber> subscribers = r.findAllSubscribers(page, pageSize);
+            return ResponseBuilder.ok().data(subscribers).build();
+        } catch (Exception e) {
+            return ResponseBuilder.exception(e).build();
+        }
     }
 
     @Override
     public Response findSubscriberById(String subscriberId, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        try {
+            IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+            ISubscriber subscriber = r.findSubscriber(subscriberId);
+            return ResponseBuilder.ok().data(subscriber).build();
+        } catch (Exception e) {
+            return ResponseBuilder.exception(e).build();
+        }
     }
 
     @Override
-    public Response updateSubscriberById(com.plantssoil.webhook.core.registry.InMemorySubscriber body, String subscriberId, SecurityContext securityContext)
-            throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    public Response updateSubscriberById(InMemorySubscriber body, String subscriberId, SecurityContext securityContext) throws NotFoundException {
+        try {
+            IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+            ISubscriber old = r.findSubscriber(subscriberId);
+            if (body.getOrganizationId() != null && !Objects.equals(old.getOrganizationId(), body.getOrganizationId())) {
+                old.setOrganizationId(body.getOrganizationId());
+            }
+            return ResponseBuilder.ok().data(old).build();
+        } catch (Exception e) {
+            return ResponseBuilder.exception(e).build();
+        }
     }
 
     @Override
     public Response updateSubscriberById(String subscriberId2, String organizationId, String subscriberId, SecurityContext securityContext)
             throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        InMemorySubscriber updated = new InMemorySubscriber();
+        updated.setOrganizationId(organizationId);
+        return updateSubscriberById(updated, subscriberId, securityContext);
     }
 }

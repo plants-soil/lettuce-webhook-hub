@@ -3,6 +3,8 @@ package com.plantssoil.webhook;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -12,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author danialdy
  * @Date 8 Feb 2025 10:51:16 pm
  */
-@javax.xml.bind.annotation.XmlRootElement
+@XmlRootElement
 public class ApiResponse implements java.io.Serializable {
     private static final long serialVersionUID = 2838001177387634370L;
 
@@ -49,6 +51,7 @@ public class ApiResponse implements java.io.Serializable {
     /**
      * The data attached to the response
      **/
+    @XmlElement(name = "data")
     @JsonProperty("data")
     public Object getData() {
         return data;

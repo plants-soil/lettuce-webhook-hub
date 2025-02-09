@@ -1,6 +1,6 @@
 package com.plantssoil.webhook.api.impl;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 
@@ -91,7 +91,7 @@ public class ResponseBuilder {
      * <li>Will change the response status to {@link Response.Status#NOT_FOUND} if
      * parameter data is null.</li>
      * <li>Will change the response status to {@link Response.Status#NOT_FOUND} if
-     * parameter data is {@link java.util.Collection} and no element in it.</li>
+     * parameter data is {@link java.util.List} and no element in it.</li>
      * <li>When response status is not {@link Response.Status#OK}, it will be
      * changed to {@link Response.Status#OK} if parameter data is not empty.</li>
      * </ul>
@@ -103,10 +103,10 @@ public class ResponseBuilder {
         if (data == null) {
             this.status = Response.Status.NOT_FOUND;
             this.data = null;
-        } else if (data instanceof Collection) {
-            Collection<?> collection = (Collection<?>) data;
-            if (collection.size() > 0) {
-                this.data = data;
+        } else if (data instanceof List) {
+            List<?> list = (List<?>) data;
+            if (list.size() > 0) {
+                this.data = list;
             } else {
                 this.status = Response.Status.NOT_FOUND;
                 this.data = null;

@@ -1,9 +1,15 @@
 package com.plantssoil.webhook.api;
 
 import com.plantssoil.webhook.api.*;
-
+import com.plantssoil.webhook.beans.*;
 
 import java.util.Date;
+import com.plantssoil.webhook.beans.InlineResponse2002;
+import com.plantssoil.webhook.beans.InlineResponse2003;
+import com.plantssoil.webhook.beans.InlineResponse2004;
+import com.plantssoil.webhook.beans.InlineResponse2005;
+import com.plantssoil.webhook.beans.InlineResponse2006;
+import com.plantssoil.webhook.beans.InlineResponse2007;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +20,7 @@ import java.io.InputStream;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-08T22:55:59.560416600+08:00[Asia/Shanghai]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-09T17:41:01.999402200+08:00[Asia/Shanghai]")
 public interface PublisherApiService {
       Response addDataGroup(com.plantssoil.webhook.core.registry.InMemoryDataGroup body,String publisherId,SecurityContext securityContext) throws NotFoundException;
       Response addDataGroup(String dataGroupId,String publisherId2,String dataGroup,String publisherId,SecurityContext securityContext) throws NotFoundException;

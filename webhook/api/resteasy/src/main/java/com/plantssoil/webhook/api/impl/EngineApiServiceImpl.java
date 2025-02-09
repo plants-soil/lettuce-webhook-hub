@@ -6,12 +6,13 @@ import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import com.plantssoil.webhook.api.ApiResponseMessage;
 import com.plantssoil.webhook.api.EngineApiService;
 import com.plantssoil.webhook.api.NotFoundException;
+import com.plantssoil.webhook.core.IEngine;
 import com.plantssoil.webhook.core.IEngineFactory;
 import com.plantssoil.webhook.core.ILogging;
 import com.plantssoil.webhook.core.IWebhookLog;
+import com.plantssoil.webhook.core.IWebhookLogLine;
 
 @RequestScoped
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-07T18:18:51.966634600+08:00[Asia/Shanghai]")
@@ -31,32 +32,53 @@ public class EngineApiServiceImpl implements EngineApiService {
 
     @Override
     public Response findAllSubscriberWebhookLogs(String webhookId, Integer page, Integer pageSize, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        try {
+            ILogging logging = IEngineFactory.getFactoryInstance().getEngine().getLogging();
+            List<IWebhookLog> webhookLogs = logging.findAllWebhookLogs(webhookId, page, pageSize);
+            return ResponseBuilder.ok().data(webhookLogs).build();
+        } catch (Exception e) {
+            return ResponseBuilder.exception(e).build();
+        }
     }
 
     @Override
     public Response findWebhookLogLines(String requestId, String webhookId, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        try {
+            ILogging logging = IEngineFactory.getFactoryInstance().getEngine().getLogging();
+            List<IWebhookLogLine> webhookLogs = logging.findWebhookLogLines(requestId, webhookId);
+            return ResponseBuilder.ok().data(webhookLogs).build();
+        } catch (Exception e) {
+            return ResponseBuilder.exception(e).build();
+        }
     }
 
     @Override
     public Response getEngineVersion(SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        try {
+            IEngine engine = IEngineFactory.getFactoryInstance().getEngine();
+            String version = engine.getVersion();
+            return ResponseBuilder.ok().message(version).build();
+        } catch (Exception e) {
+            return ResponseBuilder.exception(e).build();
+        }
     }
 
     @Override
     public Response trigger(com.plantssoil.webhook.core.Message body, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        try {
+            IEngine engine = IEngineFactory.getFactoryInstance().getEngine();
+            engine.trigger(body);
+            return ResponseBuilder.ok().build();
+        } catch (Exception e) {
+            return ResponseBuilder.exception(e).build();
+        }
     }
 
     @Override
     public Response trigger(String publisherId, String version, String eventType, String eventTag, String contentType, String charset, String dataGroup,
             String requestId, String payload, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        com.plantssoil.webhook.core.Message msg = new com.plantssoil.webhook.core.Message(publisherId, version, eventType, eventTag, contentType, charset,
+                dataGroup, requestId, payload);
+        return trigger(msg, securityContext);
     }
 }

@@ -29,46 +29,6 @@ tags:
     description: All APIs for webhook engine functions
 paths:
   /organization:
-    put:
-      tags:
-        - organization
-      summary: Update an existing organization
-      description: Update an existing organization by organizationId
-      operationId: updateOrganization
-      requestBody:
-        description: Update an existent organization
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Organization'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Organization'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Organization'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Organization'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Organization'
-        '400':
-          description: Required attributes cant't be null!
-        '404':
-          description: Organization not found
-        '422':
-          description: Validation exception
-      security:
-        - api_key: []
-        - organization_auth:
-            - write:organizations
-            - read:organizations
     post:
       tags:
         - organization
@@ -81,27 +41,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Organization'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Organization'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Organization'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the posted organization object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Organization'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Organization"
         '400':
-          description: Invalid input
-        '422':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - api_key: []
         - organization_auth:
@@ -133,20 +94,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain organization object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Organization'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Organization'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Organization"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - organization_auth:
             - write:organizations
@@ -167,18 +132,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the organization object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Organization'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Organization"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Organization not found
+          description: Not found the web service
       security:
         - organization_auth:
             - write:organizations
@@ -202,29 +171,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Organization'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Organization'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Organization'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the updated organization object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Organization'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Organization"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Organization not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
         - organization_auth:
@@ -243,27 +211,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Publisher'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Publisher'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Publisher'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the posted publisher object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Publisher'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Publisher'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Publisher"
         '400':
-          description: Invalid input
-        '422':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - api_key: []
         - publisher_auth:
@@ -295,20 +264,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain publisher object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Publisher'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Publisher'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Publisher"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - publisher_auth:
             - write:publishers
@@ -329,18 +302,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the publisher object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Publisher'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Publisher'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Publisher"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Publisher not found
+          description: Not found the web service
       security:
         - publisher_auth:
             - write:publishers
@@ -364,29 +341,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Publisher'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Publisher'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Publisher'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the updated publisher object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Publisher'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Publisher'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Publisher"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Publisher not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
         - publisher_auth:
@@ -412,29 +388,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Event'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Event'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Event'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the posted event object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Event'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Event'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Event"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Publisher not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
         - event_auth:
@@ -462,11 +437,6 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/Event'          
-          application/xml:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/Event'          
           application/x-www-form-urlencoded:
             schema:
               type: array
@@ -475,24 +445,24 @@ paths:
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contain posted event object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'          
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Event"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Publisher not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
         - event_auth:
@@ -530,20 +500,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain event object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Event"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - event_auth:
             - write:events
@@ -564,18 +538,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the event object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Event'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Event'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Event"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Event not found
+          description: Not found the web service
       security:
         - api_key: []
         - event_auth:
@@ -601,29 +579,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/DataGroup'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/DataGroup'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/DataGroup'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the posted data group object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DataGroup'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DataGroup'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Publisher not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
         - datagroup_auth:
@@ -651,16 +628,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the data group object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DataGroup'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DataGroup'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - datagroup_auth:
             - write:datagroups
@@ -687,11 +670,6 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/DataGroup'          
-          application/xml:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/DataGroup'          
           application/x-www-form-urlencoded:
             schema:
               type: array
@@ -700,24 +678,24 @@ paths:
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contain posted data group array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataGroup'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataGroup'          
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Publisher not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
         - datagroup_auth:
@@ -755,20 +733,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain data group array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataGroup'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataGroup'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - datagroup_auth:
             - write:datagroups
@@ -789,18 +771,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the data group object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DataGroup'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DataGroup'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Data Group not found
+          description: Not found the web service
       security:
         - datagroup_auth:
             - write:datagroups
@@ -818,27 +804,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Subscriber'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Subscriber'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Subscriber'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the posted subscriber object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subscriber'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Subscriber'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Subscriber"
         '400':
-          description: Invalid input
-        '422':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - api_key: []
         - subscriber_auth:
@@ -870,20 +857,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain subscriber array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Subscriber'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Subscriber'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Subscriber"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - subscriber_auth:
             - write:subscribers
@@ -904,18 +895,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the subscriber object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subscriber'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Subscriber'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Subscriber"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Subscriber not found
+          description: Not found the web service
       security:
         - subscriber_auth:
             - write:subscribers
@@ -939,29 +934,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Subscriber'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Subscriber'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Subscriber'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the updated subscriber object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subscriber'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Subscriber'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Subscriber"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Subscriber not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
         - subscriber_auth:
@@ -987,8 +981,18 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: Successful operation, will contains the posted subscriber object in ApiResponse.data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid subscriber value
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - api_key: []
         - subscriber_auth:
@@ -1007,27 +1011,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Webhook'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Webhook'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Webhook'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the posted webhook object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webhook'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Webhook'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
         '400':
-          description: Invalid input
-        '422':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1065,20 +1070,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain webhook array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Webhook'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Webhook'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Webhook"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - webhook_auth:
             - write:webhooks
@@ -1099,18 +1108,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the webhook object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webhook'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Webhook'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1135,29 +1148,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Webhook'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Webhook'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Webhook'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the updated webhook object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webhook'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Webhook'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1179,18 +1191,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the activated webhook object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webhook'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Webhook'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1212,18 +1228,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the deactivated webhook object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webhook'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Webhook'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1256,13 +1276,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or event not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1295,13 +1314,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or event not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1335,14 +1353,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or event not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1376,14 +1393,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or event not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1415,14 +1431,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or data group not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1454,14 +1469,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or data group not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1495,14 +1509,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or data group not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1536,14 +1549,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or data group not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1581,20 +1593,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain event object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Event"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - webhook_auth:
             - write:webhooks
@@ -1631,20 +1647,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain data group array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataGroup'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataGroup'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - webhook_auth:
             - write:webhooks
@@ -1671,16 +1691,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the data group object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DataGroup'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DataGroup'          
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - webhook_auth:
             - write:webhooks
@@ -1690,7 +1716,7 @@ paths:
       tags:
         - engine
       summary: Get the webhook engine version
-      description: Get the webhook engine version
+      description: Get the webhook engine version, will response version number in ApiResponse.message
       operationId: getEngineVersion
       responses:
         '200':
@@ -1699,11 +1725,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - engine_auth:
             - write:engine
@@ -1721,9 +1748,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/WebhookMessage'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/WebhookMessage'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/WebhookMessage'
@@ -1734,12 +1758,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - api_key: []
         - engine_auth:
@@ -1782,20 +1807,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain webhook log object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookLog'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookLog'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/WebhookLog"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - webhooklog_auth:
             - write:webhooklogs
@@ -1832,20 +1861,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain webhook log object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookLog'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookLog'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/WebhookLog"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - webhooklog_auth:
             - write:webhooklogs
@@ -1872,20 +1905,24 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain webhook log line object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookLogLine'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookLogLine'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/WebhookLogLine"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - webhooklog_auth:
             - write:webhooklogs
@@ -2243,7 +2280,7 @@ components:
       xml:
         name: webhookMessage
     ApiResponse:
-      description: The API response object which hold the response code and messages
+      description: The API response object which hold the response code and messages, and data if needed
       required:
         - code
         - message
@@ -2252,15 +2289,12 @@ components:
         code:
           type: integer
           format: int32
-          description: The response code
+          description: The response code, 200 - OK, 400 - Bad Request, 401 - Unauthorized, 404 - Not Found
           example: 200
         message:
           type: string
-          description: The response message
-          example: called successfully
-        data:
-          type: object
-          description: The data attached to the response
+          description: The response message, OK (response code - 200), Bad Request (response code - 400), Unauthorized (response code - 401), Not Found (response code - 404), or other customized message
+          example: OK
       xml:
         name: apiResponse
   securitySchemes:
