@@ -25,7 +25,8 @@ public class SubscriberApiServiceImpl implements SubscriberApiService {
                 body.setSubscriberId(EntityUtils.getInstance().createUniqueObjectId());
             }
             IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
-            r.addSubscriber(body);
+            ISubscriber subscriber = (ISubscriber) BeanBridge.getInstance().bridge(body);
+            r.addSubscriber(subscriber);
             return ResponseBuilder.ok().data(body).build();
         } catch (Exception e) {
             return ResponseBuilder.exception(e).build();
@@ -82,6 +83,7 @@ public class SubscriberApiServiceImpl implements SubscriberApiService {
             if (body.getOrganizationId() != null && !Objects.equals(old.getOrganizationId(), body.getOrganizationId())) {
                 old.setOrganizationId(body.getOrganizationId());
             }
+            r.updateSubscriber(old);
             return ResponseBuilder.ok().data(old).build();
         } catch (Exception e) {
             return ResponseBuilder.exception(e).build();

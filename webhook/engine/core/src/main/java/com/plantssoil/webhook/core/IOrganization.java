@@ -14,6 +14,16 @@ import java.io.Serializable;
  */
 public interface IOrganization extends Serializable {
     /**
+     * The organization status enumeration
+     * 
+     * @author danialdy
+     * @Date 10 Feb 2025 10:51:58 am
+     */
+    public enum OrganizationStatus {
+        ACTIVE, INACTIVE, LOCKED
+    }
+
+    /**
      * Get the organization id
      * 
      * @return The organization id

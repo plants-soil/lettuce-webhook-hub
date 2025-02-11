@@ -16,6 +16,8 @@ import com.plantssoil.webhook.core.IDataGroup;
 import com.plantssoil.webhook.core.IEngine;
 import com.plantssoil.webhook.core.IEngineFactory;
 import com.plantssoil.webhook.core.IEvent;
+import com.plantssoil.webhook.core.IEvent.EventStatus;
+import com.plantssoil.webhook.core.IOrganization.OrganizationStatus;
 import com.plantssoil.webhook.core.IPublisher;
 import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.ISubscriber;
@@ -25,9 +27,7 @@ import com.plantssoil.webhook.core.IWebhook.WebhookStatus;
 import com.plantssoil.webhook.core.Message;
 import com.plantssoil.webhook.persists.beans.DataGroup;
 import com.plantssoil.webhook.persists.beans.Event;
-import com.plantssoil.webhook.persists.beans.Event.EventStatus;
 import com.plantssoil.webhook.persists.beans.Organization;
-import com.plantssoil.webhook.persists.beans.Organization.OrganizationStatus;
 import com.plantssoil.webhook.persists.beans.Publisher;
 import com.plantssoil.webhook.persists.beans.Subscriber;
 import com.plantssoil.webhook.persists.beans.Webhook;
@@ -75,7 +75,7 @@ public class PersistedRegistryTestParent {
             r.addEvent(publisher.getPublisherId(), createEventInstance(EVENT_PREFIX + i, publisher));
         }
 
-        if (publisher.isSupportDataGroup()) {
+        if (publisher.getSupportDataGroup()) {
             for (int i = 0; i < 15; i++) {
                 IDataGroup dg = createDataGroupInstance(DATAGROUP_PREFIX + i);
                 r.addDataGroup(publisher.getPublisherId(), dg);
@@ -120,7 +120,7 @@ public class PersistedRegistryTestParent {
         r.subscribeEvent(webhook, events.get(1));
         r.subscribeEvent(webhook, events.get(3));
         r.subscribeEvent(webhook, events.get(5));
-        if (publisher.isSupportDataGroup()) {
+        if (publisher.getSupportDataGroup()) {
 //          List<String> dgs = publisher.findDataGroups(0, 100);
 //          webhook.subscribeDataGroup(dataGroup);
         }
@@ -169,7 +169,7 @@ public class PersistedRegistryTestParent {
 //		assertEquals(99, publishers.size());
         IPublisher publisher = publishers.get(ThreadLocalRandom.current().nextInt(publishers.size()));
         assertEquals(10, r.findEvents(publisher.getPublisherId(), 0, 100).size());
-        if (publisher.isSupportDataGroup()) {
+        if (publisher.getSupportDataGroup()) {
             assertEquals(15, r.findDataGroups(publisher.getPublisherId(), 0, 100).size());
         } else {
             assertEquals(0, r.findDataGroups(publisher.getPublisherId(), 0, 100).size());

@@ -45,7 +45,7 @@ public interface IPublisher extends Serializable {
      * @param supportDataGroup true - support data group, false - don't support data
      *                         group
      */
-    public void setSupportDataGroup(boolean supportDataGroup);
+    public void setSupportDataGroup(Boolean supportDataGroup);
 
     /**
      * Set the event version, an event may have multiple versions
@@ -66,7 +66,7 @@ public interface IPublisher extends Serializable {
      * 
      * @return true - support data group, false - don't support data group
      */
-    public boolean isSupportDataGroup();
+    public Boolean getSupportDataGroup();
 
     /**
      * Get the event version

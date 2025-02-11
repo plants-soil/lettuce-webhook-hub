@@ -13,9 +13,9 @@ import com.plantssoil.webhook.api.NotFoundException;
 import com.plantssoil.webhook.api.OrganizationApiService;
 import com.plantssoil.webhook.core.IEngineFactory;
 import com.plantssoil.webhook.core.IOrganization;
+import com.plantssoil.webhook.core.IOrganization.OrganizationStatus;
 import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.registry.InMemoryOrganization;
-import com.plantssoil.webhook.core.registry.InMemoryOrganization.OrganizationStatus;
 
 @RequestScoped
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaResteasyServerCodegen", date = "2025-02-05T11:58:30.837020300+08:00[Asia/Shanghai]")
@@ -33,7 +33,8 @@ public class OrganizationApiServiceImpl implements OrganizationApiService {
                 body.setSecretKey(null);
             }
             IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
-            r.addOrganization(body);
+            IOrganization org = (IOrganization) BeanBridge.getInstance().bridge(body);
+            r.addOrganization(org);
             return ResponseBuilder.ok().data(body).build();
         } catch (Exception e) {
             return ResponseBuilder.exception(e).build();
@@ -82,9 +83,11 @@ public class OrganizationApiServiceImpl implements OrganizationApiService {
         try {
             IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
             IOrganization org = r.findOrganization(organizationId);
-            updateOrganizationValue((InMemoryOrganization) org, body);
+            InMemoryOrganization old = BeanBridge.getInstance().bridge(org, InMemoryOrganization.class);
+            updateOrganizationValue(old, body);
+            org = (IOrganization) BeanBridge.getInstance().bridge(old);
             r.updateOrganization(org);
-            return ResponseBuilder.ok().data(org).build();
+            return ResponseBuilder.ok().data(old).build();
         } catch (Exception e) {
             return ResponseBuilder.exception(e).build();
         }

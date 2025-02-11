@@ -76,7 +76,7 @@ public class IEngineTestParent {
             registry.addEvent(publisher.getPublisherId(), createEventInstance(EVENT_PREFIX + i));
         }
 
-        if (publisher.isSupportDataGroup()) {
+        if (publisher.getSupportDataGroup()) {
             for (int i = 0; i < 15; i++) {
                 IDataGroup dg = createDataGroupInstance(DATAGROUP_PREFIX + i);
                 registry.addDataGroup(publisher.getPublisherId(), dg);
@@ -132,7 +132,7 @@ public class IEngineTestParent {
         r.subscribeEvent(webhook, events.get(1));
         r.subscribeEvent(webhook, events.get(3));
         r.subscribeEvent(webhook, events.get(5));
-        if (publisher.isSupportDataGroup()) {
+        if (publisher.getSupportDataGroup()) {
             List<IDataGroup> dgs = r.findDataGroups(publisher.getPublisherId(), 0, 100);
             r.subscribeDataGroup(webhook, dgs.get(9));
         }

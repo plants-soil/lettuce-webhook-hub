@@ -54,7 +54,8 @@ public class WebhookApiServiceImpl implements WebhookApiService {
                 body.setWebhookSecret(null);
             }
             body.setWebhookStatus(WebhookStatus.TEST);
-            r.addWebhook(body);
+            IWebhook webhook = (IWebhook) BeanBridge.getInstance().bridge(body);
+            r.addWebhook(webhook);
             return ResponseBuilder.ok().data(body).build();
         } catch (Exception e) {
             return ResponseBuilder.exception(e).build();
@@ -279,9 +280,11 @@ public class WebhookApiServiceImpl implements WebhookApiService {
     public Response updateWebhookById(InMemoryWebhook body, String webhookId, SecurityContext securityContext) throws NotFoundException {
         try {
             IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
-            IWebhook old = r.findWebhook(webhookId);
-            updateWebhookValue((InMemoryWebhook) old, body);
-            r.updateWebhook(old);
+            IWebhook webhook = r.findWebhook(webhookId);
+            InMemoryWebhook old = BeanBridge.getInstance().bridge(webhook, InMemoryWebhook.class);
+            updateWebhookValue(old, body);
+            webhook = (IWebhook) BeanBridge.getInstance().bridge(old);
+            r.updateWebhook(webhook);
             return ResponseBuilder.ok().data(old).build();
         } catch (Exception e) {
             return ResponseBuilder.exception(e).build();
@@ -289,7 +292,6 @@ public class WebhookApiServiceImpl implements WebhookApiService {
     }
 
     private void updateWebhookValue(InMemoryWebhook old, InMemoryWebhook updated) {
-
         if (updated.getSubscriberId() != null && !Objects.equals(updated.getSubscriberId(), old.getSubscriberId())) {
             old.setSubscriberId(updated.getSubscriberId());
         }

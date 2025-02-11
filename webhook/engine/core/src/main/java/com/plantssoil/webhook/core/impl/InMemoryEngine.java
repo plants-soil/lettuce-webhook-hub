@@ -79,7 +79,7 @@ class InMemoryEngine extends AbstractEngine implements IEngine {
         }
         this.publishersLoaded.put(publisher.getPublisherId(), publisher.getPublisherId());
         // load submission publisher when IPublisher does not support data group
-        if (!publisher.isSupportDataGroup()) {
+        if (!publisher.getSupportDataGroup()) {
             this.submissionPublishers.put(new PublisherKey(publisher.getPublisherId(), publisher.getVersion(), null), new SubmissionPublisher<Message>());
         }
     }
@@ -92,7 +92,7 @@ class InMemoryEngine extends AbstractEngine implements IEngine {
     @Override
     void loadDataGroup(IPublisher publisher, IDataGroup dataGroup) {
         // load submission publisher when IPublisher supports data group
-        if (publisher.isSupportDataGroup()) {
+        if (publisher.getSupportDataGroup()) {
             this.submissionPublishers.put(new PublisherKey(publisher.getPublisherId(), publisher.getVersion(), dataGroup.getDataGroup()),
                     new SubmissionPublisher<Message>());
         }
@@ -149,7 +149,7 @@ class InMemoryEngine extends AbstractEngine implements IEngine {
         IPublisher publisher = getRegistry().findPublisher(webhook.getPublisherId());
         // load submission subscriber if IPublisher the webhook subscribed does not
         // support data group
-        if (!publisher.isSupportDataGroup()) {
+        if (!publisher.getSupportDataGroup()) {
             loadSubmissionSubscriber(getSubscriberList(webhook.getSubscriberId()), webhook, null);
         }
     }
@@ -199,7 +199,7 @@ class InMemoryEngine extends AbstractEngine implements IEngine {
     @Override
     void loadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup) {
         IPublisher publisher = getRegistry().findPublisher(webhook.getPublisherId());
-        if (!publisher.isSupportDataGroup()) {
+        if (!publisher.getSupportDataGroup()) {
             return;
         }
 
@@ -221,7 +221,7 @@ class InMemoryEngine extends AbstractEngine implements IEngine {
     @Override
     void unloadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup) {
         IPublisher publisher = getRegistry().findPublisher(webhook.getPublisherId());
-        if (!publisher.isSupportDataGroup()) {
+        if (!publisher.getSupportDataGroup()) {
             return;
         }
 

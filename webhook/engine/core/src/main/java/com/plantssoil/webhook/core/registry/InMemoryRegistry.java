@@ -197,9 +197,10 @@ public class InMemoryRegistry extends AbstractRegistry {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
                     String.format("The publisher (publisherId: %s) to be update does not exists!", publisher.getPublisherId()));
         }
-        if ((old.isSupportDataGroup() && !publisher.isSupportDataGroup()) || (!old.isSupportDataGroup() && publisher.isSupportDataGroup())) {
-            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008, String.format(
-                    "The property (support data group, old: %s, updated: %s) could not be changed!", old.isSupportDataGroup(), publisher.isSupportDataGroup()));
+        if ((old.getSupportDataGroup() && !publisher.getSupportDataGroup()) || (!old.getSupportDataGroup() && publisher.getSupportDataGroup())) {
+            throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,
+                    String.format("The property (support data group, old: %s, updated: %s) could not be changed!", old.getSupportDataGroup(),
+                            publisher.getSupportDataGroup()));
         }
         if (!Objects.equals(old.getVersion(), publisher.getVersion())) {
             throw new EngineException(EngineException.BUSINESS_EXCEPTION_CODE_20008,

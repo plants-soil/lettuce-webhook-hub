@@ -19,7 +19,7 @@ public class InMemoryPublisher extends ClonableBean implements IPublisher {
 
     private String publisherId;
     private String organizationId;
-    private boolean supportDataGroup;
+    private Boolean supportDataGroup;
     private String version;
     private String createdBy;
     private Date creationTime;
@@ -40,7 +40,7 @@ public class InMemoryPublisher extends ClonableBean implements IPublisher {
     }
 
     @Override
-    public void setSupportDataGroup(boolean supportDataGroup) {
+    public void setSupportDataGroup(Boolean supportDataGroup) {
         this.supportDataGroup = supportDataGroup;
     }
 
@@ -55,7 +55,7 @@ public class InMemoryPublisher extends ClonableBean implements IPublisher {
     }
 
     @Override
-    public boolean isSupportDataGroup() {
+    public Boolean getSupportDataGroup() {
         return this.supportDataGroup;
     }
 

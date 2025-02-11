@@ -1,5 +1,6 @@
 package com.plantssoil.webhook.api.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -14,11 +15,11 @@ import com.plantssoil.webhook.api.PublisherApiService;
 import com.plantssoil.webhook.core.IDataGroup;
 import com.plantssoil.webhook.core.IEngineFactory;
 import com.plantssoil.webhook.core.IEvent;
+import com.plantssoil.webhook.core.IEvent.EventStatus;
 import com.plantssoil.webhook.core.IPublisher;
 import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.registry.InMemoryDataGroup;
 import com.plantssoil.webhook.core.registry.InMemoryEvent;
-import com.plantssoil.webhook.core.registry.InMemoryEvent.EventStatus;
 import com.plantssoil.webhook.core.registry.InMemoryPublisher;
 
 @RequestScoped
@@ -31,7 +32,8 @@ public class PublisherApiServiceImpl implements PublisherApiService {
             if (body.getDataGroupId() == null) {
                 body.setDataGroupId(EntityUtils.getInstance().createUniqueObjectId());
             }
-            r.addDataGroup(publisherId, body);
+            IDataGroup dg = (IDataGroup) BeanBridge.getInstance().bridge(body);
+            r.addDataGroup(publisherId, dg);
             return ResponseBuilder.ok().data(body).build();
         } catch (Exception e) {
             return ResponseBuilder.exception(e).build();
@@ -47,17 +49,18 @@ public class PublisherApiServiceImpl implements PublisherApiService {
         return addDataGroup(dg, publisherId, securityContext);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public Response addDataGroups(List<InMemoryDataGroup> body, String publisherId, SecurityContext securityContext) throws NotFoundException {
         try {
             IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+            List<IDataGroup> list = new ArrayList<>();
             for (InMemoryDataGroup dg : body) {
                 if (dg.getDataGroupId() == null) {
                     dg.setDataGroupId(EntityUtils.getInstance().createUniqueObjectId());
                 }
+                list.add((IDataGroup) BeanBridge.getInstance().bridge(dg));
             }
-            r.addDataGroup(publisherId, (List) body);
+            r.addDataGroup(publisherId, list);
             return ResponseBuilder.ok().data(body).build();
         } catch (Exception e) {
             return ResponseBuilder.exception(e).build();
@@ -72,7 +75,8 @@ public class PublisherApiServiceImpl implements PublisherApiService {
                 body.setEventId(EntityUtils.getInstance().createUniqueObjectId());
             }
             body.setEventStatus(EventStatus.SUBMITTED);
-            r.addEvent(publisherId, body);
+            IEvent event = (IEvent) BeanBridge.getInstance().bridge(body);
+            r.addEvent(publisherId, event);
             return ResponseBuilder.ok().data(body).build();
         } catch (Exception e) {
             return ResponseBuilder.exception(e).build();
@@ -91,18 +95,19 @@ public class PublisherApiServiceImpl implements PublisherApiService {
         return addEvent(event, publisherId, securityContext);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public Response addEvents(List<InMemoryEvent> body, String publisherId, SecurityContext securityContext) throws NotFoundException {
         try {
             IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
+            List<IEvent> list = new ArrayList<>();
             for (InMemoryEvent event : body) {
                 if (event.getEventId() == null) {
                     event.setEventId(EntityUtils.getInstance().createUniqueObjectId());
                 }
                 event.setEventStatus(EventStatus.SUBMITTED);
+                list.add((IEvent) BeanBridge.getInstance().bridge(event));
             }
-            r.addEvent(publisherId, (List) body);
+            r.addEvent(publisherId, list);
             return ResponseBuilder.ok().data(body).build();
         } catch (Exception e) {
             return ResponseBuilder.exception(e).build();
@@ -116,7 +121,8 @@ public class PublisherApiServiceImpl implements PublisherApiService {
             if (body.getPublisherId() == null) {
                 body.setPublisherId(EntityUtils.getInstance().createUniqueObjectId());
             }
-            r.addPublisher(body);
+            IPublisher p = (IPublisher) BeanBridge.getInstance().bridge(body);
+            r.addPublisher(p);
             return ResponseBuilder.ok().data(body).build();
         } catch (Exception e) {
             return ResponseBuilder.exception(e).build();
@@ -217,9 +223,11 @@ public class PublisherApiServiceImpl implements PublisherApiService {
     public Response updatePublisherById(InMemoryPublisher body, String publisherId, SecurityContext securityContext) throws NotFoundException {
         try {
             IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
-            IPublisher old = r.findPublisher(publisherId);
-            updatePublisherValue((InMemoryPublisher) old, body);
-            r.updatePublisher(old);
+            IPublisher p = r.findPublisher(publisherId);
+            InMemoryPublisher old = BeanBridge.getInstance().bridge(p, InMemoryPublisher.class);
+            updatePublisherValue(old, body);
+            p = (IPublisher) BeanBridge.getInstance().bridge(old);
+            r.updatePublisher(p);
             return ResponseBuilder.ok().data(old).build();
         } catch (Exception e) {
             return ResponseBuilder.exception(e).build();
@@ -233,8 +241,8 @@ public class PublisherApiServiceImpl implements PublisherApiService {
         if (updated.getOrganizationId() != null && !Objects.equals(updated.getOrganizationId(), old.getOrganizationId())) {
             old.setOrganizationId(updated.getOrganizationId());
         }
-        if (updated.isSupportDataGroup() != old.isSupportDataGroup()) {
-            old.setSupportDataGroup(updated.isSupportDataGroup());
+        if (updated.getSupportDataGroup() != null && !Objects.equals(updated.getSupportDataGroup(), old.getSupportDataGroup())) {
+            old.setSupportDataGroup(updated.getSupportDataGroup());
         }
         if (updated.getVersion() != null && !Objects.equals(updated.getVersion(), old.getVersion())) {
             old.setVersion(updated.getVersion());

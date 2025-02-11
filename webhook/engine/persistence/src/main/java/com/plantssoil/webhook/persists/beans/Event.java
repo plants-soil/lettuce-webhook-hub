@@ -29,17 +29,6 @@ import com.plantssoil.webhook.core.IEvent;
         @Index(name = "idx_event_pubid", columnList = "publisherId") })
 public class Event extends ClonableBean implements IEvent {
     private static final long serialVersionUID = 5996607146075281389L;
-
-    /**
-     * The status of webhook event
-     * 
-     * @author danialdy
-     * @Date 21 Nov 2024 2:57:36 pm
-     */
-    public enum EventStatus {
-        SUBMITTED, PUBLISHED, RETIRED
-    }
-
     @Id
     private String eventId;
     private String publisherId;
