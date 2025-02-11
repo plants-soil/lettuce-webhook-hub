@@ -22,7 +22,7 @@ public class Publisher extends ClonableBean implements IPublisher {
     @Id
     private String publisherId;
     private String organizationId;
-    private boolean supportDataGroup;
+    private Boolean supportDataGroup;
     private String version;
     private String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
@@ -52,12 +52,12 @@ public class Publisher extends ClonableBean implements IPublisher {
     }
 
     @Override
-    public boolean isSupportDataGroup() {
+    public Boolean getSupportDataGroup() {
         return supportDataGroup;
     }
 
     @Override
-    public void setSupportDataGroup(boolean supportDataGroup) {
+    public void setSupportDataGroup(Boolean supportDataGroup) {
         this.supportDataGroup = supportDataGroup;
     }
 

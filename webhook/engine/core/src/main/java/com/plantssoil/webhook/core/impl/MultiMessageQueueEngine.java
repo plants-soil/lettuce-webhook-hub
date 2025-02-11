@@ -78,7 +78,7 @@ class MultiMessageQueueEngine extends AbstractEngine implements IEngine {
             return;
         }
         this.publishersLoaded.put(publisher.getPublisherId(), publisher.getPublisherId());
-        if (!publisher.isSupportDataGroup()) {
+        if (!publisher.getSupportDataGroup()) {
             loadConsumer(publisher, null);
         }
     }
@@ -110,7 +110,7 @@ class MultiMessageQueueEngine extends AbstractEngine implements IEngine {
 
     @Override
     void loadDataGroup(IPublisher publisher, IDataGroup dataGroup) {
-        if (publisher.isSupportDataGroup()) {
+        if (publisher.getSupportDataGroup()) {
             loadConsumer(publisher, dataGroup.getDataGroup());
         }
     }
@@ -156,7 +156,7 @@ class MultiMessageQueueEngine extends AbstractEngine implements IEngine {
     void loadWebhook(IWebhook webhook) {
         IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
         IPublisher publisher = r.findPublisher(webhook.getPublisherId());
-        if (!publisher.isSupportDataGroup()) {
+        if (!publisher.getSupportDataGroup()) {
             loadSubscriber(webhook, null);
         }
     }
@@ -216,7 +216,7 @@ class MultiMessageQueueEngine extends AbstractEngine implements IEngine {
     void loadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup) {
         IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
         IPublisher publisher = r.findPublisher(webhook.getPublisherId());
-        if (publisher.isSupportDataGroup()) {
+        if (publisher.getSupportDataGroup()) {
             loadSubscriber(webhook, dataGroup);
         }
     }
@@ -225,7 +225,7 @@ class MultiMessageQueueEngine extends AbstractEngine implements IEngine {
     void unloadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup) {
         IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
         IPublisher publisher = r.findPublisher(webhook.getPublisherId());
-        if (publisher.isSupportDataGroup()) {
+        if (publisher.getSupportDataGroup()) {
             PublisherKey key = new PublisherKey(webhook.getPublisherId(), webhook.getPublisherVersion(), dataGroup.getDataGroup());
             IMessageConsumer<Message> consumer = this.consumers.get(key);
             List<IMessageListener<Message>> ls = consumer.getListeners();

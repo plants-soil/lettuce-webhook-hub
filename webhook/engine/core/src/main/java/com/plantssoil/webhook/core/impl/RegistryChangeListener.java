@@ -141,7 +141,10 @@ class RegistryChangeListener implements IMessageListener<RegistryChangeMessage> 
             this.engine.loadWebhook(webhook);
             break;
         case UPDATE:
+            this.engine.unloadWebhook(webhook);
             this.engine.loadWebhook(webhook);
+            this.engine.loadExistingDataGroupsSubscribed(webhook);
+            this.engine.loadExistingEventsSubscribed(webhook);
             break;
         case ACTIVATE:
             this.engine.loadWebhook(webhook);

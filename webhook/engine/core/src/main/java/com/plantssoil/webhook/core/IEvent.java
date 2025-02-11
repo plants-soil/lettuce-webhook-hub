@@ -23,6 +23,16 @@ import java.io.Serializable;
  */
 public interface IEvent extends Serializable {
     /**
+     * The status of webhook event
+     * 
+     * @author danialdy
+     * @Date 21 Nov 2024 2:57:36 pm
+     */
+    public enum EventStatus {
+        SUBMITTED, PUBLISHED, RETIRED
+    }
+
+    /**
      * set the event id
      * 
      * @param eventId event id

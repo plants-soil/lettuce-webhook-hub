@@ -56,7 +56,7 @@ public abstract class AbstractEngine {
             for (IPublisher publisher : publishers) {
                 loadPublisher(publisher);
                 loadExistingEvents(publisher);
-                if (publisher.isSupportDataGroup()) {
+                if (publisher.getSupportDataGroup()) {
                     loadExistingDataGroups(publisher);
                 }
             }
@@ -126,7 +126,7 @@ public abstract class AbstractEngine {
             for (IWebhook webhook : webhooks) {
                 loadWebhook(webhook);
                 IPublisher publisher = r.findPublisher(webhook.getPublisherId());
-                if (publisher != null && publisher.isSupportDataGroup()) {
+                if (publisher != null && publisher.getSupportDataGroup()) {
                     loadExistingDataGroupsSubscribed(webhook);
                 }
                 loadExistingEventsSubscribed(webhook);

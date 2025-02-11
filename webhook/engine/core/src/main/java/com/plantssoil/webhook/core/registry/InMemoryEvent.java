@@ -16,11 +16,6 @@ import com.plantssoil.webhook.core.IEvent;
  */
 public class InMemoryEvent extends ClonableBean implements IEvent {
     private static final long serialVersionUID = 2311945316634892414L;
-
-    public enum EventStatus {
-        SUBMITTED, PUBLISHED, RETIRED
-    }
-
     private String eventId;
     private String eventType;
     private String eventTag;

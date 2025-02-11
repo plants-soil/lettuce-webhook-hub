@@ -35,6 +35,7 @@ import com.plantssoil.webhook.core.IEngine;
 import com.plantssoil.webhook.core.IEngineFactory;
 import com.plantssoil.webhook.core.IEvent;
 import com.plantssoil.webhook.core.IOrganization;
+import com.plantssoil.webhook.core.IOrganization.OrganizationStatus;
 import com.plantssoil.webhook.core.IPublisher;
 import com.plantssoil.webhook.core.IRegistry;
 import com.plantssoil.webhook.core.ISubscriber;
@@ -48,7 +49,6 @@ import com.plantssoil.webhook.persists.beans.DataGroupSubscribed;
 import com.plantssoil.webhook.persists.beans.Event;
 import com.plantssoil.webhook.persists.beans.EventSubscribed;
 import com.plantssoil.webhook.persists.beans.Organization;
-import com.plantssoil.webhook.persists.beans.Organization.OrganizationStatus;
 import com.plantssoil.webhook.persists.beans.Publisher;
 import com.plantssoil.webhook.persists.beans.Subscriber;
 import com.plantssoil.webhook.persists.beans.Webhook;
@@ -271,7 +271,7 @@ public class JPAPersistedRegistryNewTest {
         // update publisher attribute "support data group", should throw exception
         assertThrows(EnginePersistenceException.class, () -> {
             IPublisher p = ps.get(4);
-            p.setSupportDataGroup(p.isSupportDataGroup() ? false : true);
+            p.setSupportDataGroup(p.getSupportDataGroup() ? false : true);
             r.updatePublisher(p);
         });
         // update publisher attribute "version", should throw exception
@@ -383,7 +383,7 @@ public class JPAPersistedRegistryNewTest {
         IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
         IPublisher p = getTestPublisher(r);
         // should choose a publisher support data group
-        assertTrue(p.isSupportDataGroup());
+        assertTrue(p.getSupportDataGroup());
         // add 20 data group, should success
         String dataGroupPrefix = "data.group.";
         List<IDataGroup> dgs = new ArrayList<>();

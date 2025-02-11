@@ -168,10 +168,10 @@ public class PersistedRegistry extends AbstractRegistry {
                         String.format("The publisher (publisher id: %s) to be update does not exists!", publisher.getPublisherId()));
             }
             // the "support data group" & "version" attribute can't be changed
-            if ((old.isSupportDataGroup() && !publisher.isSupportDataGroup()) || (!old.isSupportDataGroup() && publisher.isSupportDataGroup())) {
+            if ((old.getSupportDataGroup() && !publisher.getSupportDataGroup()) || (!old.getSupportDataGroup() && publisher.getSupportDataGroup())) {
                 throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21002,
-                        String.format("The property (support data group, old: %s, updated: %s) could not be changed!", old.isSupportDataGroup(),
-                                publisher.isSupportDataGroup()));
+                        String.format("The property (support data group, old: %s, updated: %s) could not be changed!", old.getSupportDataGroup(),
+                                publisher.getSupportDataGroup()));
             }
             if (!Objects.equals(old.getVersion(), publisher.getVersion())) {
                 throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21002,

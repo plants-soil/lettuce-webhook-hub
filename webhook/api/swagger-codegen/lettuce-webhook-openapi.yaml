@@ -29,46 +29,6 @@ tags:
     description: All APIs for webhook engine functions
 paths:
   /organization:
-    put:
-      tags:
-        - organization
-      summary: Update an existing organization
-      description: Update an existing organization by organizationId
-      operationId: updateOrganization
-      requestBody:
-        description: Update an existent organization
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Organization'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Organization'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Organization'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Organization'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Organization'
-        '400':
-          description: Required attributes cant't be null!
-        '404':
-          description: Organization not found
-        '422':
-          description: Validation exception
-      security:
-        - api_key: []
-        - webhook_auth:
-            - write:organizations
-            - read:organizations
     post:
       tags:
         - organization
@@ -81,30 +41,31 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Organization'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Organization'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Organization'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the posted organization object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Organization'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Organization"
         '400':
-          description: Invalid input
-        '422':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - organization_auth:
             - write:organizations
             - read:organizations
   /organization/all:
@@ -133,22 +94,26 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain organization object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Organization'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Organization'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Organization"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - organization_auth:
             - write:organizations
             - read:organizations
   /organization/{organizationId}:
@@ -167,20 +132,24 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the organization object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Organization'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Organization"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Organization not found
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - organization_auth:
             - write:organizations
             - read:organizations
     put:
@@ -202,32 +171,31 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Organization'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Organization'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Organization'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the updated organization object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Organization'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Organization"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Organization not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - organization_auth:
             - write:organizations
             - read:organizations
   /publisher:
@@ -243,30 +211,31 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Publisher'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Publisher'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Publisher'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the posted publisher object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Publisher'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Publisher'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Publisher"
         '400':
-          description: Invalid input
-        '422':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - publisher_auth:
             - write:publishers
             - read:publishers
   /publisher/all:
@@ -295,22 +264,26 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain publisher object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Publisher'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Publisher'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Publisher"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - publisher_auth:
             - write:publishers
             - read:publishers
   /publisher/{publisherId}:
@@ -329,20 +302,24 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the publisher object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Publisher'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Publisher'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Publisher"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Publisher not found
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - publisher_auth:
             - write:publishers
             - read:publishers
     put:
@@ -364,32 +341,31 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Publisher'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Publisher'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Publisher'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the updated publisher object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Publisher'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Publisher'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Publisher"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Publisher not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - publisher_auth:
             - write:publishers
             - read:publishers
   /publisher/{publisherId}/event:
@@ -412,32 +388,31 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Event'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Event'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Event'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the posted event object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Event'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Event'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Event"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Publisher not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - event_auth:
             - write:events
             - read:events
   /publisher/{publisherId}/events:
@@ -462,11 +437,6 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/Event'          
-          application/xml:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/Event'          
           application/x-www-form-urlencoded:
             schema:
               type: array
@@ -475,27 +445,27 @@ paths:
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contain posted event object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'          
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Event"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Publisher not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - event_auth:
             - write:events
             - read:events
   /publisher/{publisherId}/allEvents:
@@ -530,22 +500,26 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain event object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Event"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - event_auth:
             - write:events
             - read:events
   /publisher/event/{eventId}:
@@ -564,21 +538,25 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the event object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Event'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Event'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Event"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Event not found
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - event_auth:
             - write:events
             - read:events
   /publisher/{publisherId}/datagroup:
@@ -601,32 +579,31 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/DataGroup'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/DataGroup'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/DataGroup'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the posted data group object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DataGroup'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DataGroup'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Publisher not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - datagroup_auth:
             - write:datagroups
             - read:datagroups
     get:
@@ -651,18 +628,24 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the data group object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DataGroup'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DataGroup'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - datagroup_auth:
             - write:datagroups
             - read:datagroups
   /publisher/{publisherId}/datagroups:
@@ -687,11 +670,6 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/DataGroup'          
-          application/xml:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/DataGroup'          
           application/x-www-form-urlencoded:
             schema:
               type: array
@@ -700,27 +678,27 @@ paths:
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contain posted data group array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataGroup'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataGroup'          
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Publisher not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - datagroup_auth:
             - write:datagroups
             - read:datagroups
   /publisher/{publisherId}/allDataGroups:
@@ -755,22 +733,26 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain data group array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataGroup'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataGroup'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - datagroup_auth:
             - write:datagroups
             - read:datagroups
   /publisher/datagroup/{dataGroupId}:
@@ -789,20 +771,24 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the data group object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DataGroup'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DataGroup'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Data Group not found
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - datagroup_auth:
             - write:datagroups
             - read:datagroups
   /subscriber:
@@ -818,30 +804,31 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Subscriber'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Subscriber'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Subscriber'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the posted subscriber object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subscriber'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Subscriber'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Subscriber"
         '400':
-          description: Invalid input
-        '422':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - subscriber_auth:
             - write:subscribers
             - read:subscribers
   /subscriber/all:
@@ -870,22 +857,26 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain subscriber array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Subscriber'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Subscriber'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Subscriber"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - subscriber_auth:
             - write:subscribers
             - read:subscribers
   /subscriber/{subscriberId}:
@@ -904,20 +895,24 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the subscriber object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subscriber'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Subscriber'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Subscriber"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Subscriber not found
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - subscriber_auth:
             - write:subscribers
             - read:subscribers
     put:
@@ -939,32 +934,31 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Subscriber'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Subscriber'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Subscriber'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the updated subscriber object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subscriber'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Subscriber'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Subscriber"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Subscriber not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - subscriber_auth:
             - write:subscribers
             - read:subscribers
     delete:
@@ -987,11 +981,21 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: Successful operation, will contains the posted subscriber object in ApiResponse.data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid subscriber value
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - subscriber_auth:
             - write:subscribers
             - read:subscribers
   /webhook:
@@ -1007,27 +1011,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Webhook'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Webhook'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Webhook'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the posted webhook object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webhook'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Webhook'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
         '400':
-          description: Invalid input
-        '422':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1065,20 +1070,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain webhook array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Webhook'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Webhook'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Webhook"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - webhook_auth:
             - write:webhooks
@@ -1099,18 +1108,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the webhook object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webhook'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Webhook'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1135,29 +1148,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Webhook'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Webhook'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Webhook'
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation, will contains the updated webhook object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webhook'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Webhook'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
         '400':
-          description: Required attributes cant't be null!
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook not found
-        '422':
-          description: Validation exception
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1179,18 +1191,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the activated webhook object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webhook'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Webhook'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1212,18 +1228,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the deactivated webhook object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webhook'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Webhook'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1236,19 +1256,34 @@ paths:
       summary: Subscribe a publisher event for webhook
       description: Subscribe a publisher event for webhook
       operationId: subscribeEvent
-      parameters:
-        - name: webhookId
-          in: query
-          description: ID of webhook
-          required: true
-          schema:
-            type: string
-        - name: eventId
-          in: query
-          description: ID of publisher event to subscribe
-          required: true
-          schema:
-            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - webhookId
+                - eventId
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                eventId:
+                  type: string
+                  description: ID of publisher event to subscribe
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - webhookId
+                - eventId
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                eventId:
+                  type: string
+                  description: ID of publisher event to subscribe
       responses:
         '200':
           description: successful operation
@@ -1256,13 +1291,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or event not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1275,19 +1309,34 @@ paths:
       summary: Unsubscribe a publisher event for webhook
       description: Unsubscribe a publisher event for webhook
       operationId: unsubscribeEvent
-      parameters:
-        - name: webhookId
-          in: query
-          description: ID of webhook
-          required: true
-          schema:
-            type: string
-        - name: eventId
-          in: query
-          description: ID of publisher event to unsubscribe
-          required: true
-          schema:
-            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - webhookId
+                - eventId
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                eventId:
+                  type: string
+                  description: ID of publisher event to unsubscribe
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - webhookId
+                - eventId
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                eventId:
+                  type: string
+                  description: ID of publisher event to unsubscribe
       responses:
         '200':
           description: successful operation
@@ -1295,13 +1344,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or event not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1314,35 +1362,51 @@ paths:
       summary: Subscribe publisher events for webhook
       description: Subscribe publisher events for webhook
       operationId: subscribeEvents
-      parameters:
-        - name: webhookId
-          in: query
-          description: ID of webhook
-          required: true
-          schema:
-            type: string
-        - name: eventIds
-          in: query
-          description: ID array of publisher events to subscribe
-          required: true
-          schema:
-            type: array
-            items:
-              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - webhookId
+                - eventIds
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                eventIds:
+                  type: array
+                  description: ID array of publisher events to subscribe
+                  items:
+                    type: string
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - webhookId
+                - eventIds
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                eventIds:
+                  type: array
+                  description: ID array of publisher events to subscribe
+                  items:
+                    type: string
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or event not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1355,35 +1419,51 @@ paths:
       summary: Unsubscribe publisher events for webhook
       description: Unsubscribe publisher events for webhook
       operationId: unsubscribeEvents
-      parameters:
-        - name: webhookId
-          in: query
-          description: ID of webhook
-          required: true
-          schema:
-            type: string
-        - name: eventIds
-          in: query
-          description: ID array of publisher events to unsubscribe
-          required: true
-          schema:
-            type: array
-            items:
-              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - webhookId
+                - eventIds
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                eventIds:
+                  type: array
+                  description: ID array of publisher events to unsubscribe
+                  items:
+                    type: string
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - webhookId
+                - eventIds
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                eventIds:
+                  type: array
+                  description: ID array of publisher events to unsubscribe
+                  items:
+                    type: string
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or event not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1396,33 +1476,47 @@ paths:
       summary: Subscribe a publisher data group for webhook
       description: Subscribe a publisher data group for webhook
       operationId: subscribeDataGroup
-      parameters:
-        - name: webhookId
-          in: query
-          description: ID of webhook
-          required: true
-          schema:
-            type: string
-        - name: dataGroupId
-          in: query
-          description: ID of publisher data group to subscribe
-          required: true
-          schema:
-            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - webhookId
+                - dataGroupId
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                dataGroupId:
+                  type: string
+                  description: ID of publisher data group to subscribe
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - webhookId
+                - dataGroupId
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                dataGroupId:
+                  type: string
+                  description: ID of publisher data group to subscribe
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or data group not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1435,33 +1529,47 @@ paths:
       summary: Unsubscribe a publisher data group for webhook
       description: Unsubscribe a publisher data group for webhook
       operationId: unsubscribeDataGroup
-      parameters:
-        - name: webhookId
-          in: query
-          description: ID of webhook
-          required: true
-          schema:
-            type: string
-        - name: dataGroupId
-          in: query
-          description: ID of publisher data group to unsubscribe
-          required: true
-          schema:
-            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - webhookId
+                - dataGroupId
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                dataGroupId:
+                  type: string
+                  description: ID of publisher data group to unsubscribe
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - webhookId
+                - dataGroupId
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                dataGroupId:
+                  type: string
+                  description: ID of publisher data group to unsubscribe
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or data group not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1474,35 +1582,51 @@ paths:
       summary: Subscribe publisher data groups for webhook
       description: Subscribe publisher data groups for webhook
       operationId: subscribeDataGroups
-      parameters:
-        - name: webhookId
-          in: query
-          description: ID of webhook
-          required: true
-          schema:
-            type: string
-        - name: dataGroupIds
-          in: query
-          description: ID array of publisher data groups to subscribe
-          required: true
-          schema:
-            type: array
-            items:
-              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - webhookId
+                - dataGroupIds
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                dataGroupIds:
+                  type: array
+                  description: ID array of publisher data groups to subscribe
+                  items:
+                    type: string
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - webhookId
+                - dataGroupIds
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                dataGroupIds:
+                  type: array
+                  description: ID array of publisher data groups to subscribe
+                  items:
+                    type: string
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or data group not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1515,35 +1639,51 @@ paths:
       summary: Unsubscribe publisher events for webhook
       description: Unsubscribe publisher events for webhook
       operationId: unsubscribeDataGroups
-      parameters:
-        - name: webhookId
-          in: query
-          description: ID of webhook
-          required: true
-          schema:
-            type: string
-        - name: dataGroupIds
-          in: query
-          description: ID array of publisher data groups to unsubscribe
-          required: true
-          schema:
-            type: array
-            items:
-              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - webhookId
+                - dataGroupIds
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                dataGroupIds:
+                  type: array
+                  description: ID array of publisher data groups to unsubscribe
+                  items:
+                    type: string
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - webhookId
+                - dataGroupIds
+              type: object
+              properties:
+                webhookId:
+                  type: string
+                  description: ID of webhook
+                dataGroupIds:
+                  type: array
+                  description: ID array of publisher data groups to unsubscribe
+                  items:
+                    type: string
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Invalid ID supplied
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
         '404':
-          description: Webhook or data group not found
+          description: Not found the web service
       security:
         - api_key: []
         - webhook_auth:
@@ -1581,20 +1721,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain event object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Event"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - webhook_auth:
             - write:webhooks
@@ -1631,20 +1775,24 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain data group array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataGroup'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataGroup'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - webhook_auth:
             - write:webhooks
@@ -1671,16 +1819,22 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contains the data group object in ApiResponse.data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DataGroup'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DataGroup'          
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/DataGroup"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - webhook_auth:
             - write:webhooks
@@ -1690,7 +1844,7 @@ paths:
       tags:
         - engine
       summary: Get the webhook engine version
-      description: Get the webhook engine version
+      description: Get the webhook engine version, will response version number in ApiResponse.message
       operationId: getEngineVersion
       responses:
         '200':
@@ -1699,13 +1853,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - engine_auth:
             - write:engine
             - read:engine
   /engine/trigger:
@@ -1721,9 +1876,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/WebhookMessage'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/WebhookMessage'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/WebhookMessage'
@@ -1734,15 +1886,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'          
-            application/xml:
-              schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
         - api_key: []
-        - webhook_auth:
+        - engine_auth:
             - write:engine
             - read:engine
   /engine/allPublisherWebhookLogs:
@@ -1782,22 +1935,26 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain webhook log object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookLog'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookLog'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/WebhookLog"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - webhooklog_auth:
             - write:webhooklogs
             - read:webhooklogs
   /engine/allSubscriberWebhookLogs:
@@ -1832,22 +1989,26 @@ paths:
             format: int32
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain webhook log object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookLog'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookLog'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/WebhookLog"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - webhooklog_auth:
             - write:webhooklogs
             - read:webhooklogs
   /engine/webhookLines:
@@ -1872,27 +2033,32 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation, will contain webhook log line object array in ApiResponse.data
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookLogLine'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookLogLine'
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/WebhookLogLine"
         '400':
-          description: Validation exception
+          description: Bad request of the web service
+        '401':
+          description: Unauthorized of the web service
+        '404':
+          description: Not found the web service
       security:
-        - webhook_auth:
+        - webhooklog_auth:
             - write:webhooklogs
             - read:webhooklogs
 components:
   schemas:
     Organization:
+      description: Could be company, business unit, or any other organization type, publisher / subscriber should belongs to one organization
       required:
         - organizationName
         - email
@@ -1900,19 +2066,24 @@ components:
       properties:
         organizationId:
           type: string
-          example: 6791d42ed3d172552ed09459, maximum 24 chars
+          description: ID of organization, should be unique, system will assign auto-generated ID if it's null, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
         organizationName:
           type: string
+          description: Organization name, required
           example: Organiztion name
         email:
           type: string
-          example: test@email.com, should be unique
+          description: Organization official email, required and should be unique
+          example: test@email.com
         website:
           type: string
+          description: Organization official website URL
           example: https://test.domain.com
         logoLink:
           type: string
-          example: https://test.domain.com/images/login.png
+          description: Organization official logo URL
+          example: https://test.domain.com/images/logo.png
         organizationStatus:
           type: string
           description: Organization Status
@@ -1923,14 +2094,17 @@ components:
             - LOCKED
         createdBy:
           type: string
-          example: danialdy, this is the user name of the creator
+          description: The user name who create current organization
+          example: danialdy
         creationTime:
           type: string
+          description: The time when current organization is created
           format: date-time
           example: 2025-01-23T14:56:07Z
       xml:
         name: organization
     Publisher:
+      description: Could be a version of publisher application. Publisher publishes events (along with messages) which subscribers can subscribe
       required:
         - organizationId
         - supportDataGroup
@@ -1939,25 +2113,33 @@ components:
       properties:
         publisherId:
           type: string
-          example: 6791d42ed3d172552ed09459, maximum 24 chars
+          description: ID of publisher, should be unique, system will assign auto-generated ID if it's null, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
         organizationId:
           type: string
-          example: 6791d42ed3d172552ed09459, maximum 24 chars
+          description: ID of organization which current publisher should belongs to, required and (organizationId + version) should be unique, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
         supportDataGroup:
           type: boolean
+          description: Current publisher support multiple data group (some publisher need to separate data between different business units or merchants) or not
+          example: true
         version:
           type: string
+          description: Publisher version, required and (organizationId + version) should be unique
           example: 1.0.0
         createdBy:
           type: string
-          example: danialdy, this is the user name of the creator
+          description: The user name who create current publisher
+          example: danialdy
         creationTime:
           type: string
+          description: The time when current publisher is created
           format: date-time
           example: 2025-01-23T14:56:07Z
       xml:
         name: publisher
     DataGroup:
+      description: Could be one of business unit / merchant of the publisher, if the 'supportDataGroup' property of publisher is 'true'
       required:
         - publisherId
         - dataGroup
@@ -1965,16 +2147,20 @@ components:
       properties:
         dataGroupId:
           type: string
-          example: 6791d42ed3d172552ed09459, maximum 24 chars
+          description: ID of data group, should be unique, system will assign auto-generated ID if it's null, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
         publisherId:
           type: string
-          example: 6791d42ed3d172552ed09459, maximum 24 chars
+          description: ID of publisher which current data group belongs to, required and (publisherId + dataGroup) should be unique, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
         dataGroup:
           type: string
-          example: 6791d42ed3d172552ed09459, or other string should be unique within a publisher
+          description: Data group (the identity if the data group, means should be unique among the publisher, usally could be business unit ID / merchant ID), required and (publisherId + dataGroup) should be unique
+          example: 6791d42ed3d172552ed09459
       xml:
         name: datagroup
     Event:
+      description: The event which publisher will publish (trigger), could use eventTag to group differnt type of events. e.g., 1. product could have 'product.created' 'product.approved' 'product.outofstock' events, 2. order could have 'order.created' 'order.paid' 'order.packed' 'order.delivered' 'order.refund' 'order.returned' events. Publisher could define as many as events.
       required:
         - publisherId
         - eventType
@@ -1982,25 +2168,31 @@ components:
       properties:
         eventId:
           type: string
-          example: 6791d42ed3d172552ed09459, maximum 24 chars
+          description: ID of event, should be unique, system will assign auto-generated ID if it's null, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
         publisherId:
           type: string
-          example: 6791d42ed3d172552ed09459, maximum 24 chars
+          description: ID of publisher which current event belongs to, required, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
         eventType:
           type: string
-          example: order.created, or order.paid, order.delivered, product.created, etc.
+          description: Event type, required and (publisherId + eventType) should be unique, e.g, order.created, or order.paid, order.delivered, product.created, etc.
+          example: order.created
         eventTag:
           type: string
-          example: order, product, etc.
+          description: Event tag, which could be used to group event types, e.g, order, product, etc.
+          example: order
         contentType:
           type: string
-          example: application/json, application/xml, etc.
+          description: Content type (message format) which publisher triggers, e.g, application/json
+          example: application/json
         charset:
           type: string
+          description: Charset (message encoding) which publisher triggers
           example: utf-8
         eventStatus:
           type: string
-          description: Event Status
+          description: Event Status, will be ignored when posting a new event
           example: PUBLISHED
           enum:
             - SUBMITTED
@@ -2009,19 +2201,23 @@ components:
       xml:
         name: event
     Subscriber:
+      description: Could be the subscriber which have multiple webhooks(applications) to subscribe publisher events, one organizaton only have one subscriber
       required:
         - organizationId
       type: object
       properties:
         subscriberId:
           type: string
-          example: 6791d42ed3d172552ed09459, maximum 24 chars
+          description: ID of subscriber, should be unique, system will assign auto-generated ID if it's null, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
         organizationId:
           type: string
-          example: 6791d42ed3d172552ed09459, maximum 24 chars
+          description: ID of organization which current subscriber should belongs to, required and should be unique, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
       xml:
         name: subscriber
     Webhook:
+      description: Could be an application which subscribe and receive events from publisher, one webhook could receive events from one specific (publisher + publisher version)
       required:
         - subscriberId
         - publisherId
@@ -2032,27 +2228,38 @@ components:
       properties:
         webhookId:
           type: string
-          example: 6791d42ed3d172552ed09459, maximum 24 chars
+          description: ID of webhook, should be unique, system will assign auto-generated ID if it's null, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
         subscriberId:
           type: string
-          example: 6791d42ed3d172552ed09459, maximum 24 chars
+          description: Subscriber ID which current webhook belongs to, required, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
         appName:
           type: string
+          description: Webhook name (application name)
+          example: Order Management System
         appTag:
           type: string
+          description: Webhook tag (application tag), could used to group differnt webhooks(applications)
+          example: E-Commerce
         description:
           type: string
+          description: Webhook description
+          example: The system for merchants to manage customer orders
         webhookSecret:
           type: string
+          description: Webhook secret, managed by system and will be ignored when posting new webhook
         publisherId:
           type: string
-          example: 6791d42ed3d172552ed09459, maximum 24 chars
+          description: Publisher ID which current webhook subscribed, required and (publisherId + publisherVersion) should be unique, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
         publisherVersion:
           type: string
+          description: Publisher version which current webhook subscribed, required and (publisherId + publisherVersion) should be unique
           example: 1.0.0
         securityStrategy:
           type: string
-          description: Security Strategry
+          description: Security Strategry, the publisher will use the specified strtegry to signature before dispatching message to current webhook, required
           example: SIGNATURE
           enum:
             - SIGNATURE
@@ -2060,12 +2267,15 @@ components:
             - NONE 
         webhookUrl:
           type: string
+          description: Webhook URL, which used to receive events and messages from subscribed publisher, required
+          example: https://www.example.com/oms/v1/webhook
         customizedHeaders:
           type: string
-          description: Customized Headers
+          description: Customized Headers, could add special headers needed for current webhook
           example: {"key1": "value1", "key2": "value2", "key3": "value3"}
         trustedIps:
           type: array
+          description: Trusted IP addresses, put current webhook website into white list
           items:
             type: string
           example:
@@ -2074,7 +2284,7 @@ components:
             - "192.168.0.3"
         webhookStatus:
           type: string
-          description: Webhook Status
+          description: Webhook Status, will be ignored when posting new webhook
           example: TEST
           enum:
             - TEST
@@ -2083,81 +2293,144 @@ components:
             - INACTIVE
         createdBy:
           type: string
-          example: danialdy, this is the user name of the creator
+          description: The user name who create current webhook
+          example: danialdy
         creationTime:
           type: string
+          description: The time when current webhook is created
           format: date-time
           example: 2025-01-23T14:56:07Z
       xml:
         name: webhook
     WebhookLog:
+      description: The webhook logs, all events (which carries messages) will be logged when publisher trigger events
       type: object
       properties:
         eventType:
           type: string
+          description: The event type publisher triggered, e.g, order.created, or order.paid, order.delivered, product.created, etc.
+          example: order.created
         eventTag:
           type: string
+          description: The event tag publisher triggered, e.g, product, order, etc.
+          example: product
         contentType:
           type: string
+          description: The content type publisher triggered, e.g, application/json, application/xml, etc.
+          example: application/json
         charset:
           type: string
+          description: The message charset publisher triggered
+          example: utf-8
         requestId:
           type: string
+          description: ID of request, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
         payload:
           type: string
+          description: The payload (request body) publisher triggered
+          example: {"orderId": "1", "orderTime": "2025-02-08T18:18:18", "customerId": "6791d42ed3d172552ed09459", "totalAmount": 120, "orderLines": [{"rowno": 1, "sku": "100001", "quantity": 1, "unitPrice": 40}, {"rowno": 1, "sku": "100002", "quantity": 1, "unitPrice": 80}]}
         webhookStatus:
           type: string
+          description: The webhook status
+          example: triggered
         triggerTime:
           type: string
+          description: The time when publisher triggered the event
           format: date-time
           example: 2025-01-23T14:56:07Z
       xml:
         name: webhookLog
     WebhookLogLine:
+      description: The webhook log line, log line will be added when event(message) is dispatched, got response from webhook, or exception happend
       type: object
       properties:
         logType:
           type: string
+          description: The log type, e.g, dispatched, success, fail, etc.
+          example: dispatched
         information:
           type: string
         logTime:
           type: string
+          description: The log time when the log line is added
           format: date-time
           example: 2025-01-23T14:56:07Z
         tryTime:
           type: integer
+          description: How many times the event(with message) is dispatched
           format: int32
+          example: 1
+      xml:
+        name: webhookLogLine
+    WebhookMessage:
+      description: The webhook message which triggered by publisher
+      required:
+        - publisherId
+        - version
+        - eventType
+        - requestId
+        - payload
+      type: object
+      properties:
+        publisherId:
+          type: string
+          description: Valid publisher ID (who trigger the event and message), required, maximum 24 chars
+          example: 6791d42ed3d172552ed09459
+        version:
+          type: string
+          description: Valid publisher version (who trigger the event and message), required
+          example: 1.0.0
+        eventType:
+          type: string
+          description: Valid event type (should already been registered), required, e.g, order.created, or order.paid, order.delivered, product.created, etc.
+          example: order.created
+        eventTag:
+          type: string
+          description: Valid event tag, should already been registered, e.g, product, order, etc.
+          example: product
+        contentType:
+          type: string
+          description: The content type (format type of payload), e.g, application/json, application/xml, etc.
+          example: application/json
+        charset:
+          type: string
+          description: The message charset (encoding of payload)
+          example: utf-8
+        dataGroup:
+          type: string
+          description: Data group (the identity of the data group if the publisher support multiple data group, usally could be business unit ID / merchant ID), should already been registered
+          example: 6791d42ed3d172552ed09459
+        requestId:
+          type: string
+          description: ID of request, which used to identify one request, required. Webhook could use this requestId to verify duplicated consumption, this verification should be always needed, because webhook engine will try to call webhook multiple times util got response from webhook.
+          example: 6791d42ed3d172552ed09459
+        payload:
+          type: string
+          description: The message (request body) publisher triggered, required
+          example: {"orderId": "1", "orderTime": "2025-02-08T18:18:18", "customerId": "6791d42ed3d172552ed09459", "totalAmount": 120, "orderLines": [{"rowno": 1, "sku": "100001", "quantity": 1, "unitPrice": 40}, {"rowno": 1, "sku": "100002", "quantity": 1, "unitPrice": 80}]}
+      xml:
+        name: webhookMessage
     ApiResponse:
+      description: The API response object which hold the response code and messages, and data if needed
+      required:
+        - code
+        - message
       type: object
       properties:
         code:
           type: integer
           format: int32
+          description: The response code, 200 - OK, 400 - Bad Request, 401 - Unauthorized, 404 - Not Found
+          example: 200
         message:
           type: string
-    WebhookMessage:
-      type: object
-      properties:
-        publisherId:
-          type: string
-        version:
-          type: string
-        eventType:
-          type: string
-        eventTag:
-          type: string
-        contentType:
-          type: string
-        charset:
-          type: string
-        dataGroup:
-          type: string
-        requestId:
-          type: string
-        payload:
-          type: string
+          description: The response message, OK (response code - 200), Bad Request (response code - 400), Unauthorized (response code - 401), Not Found (response code - 404), or other customized message
+          example: OK
+      xml:
+        name: apiResponse
   securitySchemes:
-    webhook_auth:
+    organization_auth:
       type: oauth2
       flows:
         implicit:
@@ -2165,6 +2438,62 @@ components:
           scopes:
             write:organizations: modify organizations in your account
             read:organizations: read your organizations
+    publisher_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:publishers: modify publishers in you account
+            read:publishers: read your publishers
+    event_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:events: modify events in your account
+            read:events: read your events
+    datagroup_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:datagroups: modify data groups in your account
+            read:datagroups: read your data groups
+    subscriber_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:subscribers: modify subscribers in your account
+            read:subscribers: read your subscribers
+    webhook_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:webhooks: modify webhooks in your account
+            read:webhooks: read your webhooks
+    engine_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:engine: modify engine in your account
+            read:engine: read your engine
+    webhooklog_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://lettuce.plantssoil.com/oauth/authorize
+          scopes:
+            write:webhooklogs: modify webhook logs in your account
+            read:webhooklogs: read your webhook logs
     api_key:
       type: apiKey
       name: api_key

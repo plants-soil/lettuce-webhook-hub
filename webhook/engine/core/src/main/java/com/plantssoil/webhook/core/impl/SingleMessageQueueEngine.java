@@ -108,7 +108,7 @@ class SingleMessageQueueEngine extends AbstractEngine implements IEngine {
     void loadWebhook(IWebhook webhook) {
         IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
         IPublisher publisher = r.findPublisher(webhook.getPublisherId());
-        if (!publisher.isSupportDataGroup()) {
+        if (!publisher.getSupportDataGroup()) {
             loadSubscriber(webhook, null);
         }
     }
@@ -132,7 +132,7 @@ class SingleMessageQueueEngine extends AbstractEngine implements IEngine {
     void loadSubscribedDataGroup(IWebhook webhook, IDataGroup dataGroup) {
         IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
         IPublisher publisher = r.findPublisher(webhook.getPublisherId());
-        if (publisher.isSupportDataGroup()) {
+        if (publisher.getSupportDataGroup()) {
             loadSubscriber(webhook, dataGroup);
         }
     }

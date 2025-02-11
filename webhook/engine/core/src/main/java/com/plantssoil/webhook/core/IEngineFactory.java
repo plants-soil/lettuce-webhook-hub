@@ -4,6 +4,7 @@ import com.plantssoil.common.config.ConfigurableLoader;
 import com.plantssoil.common.config.IConfigurable;
 import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.webhook.core.exception.EngineException;
+import com.plantssoil.webhook.core.impl.InMemoryEngineFactory;
 
 /**
  * Factory for creating the webhook engine<br/>
@@ -47,7 +48,8 @@ public interface IEngineFactory {
      * @return Singleton instance of {@link IEngineFactory}
      */
     public static IEngineFactory getFactoryInstance() {
-        IConfigurable configurable = ConfigurableLoader.getInstance().createSingleton(LettuceConfiguration.WEBHOOK_ENGINE_FACTORY_CONFIGURABLE);
+        IConfigurable configurable = ConfigurableLoader.getInstance().createSingleton(LettuceConfiguration.WEBHOOK_ENGINE_FACTORY_CONFIGURABLE,
+                InMemoryEngineFactory.class.getName());
         if (configurable instanceof IEngineFactory) {
             return (IEngineFactory) configurable;
         } else {

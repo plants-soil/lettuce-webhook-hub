@@ -27,10 +27,6 @@ import com.plantssoil.webhook.core.IOrganization;
 public class Organization extends ClonableBean implements IOrganization {
     private static final long serialVersionUID = -1431122765874295449L;
 
-    public enum OrganizationStatus {
-        ACTIVE, INACTIVE, LOCKED
-    }
-
     @Id
     private String organizationId;
     private String organizationName;

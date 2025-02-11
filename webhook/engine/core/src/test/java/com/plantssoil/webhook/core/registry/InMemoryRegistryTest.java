@@ -218,7 +218,7 @@ public class InMemoryRegistryTest {
         // update publisher attribute "support data group", should throw exception
         assertThrows(EngineException.class, () -> {
             IPublisher p = ps.get(4);
-            p.setSupportDataGroup(p.isSupportDataGroup() ? false : true);
+            p.setSupportDataGroup(p.getSupportDataGroup() ? false : true);
             r.updatePublisher(p);
         });
         // update publisher attribute "version", should throw exception
@@ -327,7 +327,7 @@ public class InMemoryRegistryTest {
         IRegistry r = IEngineFactory.getFactoryInstance().getEngine().getRegistry();
         IPublisher p = getTestPublisher(r);
         // should choose a publisher support data group
-        assertTrue(p.isSupportDataGroup());
+        assertTrue(p.getSupportDataGroup());
         // add 20 data group, should success
         String dataGroupPrefix = "data.group.";
         List<IDataGroup> dgs = new ArrayList<>();
@@ -448,7 +448,7 @@ public class InMemoryRegistryTest {
         // update subscriber attribute "organizationId", should throw exception
         assertThrows(EngineException.class, () -> {
             ISubscriber s = ps.get(3);
-            s.setOrganizationId("ORGANIZATION-" + CURRENT_TIME_MILLIS + "-1");
+            s.setOrganizationId("ORGANIZATION-" + CURRENT_TIME_MILLIS + "-A");
             r.updateSubscriber(s);
         });
         // should success
