@@ -104,6 +104,12 @@ public class LettuceConfiguration {
     public final static String WEBHOOK_ENGINE_RETRY_QUEUE_CAPACITY30 = "webhook.engine.retry.queue.capacity30";
 
     /**
+     * Lettuce Webhook Engine Restful service factory implementation configuration,
+     * defaults to {@link com.plantssoil.webhook.resteasy.ResteasyServiceFactory}
+     */
+    public final static String WEBHOOK_ENGINE_API_FACTORY_CONFIGURABLE = "webhook.engine.api.factory.configurable";
+
+    /**
      * Persistence Factory implementation configuration
      */
     public final static String PERSISTENCE_FACTORY_CONFIGURABLE = "persistence.fatory.configurable";

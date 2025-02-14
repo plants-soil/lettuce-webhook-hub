@@ -316,6 +316,7 @@ public abstract class AbstractRegistry implements IRegistry {
         checkRequiredAttribute(webhook);
         String webhookId = webhook.getWebhookId();
         synchronized (webhookId.intern()) {
+            webhook.setWebhookStatus(WebhookStatus.PRODUCTION);
             // persist webhook
             saveActivatedWebhook(webhook);
             // notify webhook engine
@@ -340,6 +341,7 @@ public abstract class AbstractRegistry implements IRegistry {
         checkRequiredAttribute(webhook);
         String webhookId = webhook.getWebhookId();
         synchronized (webhookId.intern()) {
+            webhook.setWebhookStatus(WebhookStatus.INACTIVE);
             // persist webhook
             saveDeactivatedWebhook(webhook);
             // notify webhook engine

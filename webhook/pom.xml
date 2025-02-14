@@ -16,6 +16,5 @@
 		<module>engine</module>
 		<module>api</module>
 		<module>platforms</module>
-		<module>test</module>
 	</modules>
 </project>

@@ -13,9 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.plantssoil.common.config.ConfigFactory;
 import com.plantssoil.common.config.IConfigurable;
-import com.plantssoil.common.config.LettuceConfiguration;
 import com.plantssoil.common.httpclient.impl.NamedThreadFactory;
 import com.plantssoil.webhook.core.ILogging;
 import com.plantssoil.webhook.core.IWebhook;
@@ -43,8 +41,6 @@ public class InMemoryLogging implements ILogging, IConfigurable {
     private Map<String, List<InMemoryWebhookLogLine>> logLines = new ConcurrentHashMap<>();
     private AtomicLong logLineId = new AtomicLong(0);
     private ExecutorService loggingExecutor = Executors.newCachedThreadPool(new NamedThreadFactory("Persisted-Logging-Executor"));
-    private static String PERSISTENCE_FACTORY_CONFIGURABLE = ConfigFactory.getInstance().getConfiguration()
-            .getString(LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE);
 
     private List<InMemoryWebhookLogLine> getLogLines(String requestId) {
         List<InMemoryWebhookLogLine> lines = this.logLines.get(requestId);
@@ -62,10 +58,6 @@ public class InMemoryLogging implements ILogging, IConfigurable {
 
     @Override
     public void triggerMessage(Message message) {
-        if (PERSISTENCE_FACTORY_CONFIGURABLE == null) {
-            return;
-        }
-
         loggingExecutor.submit(() -> {
             InMemoryWebhookLog log = logs.get(message.getRequestId());
             if (log == null) {
@@ -88,10 +80,6 @@ public class InMemoryLogging implements ILogging, IConfigurable {
 
     @Override
     public void dispatchMessage(Message message, IWebhook webhook, int tryTime) {
-        if (PERSISTENCE_FACTORY_CONFIGURABLE == null) {
-            return;
-        }
-
         loggingExecutor.submit(() -> {
             List<InMemoryWebhookLogLine> lines = getLogLines(message.getRequestId());
             InMemoryWebhookLogLine line = new InMemoryWebhookLogLine();
@@ -108,10 +96,6 @@ public class InMemoryLogging implements ILogging, IConfigurable {
 
     @Override
     public void responseMessage(Message message, IWebhook webhook, String responseType, String information) {
-        if (PERSISTENCE_FACTORY_CONFIGURABLE == null) {
-            return;
-        }
-
         loggingExecutor.submit(() -> {
             List<InMemoryWebhookLogLine> lines = getLogLines(message.getRequestId());
             InMemoryWebhookLogLine line = new InMemoryWebhookLogLine();
