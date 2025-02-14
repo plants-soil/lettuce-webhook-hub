@@ -425,7 +425,6 @@ public class PersistedRegistry extends AbstractRegistry {
             String msg = String.format("Only the instance of %s could be persisted!", Webhook.class.getName());
             throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21011, msg);
         }
-        webhook.setWebhookStatus(WebhookStatus.PRODUCTION);
         IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
         try (IPersistence p = f.create()) {
             // check webhook is already activated or not
@@ -451,7 +450,6 @@ public class PersistedRegistry extends AbstractRegistry {
             String msg = String.format("Only the instance of %s could be persisted!", Webhook.class.getName());
             throw new EnginePersistenceException(EnginePersistenceException.BUSINESS_EXCEPTION_CODE_21012, msg);
         }
-        webhook.setWebhookStatus(WebhookStatus.INACTIVE);
         IPersistenceFactory f = IPersistenceFactory.getFactoryInstance();
         try (IPersistence p = f.create()) {
             // check webhook is already deactivated or not

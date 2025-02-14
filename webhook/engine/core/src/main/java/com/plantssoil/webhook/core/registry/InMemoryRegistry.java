@@ -459,6 +459,12 @@ public class InMemoryRegistry extends AbstractRegistry {
                 indexesRemove.add(index);
             }
         }
+        indexesRemove.sort(new java.util.Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return 0 - o1.compareTo(o2);
+            }
+        });
         for (Integer index : indexesRemove) {
             existingEvents.remove(index.intValue());
         }
@@ -502,6 +508,12 @@ public class InMemoryRegistry extends AbstractRegistry {
                 indexesRemove.add(index);
             }
         }
+        indexesRemove.sort(new java.util.Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return 0 - o1.compareTo(o2);
+            }
+        });
         for (Integer index : indexesRemove) {
             existingDataGroups.remove(index.intValue());
         }
