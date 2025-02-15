@@ -17,6 +17,7 @@ public class MultiMessageQueueEngineFactory extends AbstractEngineFactory {
 
     @Override
     IEngine createEngineInstance() {
+        LOGGER.info("Creating webhook engine: " + MultiMessageQueueEngine.class.getName());
         return new MultiMessageQueueEngine();
     }
 

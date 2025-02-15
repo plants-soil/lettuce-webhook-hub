@@ -69,6 +69,7 @@ public class JDBCInitializer extends AbstractLiquibaseInitializer {
             throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13010,
                     "Database connection (driverClass, connectionUrl) can't be null!");
         }
+        LOGGER.info("RDBMS is initializing by JDBC with driver: " + this.driverClass);
         try {
             Class.forName(this.driverClass);
             Connection connection = null;

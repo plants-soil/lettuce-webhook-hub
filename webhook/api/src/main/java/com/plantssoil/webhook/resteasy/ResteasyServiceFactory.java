@@ -3,6 +3,9 @@ package com.plantssoil.webhook.resteasy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.plantssoil.webhook.IRestfulServiceFactory;
 import com.plantssoil.webhook.api.EngineApiService;
 import com.plantssoil.webhook.api.OrganizationApiService;
@@ -17,9 +20,11 @@ import com.plantssoil.webhook.api.WebhookApiService;
  * @Date 14 Feb 2025 12:26:32 am
  */
 public class ResteasyServiceFactory implements IRestfulServiceFactory {
+    private final static Logger LOGGER = LoggerFactory.getLogger(ResteasyServiceFactory.class.getName());
     private Map<Class<?>, Object> restfulServices = new ConcurrentHashMap<>();
 
     public ResteasyServiceFactory() {
+        LOGGER.info("Restful API service loaded.");
     }
 
     @SuppressWarnings("unchecked")

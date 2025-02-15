@@ -100,10 +100,10 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
         if (this.entityManagerFactory == null) {
             synchronized (this) {
                 if (this.entityManagerFactory == null) {
-                    LOGGER.info("Loading and connectiong RDBMS JPA as the persistence service...");
+                    LOGGER.info("Loading JPA as the persistence service...");
                     Map<String, String> connectionProperties = getConnectionProperties();
                     this.entityManagerFactory = Persistence.createEntityManagerFactory(getPersistenceUnitName(), connectionProperties);
-                    LOGGER.info("RDBMS connected and loaded.");
+                    LOGGER.info("JPA connected and loaded.");
                 }
             }
         }
@@ -136,6 +136,7 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
     }
 
     private Map<String, String> getDataSourceProperties(String datasourceName) {
+        LOGGER.info("Use datasource to connect RDBMS: " + datasourceName);
         Map<String, String> properties = new HashMap<>();
         properties.put("jta-data-source", datasourceName);
 
@@ -151,6 +152,7 @@ public class JPAPersistenceFactory implements IPersistenceFactory {
     }
 
     private Map<String, String> getDataConnectionProperties(DatabaseConnectionConfig databaseConfig) {
+        LOGGER.info("Use JDBC with specific driver to connect RDBMS: " + databaseConfig.getDatabaseDriver());
         Map<String, String> properties = new HashMap<>();
         if (databaseConfig.getDatabaseDriver() != null) {
             properties.put("javax.persistence.jdbc.driver", databaseConfig.getDatabaseDriver());

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.MapConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.interpol.ConfigurationInterpolator;
@@ -55,7 +54,8 @@ public class ConfigFactory {
         if (url != null) {
             try {
                 conf.addConfiguration(new PropertiesConfiguration(url));
-            } catch (ConfigurationException e) {
+                LOGGER.info("Loaded configurations from " + url.toURI().toString());
+            } catch (Exception e) {
                 throw new ConfigException(ConfigException.BUSINESS_EXCEPTION_CODE_12011, e);
             }
         }
