@@ -98,7 +98,9 @@ class InMemorySubscriber implements Subscriber<Message> {
             LOGGER.debug(String.format("Webhook subscriber (publisherId: %s, version: %s) unsubscribed.", this.webhook.getPublisherId(),
                     this.webhook.getPublisherVersion()));
         }
-        this.subscription.cancel();
+        if (this.subscription != null) {
+            this.subscription.cancel();
+        }
     }
 
     @Override
