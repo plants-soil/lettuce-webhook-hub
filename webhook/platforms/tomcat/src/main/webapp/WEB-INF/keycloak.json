@@ -1,0 +1,7 @@
+{
+  "realm" : "lettuce",
+  "resource" : "tomcat-lettuce",
+  "auth-server-url" : "http://192.168.0.67:8080",
+  "ssl-required": "none",
+  "autodetect-bearer-only": true
+}
