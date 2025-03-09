@@ -17,6 +17,7 @@ public class InMemoryEngineFactory extends AbstractEngineFactory {
 
     @Override
     IEngine createEngineInstance() {
+        LOGGER.info("Creating webhook engine: " + InMemoryEngine.class.getName());
         return new InMemoryEngine();
     }
 

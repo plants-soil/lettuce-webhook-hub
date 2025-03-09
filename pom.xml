@@ -57,6 +57,7 @@
 		<!-- Logging -->
 		<version.slf4j-api>2.0.16</version.slf4j-api>
 		<version.slf4j-reload4j>2.0.16</version.slf4j-reload4j>
+		<version.slf4j-jdk14>2.0.16</version.slf4j-jdk14>
 		<version.jcl-over-slf4j>1.7.28</version.jcl-over-slf4j>
 		<!-- Dependencies -->
 		<version.okhttp3>3.14.9</version.okhttp3>
@@ -159,6 +160,11 @@
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-reload4j</artifactId>
 				<version>${version.slf4j-reload4j}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-jdk14</artifactId>
+				<version>${version.slf4j-jdk14}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>

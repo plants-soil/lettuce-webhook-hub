@@ -44,6 +44,7 @@ public class DatasourceInitializer extends AbstractLiquibaseInitializer {
         if (this.datasourceName == null || this.datasourceName.strip().length() == 0) {
             throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13007, "The datasource name for database connection can't be null!");
         }
+        LOGGER.info("RDBMS is initializing by datasource JNDI: " + this.datasourceName);
         try {
             DataSource dataSource = (DataSource) new InitialContext().lookup(this.datasourceName);
             return dataSource.getConnection();

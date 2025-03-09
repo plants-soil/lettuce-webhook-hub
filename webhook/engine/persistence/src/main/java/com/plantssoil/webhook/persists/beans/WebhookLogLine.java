@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,6 +23,7 @@ public class WebhookLogLine implements IWebhookLogLine, java.io.Serializable {
     private String webhookId;
     private String requestId;
     private String logType;
+    @Lob
     private String information;
     @Temporal(TemporalType.TIMESTAMP)
     private Date logTime;

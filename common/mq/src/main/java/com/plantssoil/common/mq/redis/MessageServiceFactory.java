@@ -44,7 +44,7 @@ public class MessageServiceFactory<T extends java.io.Serializable> implements IM
      * Initialize Redis Client and connections for publisher and consumer<br/>
      */
     public MessageServiceFactory() {
-        LOGGER.info("Loading Redis List as the message service...");
+        LOGGER.info("Loading Redis as the message service...");
         IConfiguration configuration = ConfigFactory.getInstance().getConfiguration();
 
         // initiate the RedisClient
@@ -77,7 +77,7 @@ public class MessageServiceFactory<T extends java.io.Serializable> implements IM
 
         // create consumers collection
         this.consumers = new ArrayList<>();
-        LOGGER.info("Redis Client connected and loaded.");
+        LOGGER.info("Redis connected and loaded.");
     }
 
     @Override

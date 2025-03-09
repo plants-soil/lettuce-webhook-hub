@@ -211,6 +211,7 @@ public abstract class AbstractEngine {
                 if (this.registry == null) {
                     this.registry = (IRegistry) ConfigurableLoader.getInstance().createConfigurable(LettuceConfiguration.WEBHOOK_ENGINE_REGISTRY_CONFIGURABLE,
                             InMemoryRegistry.class.getName());
+                    LOGGER.info("Webhook engine registry service loaded: " + this.registry.getClass().getName());
                 }
             }
         }
@@ -223,6 +224,7 @@ public abstract class AbstractEngine {
                 if (this.logging == null) {
                     this.logging = (ILogging) ConfigurableLoader.getInstance().createSingleton(LettuceConfiguration.WEBHOOK_ENGINE_LOGGING_CONFIGURABLE,
                             InMemoryLogging.class.getName());
+                    LOGGER.info("Webhook engine logging service loaded: " + this.logging.getClass().getName());
                 }
             }
         }

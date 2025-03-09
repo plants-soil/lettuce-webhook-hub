@@ -25,7 +25,6 @@ import com.plantssoil.common.persistence.IPersistenceFactory;
  * Create persistence instance, the implementation is defined via configuration
  * {@link LettuceConfiguration.PERSISTENCE_FACTORY_CONFIGURABLE}
  * 
- * 
  * @author danialdy
  * @Date 8 Nov 2024 1:18:35 pm
  */
@@ -35,7 +34,7 @@ public class MongodbPersistenceFactory implements IPersistenceFactory {
     private MongoClient client;
 
     public MongodbPersistenceFactory() {
-        LOGGER.info("Loading and connectiong Mongodb as the persistence service...");
+        LOGGER.info("Loading Mongodb as the persistence service...");
         IConfiguration conf = ConfigFactory.getInstance().getConfiguration();
         String url = conf.getString(LettuceConfiguration.PERSISTENCE_DATABASE_URL);
         String username = null;

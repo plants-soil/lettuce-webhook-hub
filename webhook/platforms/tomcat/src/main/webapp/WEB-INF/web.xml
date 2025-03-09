@@ -14,10 +14,32 @@
 		<filter-name>ApiFilter</filter-name>
 		<url-pattern>/v1/*</url-pattern>
 	</filter-mapping>
-	
+
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>tomcat-lettuce</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>user</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<login-config>
+		<auth-method>LETTUCE</auth-method>
+		<realm-name>lettuce</realm-name>
+	</login-config>
+
+    <security-role>
+        <role-name>admin</role-name>
+    </security-role>
+    <security-role>
+        <role-name>user</role-name>
+    </security-role>
 </web-app>

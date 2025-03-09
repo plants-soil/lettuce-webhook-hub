@@ -147,7 +147,7 @@ public class DirectoryLocator {
             dir = String.format("%s%s%s", dir, FILE_SEPARATOR, CONFIG.equals(directoryName) ? "conf" : directoryName);
             return Paths.get(dir);
         }
-        dir = System.getProperty(String.format("tomcat.%s.dir", CONFIG.equals(directoryName) ? "conf" : directoryName));
+        dir = System.getProperty(String.format("tomcat.%s.dir", directoryName));
         if (dir != null && dir.strip().length() > 0) {
             return Paths.get(dir);
         } else {

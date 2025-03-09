@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -25,6 +26,7 @@ public class WebhookLog implements IWebhookLog, java.io.Serializable {
     private String charset;
     @Id
     private String requestId;
+    @Lob
     private String payload;
     private String webhookStatus;
     @Temporal(TemporalType.TIMESTAMP)

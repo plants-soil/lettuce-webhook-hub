@@ -43,7 +43,7 @@ import liquibase.resource.FileSystemResourceAccessor;
  *
  */
 abstract class AbstractLiquibaseInitializer implements IPersistenceInitializer {
-    private final static Logger LOGGER = LoggerFactory.getLogger(AbstractLiquibaseInitializer.class.getName());
+    final static Logger LOGGER = LoggerFactory.getLogger(AbstractLiquibaseInitializer.class.getName());
 
     /**
      * Get Database Connection on which to execute Liquibase database initialization
@@ -81,7 +81,7 @@ abstract class AbstractLiquibaseInitializer implements IPersistenceInitializer {
 
     @Override
     public void initialize() {
-        LOGGER.info("Connecting and loading JDBC to initialize RDBMS...");
+        LOGGER.info("Loading Liquibase to initialize RDBMS...");
         String changeLogFileWithFullPath = getChangeLogFile();
         int lastSeperator = changeLogFileWithFullPath.lastIndexOf(File.separator);
         String path = changeLogFileWithFullPath.substring(0, lastSeperator);
@@ -109,6 +109,6 @@ abstract class AbstractLiquibaseInitializer implements IPersistenceInitializer {
         } catch (LiquibaseException e) {
             throw new PersistenceException(PersistenceException.BUSINESS_EXCEPTION_CODE_13006, e);
         }
-
+        LOGGER.info("RDBMS initialized or updated.");
     }
 }
